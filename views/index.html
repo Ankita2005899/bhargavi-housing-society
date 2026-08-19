@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhargavi Housing Society — Community &amp; Home</title>
+<link rel="icon" href="images/branding/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base/variables.css">
+<link rel="stylesheet" href="css/pages/site.css">
+<link rel="stylesheet" href="css/components/popup.css">
+</head>
+<body>
+
+<!-- ================= PRELOADER ================= -->
+<div id="preloader"><div class="loader-ring"></div></div>
+
+<!-- ================= TOP TICKER ================= -->
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+  </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#top" class="brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo" class="brand-logo">
+      <span class="brand-text">
+        <strong>Bhargavi Housing Society</strong>
+        <em>Community &amp; Home · Reg. No. 123/2026</em>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#about">About</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#events">Events</a>
+      <a href="#governance">Governance</a>
+      <a href="#notices">Notices</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= SLIDE-IN MENU ================= -->
+<div class="menu-overlay" id="menuOverlay"></div>
+<aside class="slide-menu" id="slideMenu">
+  <div class="slide-menu-head">
+    <img src="images/branding/logo.jpg" alt="logo" class="slide-menu-logo">
+    <button class="close-btn" id="closeMenuBtn" aria-label="Close menu">&times;</button>
+  </div>
+  <nav class="slide-menu-links">
+    <a href="#about">About the Society</a>
+    <a href="#dashboard">Resident Dashboard</a>
+    <a href="#events">Events &amp; Celebrations</a>
+    <a href="#governance">Meetings &amp; Governance</a>
+    <a href="#notices">Notice Board</a>
+    <a href="#contact">Contact &amp; Location</a>
+    <button class="view-details-trigger" id="viewDetailsBtn">
+      <span>📋</span> View Details
+    </button>
+  </nav>
+  <div class="slide-menu-divider"></div>
+  <div class="account-slot" id="accountSlot"></div>
+  <button class="secretary-trigger" id="secretaryBtn">
+    <span class="lock-ic">🔒</span>
+    <span>
+      <strong>Secretary Section</strong>
+      <small>Committee access only</small>
+    </span>
+  </button>
+  <p class="slide-menu-foot">Wing A · Wing B · Wing C</p>
+</aside>
+
+<!-- ================= VIEW DETAILS POPUP (center-top dropdown) ================= -->
+<div class="details-popup-overlay" id="detailsPopupOverlay">
+  <div class="details-popup" id="detailsPopup">
+    <div class="details-popup-head">
+      <h3 id="detailsPopupTitle">View Details</h3>
+      <button class="modal-close" id="detailsPopupClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="details-popup-menu" id="detailsPopupMenu">
+      <button class="details-popup-option" data-view="members"><span class="details-popup-option-icon"></span> View Member</button>
+      <button class="details-popup-option" data-view="ambulance"><span class="details-popup-option-icon"></span> View Ambulance</button>
+      <button class="details-popup-option" data-view="hospital"><span class="details-popup-option-icon"></span> View Hospital</button>
+    </div>
+
+    <div class="details-popup-body" id="detailsPopupBody" hidden>
+      <button class="details-popup-back" id="detailsPopupBack">&larr; Back</button>
+      <div class="details-popup-content" id="detailsPopupContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= YELLOW RE-ENTRY FLASH ================= -->
+<div class="reentry-flash" id="reentryFlash"></div>
+
+<!-- ================= MEETING POPUP (dashboard) ================= -->
+<div class="modal-overlay" id="meetingPopupOverlay">
+  <div class="modal-card meeting-popup">
+    <button class="modal-close" id="meetingPopupClose">&times;</button>
+    <span class="eyebrow-mono">CURRENTLY SCHEDULING</span>
+    <h3>Annual General Body Meeting</h3>
+    <div class="meeting-detail-row"><span>🗓</span> Saturday, 30 August 2026</div>
+    <div class="meeting-detail-row"><span>🕕</span> 6:00 PM – 8:00 PM</div>
+    <div class="meeting-detail-row"><span>📍</span> Community Hall, Ground Floor</div>
+    <div class="meeting-agenda">
+      <p class="mini-label-mono">Agenda</p>
+      <ol>
+        <li>Confirmation of minutes of previous AGM</li>
+        <li>Presentation of annual audit report</li>
+        <li>Approval of budget for the financial year</li>
+        <li>Election of managing committee</li>
+        <li>Maintenance &amp; upgrade proposals</li>
+      </ol>
+    </div>
+    <div class="meeting-actions">
+      <button class="btn btn-primary btn-sm">RSVP — Attending</button>
+      <button class="btn btn-outline btn-sm" id="meetingPopupClose2">Remind me later</button>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="hero-media">
+      <img src="images/gallery/republic-day.jpg" alt="Flag hoisting ceremony at Bhargavi Housing Society courtyard">
+      <div class="hero-scrim"></div>
+    </div>
+    <div class="hero-content">
+      <span class="eyebrow-mono">WING A · WING B · WING C</span>
+      <h1>Bhargavi Housing<br>Society</h1>
+      <p class="hero-sub">One courtyard, three wings, a hundred reasons to step outside — from flag hoisting at dawn to diyas at dusk. This is where our community lives, meets, and celebrates.</p>
+      <div class="hero-cta">
+        <a href="#events" class="btn btn-primary">Explore Events</a>
+        <a href="#dashboard" class="btn btn-ghost">Open Resident Dashboard</a>
+      </div>
+    </div>
+    <div class="hero-stats reveal">
+      <div><strong data-count="3">0</strong><span>Wings</span></div>
+      <div><strong data-count="216">0</strong><span>Homes</span></div>
+      <div><strong data-count="17">0</strong><span>Annual events</span></div>
+      <div><strong data-count="12" id="committeeMemberCount">0</strong><span>Committee members</span></div>
+    </div>
+  </section>
+
+  <div class="fountain-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+  </div>
+
+  <!-- ================= LAYOUT WITH LEFT SLIDER ================= -->
+  <div class="with-rail">
+
+    <!-- LEFT SLIDER RAIL -->
+    <aside class="left-rail" id="leftRail">
+      <div class="rail-slider">
+        <div class="rail-track" id="railTrack">
+          <div class="rail-slide">
+            <img src="images/gallery/wing-b-fountain.jpg" alt="Residents gathered at the Wing B fountain">
+            <p><strong>Wing B Courtyard</strong>Our central fountain — the heart of every gathering.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/diwali.jpg" alt="Diwali celebration with rangoli and diyas">
+            <p><strong>Diwali Nights</strong>Rangoli, diyas and sparklers light up the courtyard.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/sports-day.jpg" alt="Annual sports day cricket match">
+            <p><strong>Sports Day</strong>Cricket, badminton and tug-of-war across all wings.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/agm.jpg" alt="Annual general body meeting">
+            <p><strong>Your Voice Counts</strong>Every member has a say at our general body meetings.</p>
+          </div>
+        </div>
+        <div class="rail-dots" id="railDots"></div>
+      </div>
+
+      <div class="rail-actions">
+        <p class="mini-label-mono">Quick actions</p>
+        <button class="rail-btn" data-toast="Redirecting to maintenance payment portal…">💳 Pay Maintenance</button>
+        <button class="rail-btn" data-toast="Complaint form opened. Our facility team replies within 24 hrs.">🛠️ Raise a Complaint</button>
+        <button class="rail-btn" data-toast="Amenity booking calendar opened for the Community Hall.">🏛️ Book Community Hall</button>
+        <button class="rail-btn" data-toast="Visitor gate-pass request sent to Wing security desk.">🚪 Visitor Gate Pass</button>
+        <button class="rail-btn" data-toast="Opening resident directory (committee members only).">📇 Resident Directory</button>
+      </div>
+    </aside>
+
+    <div class="content-col">
+
+      <!-- ================= ABOUT ================= -->
+      <section id="about" class="section about-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">01 · ABOUT US</span>
+          <h2>Three wings, one community</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy reveal">
+            <p>Bhargavi Housing Society is home to families across <strong>Wing A, Wing B and Wing C</strong>, built around a shared courtyard that has hosted everything from flag hoistings to festival feasts. Our managing committee — President, Vice President, Secretary, Treasurer and Joint Secretary — works with resident volunteers to keep the society safe, well-maintained and genuinely social.</p>
+            <p>Whether it's a rangoli competition, a safety workshop, or the Annual General Body Meeting, our courtyard has a way of turning 216 households into one neighbourhood.</p>
+            <div class="about-facts">
+              <div><span class="fact-num-mono">Reg. 123/2026</span><span>Registration number</span></div>
+              <div><span class="fact-num-mono">G+3</span><span>Floors per wing</span></div>
+              <div><span class="fact-num-mono">24×7</span><span>Security &amp; CCTV</span></div>
+            </div>
+          </div>
+          <div class="about-photos reveal">
+            <img src="images/branding/gate-signboard.jpg" alt="Bhargavi Housing Society main gate signboard" class="photo-a">
+            <img src="images/gallery/wing-a.jpg" alt="Wing A building exterior" class="photo-b">
+          </div>
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboard" class="section dashboard-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">02 · RESIDENT DASHBOARD</span>
+          <h2>Everything a resident needs, in one place</h2>
+          <p class="section-sub">A preview of the members' dashboard — notices, dues, and meetings, always up to date.</p>
+        </div>
+
+        <div class="dashboard-mock reveal">
+          <div class="dash-topbar">
+            <div class="dash-tabs">
+              <span class="dash-tab active">Overview</span>
+              <span class="dash-tab">Payments</span>
+              <span class="dash-tab">Notices</span>
+              <span class="dash-tab">Meetings</span>
+              <span class="dash-tab">Directory</span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="openMeetingPopupBtn">🔔 Scheduled Meeting</button>
+          </div>
+          <div class="dash-body">
+            <div class="dash-card">
+              <p class="mini-label-mono">Maintenance</p>
+              <h4>₹3,200 due</h4>
+              <p class="dash-note">Due by 5 Sept 2026</p>
+              <button class="btn btn-outline btn-sm">Pay now</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Upcoming</p>
+              <h4>AGM · 30 Aug</h4>
+              <p class="dash-note">Community Hall, 6:00 PM</p>
+              <button class="btn btn-outline btn-sm" id="openMeetingPopupBtn2">View agenda</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Latest notice</p>
+              <h4>Water tank cleaning</h4>
+              <p class="dash-note">22 Aug, 10 AM – 1 PM, all wings</p>
+              <button class="btn btn-outline btn-sm">Read more</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Amenities</p>
+              <h4>Community Hall</h4>
+              <p class="dash-note">2 bookings this week</p>
+              <button class="btn btn-outline btn-sm">Book</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= EVENTS ================= -->
+      <section id="events" class="section events-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">03 · EVENTS &amp; CELEBRATIONS</span>
+          <h2>The courtyard calendar</h2>
+          <p class="section-sub">Cultural festivals, national days and community gatherings — captured wing by wing.</p>
+        </div>
+
+        <div class="filter-bar reveal">
+          <button class="filter-chip active" data-filter="all">All Events</button>
+          <button class="filter-chip" data-filter="cultural">Cultural &amp; Festive</button>
+          <button class="filter-chip" data-filter="national">National Days</button>
+          <button class="filter-chip" data-filter="social">Social &amp; Community</button>
+          <button class="filter-chip" data-filter="meetings">Meetings &amp; Governance</button>
+        </div>
+
+        <div class="events-grid" id="eventsGrid">
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/diwali.jpg" alt="Diwali celebration with rangoli, diyas and sparklers">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Diwali</h3>
+              <p>Diyas around the fountain, a hand-drawn rangoli centrepiece, and sparklers across every balcony.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/ganesh-chaturthi.jpg" alt="Ganesh Chaturthi pandal in the courtyard">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Ganesh Chaturthi</h3>
+              <p>A decorated pandal, dhol beats, rangoli at the gate, and aarti performed by all three wings together.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/eid.jpg" alt="Eid Mubarak celebration with lights and shared feast">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Eid</h3>
+              <p>Crescent-lit balconies, a shared feast laid out courtyard-wide, and Eid Mubarak wishes from every wing.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/christmas.jpg" alt="Christmas celebration with tree and carollers">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Christmas</h3>
+              <p>A courtyard Christmas tree, resident carollers on stage, and a nativity corner near Wing C.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/navratri.jpg" alt="Navratri garba dance around the deity mandap">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Navratri</h3>
+              <p>Nine nights of garba and dandiya around the mandap, with a buffet stall running late into the evening.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/holi.jpg" alt="Holi colour celebration in the courtyard">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Holi</h3>
+              <p>Colour, water and music take over the courtyard for a morning every wing looks forward to.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/makar-sankranti.jpg" alt="Makar Sankranti bonfire and rangoli">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Makar Sankranti</h3>
+              <p>A traditional bonfire, kite flying from every balcony, and an intricate courtyard rangoli.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/new-year.jpg" alt="New Year's Eve celebration with lights and stage performance">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>New Year's Eve</h3>
+              <p>Fairy-lit balconies, a live band on the courtyard stage, and dinner for the whole society.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="national">
+            <img src="images/gallery/independence-day.jpg" alt="Independence Day flag hoisting ceremony">
+            <div class="event-body">
+              <span class="tag national">National Day</span>
+              <h3>Independence Day</h3>
+              <p>Morning flag hoisting, the national anthem sung together, and tricolour activities for children.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="national">
+            <img src="images/gallery/republic-day.jpg" alt="Republic Day flag hoisting ceremony">
+            <div class="event-body">
+              <span class="tag national">National Day</span>
+              <h3>Republic Day</h3>
+              <p>Flag hoisting with a children's guard of honour, followed by patriotic songs on the courtyard stage.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/sports-day.jpg" alt="Annual sports day and fun fair">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Annual Sports Day &amp; Fun Fair</h3>
+              <p>Cricket, badminton, tug-of-war and indoor games, plus a chaat, ice-cream and game-zone fair.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/senior-citizens-day.jpg" alt="Senior Citizens Day felicitation event">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Senior Citizens' Day</h3>
+              <p>A felicitation evening honouring our elders, with music, games and a shared dinner.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/childrens-day.jpg" alt="Children's Day celebration with games and talent show">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Children's Day</h3>
+              <p>Story-telling, games and a talent show — every child gets a turn on the courtyard stage.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/agm.jpg" alt="Annual General Body Meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Annual General Body Meeting</h3>
+              <p>Our most important meeting — audited accounts, budget approval, committee elections and maintenance plans.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/sgbm.jpg" alt="Special General Body Meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Special General Body Meeting</h3>
+              <p>Called as needed for urgent matters — structural repairs, policy changes, or unplanned expenditure.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/committee-meeting.jpg" alt="Monthly managing committee meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Managing Committee Meeting</h3>
+              <p>Monthly / quarterly — day-to-day operations, vendor payments, staff management and resident grievances.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/safety-workshop.jpg" alt="Safety and awareness workshop">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Safety &amp; Awareness Workshop</h3>
+              <p>Fire drills, waste segregation, disaster management and security protocols — for every resident.</p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= GOVERNANCE STRIP ================= -->
+      <section id="governance" class="section governance-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">04 · HOW THE SOCIETY IS RUN</span>
+          <h2>Governance, in plain terms</h2>
+        </div>
+        <div class="gov-grid reveal">
+          <div class="gov-card">
+            <span class="gov-num-mono">AGM</span>
+            <h4>Annual General Body Meeting</h4>
+            <p>Held once a year. Reviews audits, approves budgets, and elects the managing committee.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">SGBM</span>
+            <h4>Special General Body Meeting</h4>
+            <p>Called when urgent matters — repairs, amendments, expenditure — can't wait for the AGM.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">MC</span>
+            <h4>Managing Committee</h4>
+            <p>Meets monthly to run operations: vendors, staff, maintenance, and resident grievances.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">SAW</span>
+            <h4>Safety &amp; Awareness</h4>
+            <p>Workshops on fire safety, waste segregation, disaster management and security.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= NOTICE BOARD ================= -->
+      <section id="notices" class="section notices-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">05 · NOTICE BOARD</span>
+          <h2>Pinned this week</h2>
+        </div>
+        <div class="notice-board reveal">
+          <div class="pin-note">
+            <span class="pin-date-mono">17 AUG</span>
+            <p>Independence Day flag hoisting photos are up in the Wing B lobby gallery.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">22 AUG</span>
+            <p>Water tank cleaning across all wings, 10 AM – 1 PM. Please store water in advance.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">25 AUG</span>
+            <p>Ganesh Chaturthi decoration committee meeting — volunteers, please register at the gate office.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">30 AUG</span>
+            <p>Annual General Body Meeting, 6:00 PM, Community Hall. Attendance strongly encouraged.</p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content-col -->
+  </div><!-- /with-rail -->
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="section contact-section">
+    <div class="contact-grid reveal">
+      <div class="contact-copy">
+        <span class="eyebrow-mono">06 · VISIT US</span>
+        <h2>Find the courtyard</h2>
+        <p>Bhargavi Housing Society, Wing A · B · C<br>Mumbai, Maharashtra, India</p>
+        <p>Gate office: 9:00 AM – 9:00 PM · Security desk: 24×7</p>
+        <div class="contact-buttons">
+          <a class="btn btn-primary" href="mailto:office@bhargavihousingsociety.example">Email the office</a>
+          <a class="btn btn-outline" href="tel:+910000000000">Call gate office</a>
+        </div>
+      </div>
+      <div class="contact-photo">
+        <img src="images/gallery/wing-a.jpg" alt="Wing A entrance of Bhargavi Housing Society">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo">
+      <p>Bhargavi Housing Society<br><span>Community &amp; Home</span></p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Explore</h5>
+      <a href="#about">About</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#events">Events</a>
+      <a href="#governance">Governance</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Wings</h5>
+      <a href="#">Wing A</a>
+      <a href="#">Wing B</a>
+      <a href="#">Wing C</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Resident Services</h5>
+      <a href="#">Pay Maintenance</a>
+      <a href="#">Raise a Complaint</a>
+      <a href="#">Book Community Hall</a>
+      <a href="#" id="footerSecretaryBtn">Secretary Section</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Stay in touch</h5>
+      <p class="footer-note">Get notice-board updates by email.</p>
+      <form class="footer-form" onsubmit="return false;">
+        <input type="email" placeholder="you@example.com">
+        <button class="btn btn-primary btn-sm" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Bhargavi Housing Society. Reg. No. 123/2026. All rights reserved.</p>
+    <p>Built with 🧡 by the residents, for the residents.</p>
+  </div>
+</footer>
+
+<!-- ================= TOAST ================= -->
+<div class="toast" id="toast"></div>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
+
+<!-- ================= LIVE EDIT TOOLBAR (secretary editing the website) ================= -->
+<div class="edit-toolbar" id="editToolbar">
+  <span class="edit-toolbar-msg">🖊️ Editing website — click any highlighted text or photo to change it</span>
+  <div class="edit-toolbar-actions">
+    <button class="btn btn-primary btn-sm" id="saveEditsBtn">💾 Save &amp; show on website</button>
+    <button class="btn btn-outline btn-sm" id="exitEditBtn">✖ Exit editing</button>
+  </div>
+</div>
+<input type="file" id="editImageInput" accept="image/*" hidden>
+
+<script type="module" src="js/pages/home.js"></script>
+</body>
+</html>
