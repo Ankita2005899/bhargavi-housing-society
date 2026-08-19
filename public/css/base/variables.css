@@ -1,0 +1,33 @@
+/* =====================================================
+   DESIGN TOKENS — shared colours, type, radius, shadow
+   Loaded before every other stylesheet.
+   ===================================================== */
+:root{
+  --navy-950: #0E1B32;
+  --navy-900: #142A4C;
+  --navy-800: #1B3A6B;
+  --navy-700: #234B85;
+  --sky-500:  #4E8FC7;
+  --sky-100:  #E7F0F9;
+  --gold-500: #D9A441;
+  --gold-600: #C08A2A;
+  --diya-600: #C1522C;
+  --diya-700: #A5411F;
+  --paper:    #F6F5F1;
+  --paper-2:  #FFFFFF;
+  --ink-900:  #1B2130;
+  --ink-600:  #4A5468;
+  --ink-400:  #7C8598;
+  --line:     #E2E1D9;
+
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 10px 30px rgba(14,27,50,0.08);
+  --shadow-card: 0 4px 18px rgba(14,27,50,0.10);
+  --ease: cubic-bezier(.22,.85,.32,1);
+}

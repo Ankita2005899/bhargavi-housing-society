@@ -1,0 +1,60 @@
+/* =====================================================
+   AUTH PAGES — login & signup
+   ===================================================== */
+.auth-page{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--navy-950) url('../images/branding/aerial-view.jpg') center/cover no-repeat fixed;
+  padding:2rem 1rem;
+}
+.auth-page::before{content:'';position:fixed;inset:0;background:rgba(14,27,50,.82);z-index:0;}
+.auth-card{
+  position:relative;z-index:1;
+  width:100%;max-width:420px;background:var(--paper-2);border-radius:var(--radius-lg);
+  box-shadow:0 30px 70px rgba(0,0,0,.35);padding:2.2rem 2rem 2.4rem;
+}
+.auth-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1.4rem;}
+.auth-brand img{width:42px;height:42px;border-radius:10px;object-fit:cover;}
+.auth-brand strong{display:block;font-family:var(--font-display);color:var(--navy-950);font-size:1rem;}
+.auth-brand span{display:block;font-size:.74rem;color:var(--ink-400);}
+
+.auth-card h1{font-size:1.35rem;margin-bottom:.25rem;}
+.auth-sub{color:var(--ink-600);font-size:.88rem;margin-bottom:1.4rem;}
+
+.field{margin-bottom:1rem;}
+.field label{display:block;font-size:.82rem;font-weight:700;color:var(--navy-950);margin-bottom:.35rem;}
+.field input,
+.field select{
+  width:100%;padding:.75em .9em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-body);font-size:.92rem;background:var(--paper);color:var(--ink-900);
+  transition:border-color .18s ease, background .18s ease;
+}
+.field input:focus,
+.field select:focus{outline:none;border-color:var(--sky-500);background:var(--paper-2);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.field-hint{font-size:.74rem;color:var(--ink-400);margin-top:.3rem;}
+
+.field-check{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--ink-600);margin-bottom:1.2rem;}
+.field-check input{width:auto;}
+
+.auth-error{
+  display:none;background:#FBEAEA;color:#B3261E;border:1px solid #F0C6C6;border-radius:var(--radius-sm);
+  padding:.7em .9em;font-size:.83rem;margin-bottom:1rem;
+}
+.auth-error.show{display:block;}
+
+.btn-block{width:100%;justify-content:center;}
+
+.auth-switch{text-align:center;font-size:.86rem;color:var(--ink-600);margin-top:1.3rem;}
+.auth-switch a{color:var(--diya-600);font-weight:700;text-decoration:none;}
+.auth-switch a:hover{text-decoration:underline;}
+
+.auth-back{
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:.35rem;
+  color:#fff;opacity:.85;font-size:.85rem;text-decoration:none;margin-bottom:1rem;
+}
+.auth-back:hover{opacity:1;}
+
+.secretary-note{
+  position:relative;z-index:1;margin-top:1rem;text-align:center;font-size:.76rem;color:rgba(255,255,255,.65);
+  max-width:420px;
+}
