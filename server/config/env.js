@@ -23,5 +23,5 @@ module.exports = {
   // no secretary user exists yet. Change these via Render environment
   // variables; the password is hashed before it ever touches the database.
   secretaryEmail: required('SECRETARY_EMAIL', 'secratery2@gmail.com'),
-  secretaryPassword: required('SECRETARY_PASSWORD', '12345')
+  secretaryPassword: required('SECRETARY_PASSWORD', '123456')
 };
