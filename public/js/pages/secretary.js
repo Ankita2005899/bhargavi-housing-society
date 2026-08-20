@@ -1089,7 +1089,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const maintMonthPicker = document.getElementById('maintMonthPicker');
   const maintenanceTableBody = document.getElementById('maintenanceTableBody');
   const maintenanceEmpty = document.getElementById('maintenanceEmpty');
+  const maintSelectAllCell = document.getElementById('maintSelectAllCell');
+  const maintSelectAll = document.getElementById('maintSelectAll');
+  const maintSelectBar = document.getElementById('maintSelectBar');
+  const maintSelectCount = document.getElementById('maintSelectCount');
+  const maintSelectHint = document.getElementById('maintSelectHint');
+  const maintShowOnSiteBtn = document.getElementById('maintShowOnSiteBtn');
+  const maintCancelSelectBtn = document.getElementById('maintCancelSelectBtn');
   let maintenanceRows = [];
+  let maintSelectMode = false;
+  let maintSelectedIds = new Set();
 
   function currentMonthStr() {
     const d = new Date();
@@ -1100,6 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadMaintenance() {
     try {
       maintenanceRows = await api('maintenance?month=' + encodeURIComponent(maintMonthPicker.value));
+      exitMaintSelectMode();
       renderMaintenance();
     } catch (err) {
       showToast('Could not load maintenance records: ' + err.message);
@@ -1121,9 +1131,25 @@ document.addEventListener('DOMContentLoaded', () => {
         : `<span class="maint-screenshot-none">No screenshot</span>`;
       const tr = document.createElement('tr');
       tr.dataset.memberId = r.member_id;
+      tr.dataset.name = r.name;
       tr.innerHTML = `
+        <td class="maint-select-col" hidden><input type="checkbox" class="maint-row-check"></td>
         <td>${photoCell}</td>
-        <td class="maint-name-cell">${escapeHtml(r.name)}</td>
+        <td class="maint-name-cell">
+          <button type="button" class="maint-name-trigger" title="Edit name / photo">
+            ${icon('edit',13)} <span class="maint-name-current">${escapeHtml(r.name)}</span>
+          </button>
+          <div class="maint-name-edit">
+            <label>Full name
+              <input type="text" class="maint-name-input" value="${escapeHtml(r.name)}">
+            </label>
+            <label>Profile photo
+              <input type="file" class="maint-photo-file" accept="image/*">
+            </label>
+            <input type="hidden" class="maint-photo-data" value="">
+            <p class="maint-name-edit-hint">Changes are saved when you click Save on this row.</p>
+          </div>
+        </td>
         <td>${escapeHtml(r.wing)} / Room ${escapeHtml(r.flat)}</td>
         <td><input type="number" class="maint-amount-input" min="0" value="${Number(r.amount) || 0}"></td>
         <td>
@@ -1135,7 +1161,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>
           <div class="maint-screenshot-cell" data-current="${r.screenshot ? escapeHtml(r.screenshot) : ''}">
             <div class="maint-screenshot-preview">${screenshotCellHtml}</div>
-            <input type="file" class="maint-screenshot-file" accept="image/*" ${r.status === 'Paid' ? '' : 'hidden'}>
+            <label class="maint-screenshot-upload-btn">
+              ${icon('camera',14)} <span>${r.screenshot ? 'Replace screenshot' : 'Upload screenshot'}</span>
+              <input type="file" class="maint-screenshot-file" accept="image/*">
+            </label>
           </div>
         </td>
         <td><button class="btn btn-primary btn-sm maint-save-btn" type="button">Save</button></td>`;
@@ -1145,15 +1174,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maintCountPaid').textContent = paid;
     document.getElementById('maintCountUnpaid').textContent = unpaid;
     document.getElementById('maintCollected').textContent = rupee(collected);
+    // Re-apply select mode column visibility if a reload happened mid-selection
+    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = !maintSelectMode);
+    updateMaintSelectBar();
   }
 
-  // Toggle the screenshot upload field when Paid/Unpaid changes
-  maintenanceTableBody.addEventListener('change', (e) => {
-    if (e.target.classList.contains('maint-status-select')) {
-      const tr = e.target.closest('tr');
-      const fileInput = tr.querySelector('.maint-screenshot-file');
-      fileInput.hidden = e.target.value !== 'Paid';
-    }
+  /* ---- name / photo inline edit dropdown ---- */
+  maintenanceTableBody.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.maint-name-trigger');
+    if (!trigger) return;
+    e.stopPropagation();
+    const cell = trigger.closest('.maint-name-cell');
+    const wasOpen = cell.classList.contains('open');
+    maintenanceTableBody.querySelectorAll('.maint-name-cell.open').forEach(c => c.classList.remove('open'));
+    if (!wasOpen) cell.classList.add('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.maint-name-cell')) return;
+    maintenanceTableBody.querySelectorAll('.maint-name-cell.open').forEach(c => c.classList.remove('open'));
   });
 
   // View a payment screenshot full-size in a new tab
@@ -1164,6 +1202,104 @@ document.addEventListener('DOMContentLoaded', () => {
     if (win) win.document.write(`<img src="${thumb.src}" style="max-width:100%;">`);
   });
 
+  // New profile photo chosen in the name-edit dropdown -> stash as a data URL
+  maintenanceTableBody.addEventListener('change', async (e) => {
+    if (e.target.classList.contains('maint-photo-file')) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const tr = e.target.closest('tr');
+      try {
+        tr.querySelector('.maint-photo-data').value = await fileToResizedDataUrl(file, 400);
+        showToast('Photo ready — click Save to apply it');
+      } catch (err) {
+        showToast('Could not read that image: ' + err.message);
+      }
+      return;
+    }
+    // New payment screenshot chosen -> preview immediately, apply on Save
+    if (e.target.classList.contains('maint-screenshot-file')) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const cell = e.target.closest('.maint-screenshot-cell');
+      try {
+        const dataUrl = await fileToResizedDataUrl(file, 640);
+        cell.dataset.pending = dataUrl;
+        cell.querySelector('.maint-screenshot-preview').innerHTML =
+          `<img class="maint-screenshot-thumb" src="${dataUrl}" alt="Payment screenshot" data-act="view-screenshot">`;
+      } catch (err) {
+        showToast('Could not read that image: ' + err.message);
+      }
+      return;
+    }
+    // Row checkbox toggled (select mode)
+    if (e.target.classList.contains('maint-row-check')) {
+      const tr = e.target.closest('tr');
+      const id = String(tr.dataset.memberId);
+      if (e.target.checked) { maintSelectedIds.add(id); tr.classList.add('maint-row-selected'); }
+      else { maintSelectedIds.delete(id); tr.classList.remove('maint-row-selected'); }
+      updateMaintSelectBar();
+    }
+  });
+
+  /* ---- row selection: double-click any row to turn on checkboxes ---- */
+  maintenanceTableBody.addEventListener('dblclick', (e) => {
+    if (e.target.closest('.maint-name-trigger, .maint-name-edit, .maint-screenshot-cell, input, select, button')) return;
+    enterMaintSelectMode();
+  });
+
+  function enterMaintSelectMode() {
+    if (maintSelectMode) return;
+    maintSelectMode = true;
+    maintSelectAllCell.hidden = false;
+    maintSelectHint.classList.add('hide');
+    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = false);
+    updateMaintSelectBar();
+  }
+  function exitMaintSelectMode() {
+    maintSelectMode = false;
+    maintSelectedIds.clear();
+    maintSelectAllCell.hidden = true;
+    maintSelectHint.classList.remove('hide');
+    maintSelectAll.checked = false;
+    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = true);
+    maintenanceTableBody.querySelectorAll('.maint-row-check').forEach(cb => cb.checked = false);
+    maintenanceTableBody.querySelectorAll('tr.maint-row-selected').forEach(tr => tr.classList.remove('maint-row-selected'));
+    updateMaintSelectBar();
+  }
+  maintCancelSelectBtn.addEventListener('click', exitMaintSelectMode);
+
+  maintSelectAll.addEventListener('change', () => {
+    maintenanceTableBody.querySelectorAll('.maint-row-check').forEach(cb => {
+      cb.checked = maintSelectAll.checked;
+      cb.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+
+  function updateMaintSelectBar() {
+    const n = maintSelectedIds.size;
+    maintSelectBar.classList.toggle('show', maintSelectMode && n > 0);
+    maintSelectCount.textContent = n + (n === 1 ? ' member selected' : ' members selected');
+  }
+
+  // Feature the selected member(s) under "Maintenance" in the public
+  // site's hamburger menu — bridged via localStorage since that menu
+  // has no Secretary session to query the protected maintenance API.
+  maintShowOnSiteBtn.addEventListener('click', () => {
+    const selected = maintenanceRows.filter(r => maintSelectedIds.has(String(r.member_id)));
+    if (!selected.length) return;
+    const payload = selected.map(r => ({
+      member_id: r.member_id, name: r.name, wing: r.wing, flat: r.flat,
+      profile_image: r.profile_image || '', amount: Number(r.amount) || 0,
+      status: r.status, month: maintMonthPicker.value
+    }));
+    try {
+      localStorage.setItem('secMaintenanceSelection', JSON.stringify(payload));
+      showToast('Saved — open the website\'s Maintenance menu to see it');
+    } catch (err) {
+      showToast('Could not save selection: ' + err.message);
+    }
+  });
+
   maintenanceTableBody.addEventListener('click', async (e) => {
     const btn = e.target.closest('.maint-save-btn');
     if (!btn) return;
@@ -1172,16 +1308,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const amount = Number(tr.querySelector('.maint-amount-input').value) || 0;
     const status = tr.querySelector('.maint-status-select').value;
     const screenshotCell = tr.querySelector('.maint-screenshot-cell');
-    const fileInput = tr.querySelector('.maint-screenshot-file');
-    let screenshot = screenshotCell.dataset.current || null;
+    const screenshot = screenshotCell.dataset.pending || screenshotCell.dataset.current || null;
+
+    const newName = tr.querySelector('.maint-name-input').value.trim();
+    const newPhoto = tr.querySelector('.maint-photo-data').value;
+    const nameChanged = newName && newName !== tr.dataset.name;
+    const photoChanged = !!newPhoto;
 
     btn.disabled = true;
     try {
-      const file = fileInput.files && fileInput.files[0];
-      if (status === 'Paid' && file) {
-        screenshot = await fileToResizedDataUrl(file, 640);
-      } else if (status === 'Unpaid') {
-        screenshot = null; // clear proof if marked unpaid
+      if (nameChanged || photoChanged) {
+        const member = await api('members/' + memberId + '/profile');
+        const merged = {
+          ...member,
+          name: nameChanged ? newName : member.name,
+          profile_image: photoChanged ? newPhoto : member.profile_image
+        };
+        await api('members/' + memberId, { method: 'PUT', body: JSON.stringify(merged) });
       }
       await api('maintenance', {
         method: 'POST',
