@@ -10,8 +10,13 @@
 <link rel="stylesheet" href="css/base/variables.css">
 <link rel="stylesheet" href="css/pages/site.css">
 <link rel="stylesheet" href="css/components/popup.css">
+<style>
+  /* Hide the homepage until we've confirmed the visitor is logged in —
+     avoids a flash of the site before the redirect to login.html. */
+  body.site-gate-pending{visibility:hidden;}
+</style>
 </head>
-<body>
+<body class="site-gate-pending">
 
 <!-- ================= PRELOADER ================= -->
 <div id="preloader"><div class="loader-ring"></div></div>
