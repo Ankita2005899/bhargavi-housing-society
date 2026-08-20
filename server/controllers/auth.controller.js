@@ -68,7 +68,20 @@ async function login(req, res) {
     req.session.memberId = user.member_id;
     if (rememberMe) req.session.cookie.maxAge = env.sessionRememberMaxAgeMs;
 
-    res.json({ success: true, user: { email: user.email, role: user.role, memberId: user.member_id } });
+    // Log this entry (time) and bump the running count — visible to the
+    // Secretary under the "Accounts" / login history section.
+    const stats = await userModel.recordLogin(user.id);
+
+    res.json({
+      success: true,
+      user: {
+        email: user.email,
+        role: user.role,
+        memberId: user.member_id,
+        loginCount: stats.login_count,
+        lastLoginAt: stats.last_login_at
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Could not log in. Please try again.' });
@@ -93,4 +106,29 @@ function session(req, res) {
   res.json({ loggedIn: false });
 }
 
-module.exports = { signup, login, logout, session };
+// GET /api/auth/accounts — Secretary only. Every registered account
+// (resident or secretary) with its linked member details and login
+// stats, shown as the "Accounts" list in the Secretary section.
+async function listAccounts(req, res) {
+  try {
+    const accounts = await userModel.findAllWithStats();
+    res.json(accounts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not load accounts.' });
+  }
+}
+
+// GET /api/auth/login-history — Secretary only. Every login entry with
+// its exact time, newest first.
+async function listLoginHistory(req, res) {
+  try {
+    const history = await userModel.findLoginHistory(200);
+    res.json(history);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not load login history.' });
+  }
+}
+
+module.exports = { signup, login, logout, session, listAccounts, listLoginHistory };

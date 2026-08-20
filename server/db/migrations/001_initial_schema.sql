@@ -30,7 +30,17 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'resident',
   member_id INTEGER REFERENCES members(id) ON DELETE SET NULL,
+  login_count INTEGER NOT NULL DEFAULT 0,
+  last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- One row per successful login (who + exact time), so the Secretary
+-- section can show a full login history, not just the latest login.
+CREATE TABLE IF NOT EXISTS login_history (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  logged_in_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS finance (

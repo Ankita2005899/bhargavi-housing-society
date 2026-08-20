@@ -17,7 +17,11 @@ export async function getSession(force) {
 }
 
 export async function initAccountMenu() {
-  const slot = document.getElementById('accountSlot');
+  // The header (front of the site, always visible) is now where login /
+  // signup / account state lives — it used to be tucked inside the
+  // hamburger slide-menu, but residents shouldn't have to open a menu
+  // just to sign in.
+  const slot = document.getElementById('headerAuthSlot');
   const secretaryTrigger = document.getElementById('secretaryBtn');
   if (!slot) return;
 
@@ -26,7 +30,7 @@ export async function initAccountMenu() {
   if (!s.loggedIn) {
     slot.innerHTML = `
       <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
-      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>`;
+      <a href="signup.html" class="btn btn-primary btn-sm auth-signup-btn">Sign up</a>`;
     if (secretaryTrigger) {
       secretaryTrigger.querySelector('small').textContent = 'Committee access only — please log in';
     }
