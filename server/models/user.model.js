@@ -59,4 +59,11 @@ async function findLoginHistory(limit) {
   return rows;
 }
 
-module.exports = { findByEmail, findById, create, recordLogin, findAllWithStats, findLoginHistory };
+// Secretary-only: permanently remove an account (and its login history,
+// via the FK cascade) from the Accounts list.
+async function deleteById(id) {
+  const { rows } = await pool.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+  return rows[0] || null;
+}
+
+module.exports = { findByEmail, findById, create, recordLogin, findAllWithStats, findLoginHistory, deleteById };

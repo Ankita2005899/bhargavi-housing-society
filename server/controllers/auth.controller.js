@@ -131,4 +131,23 @@ async function listLoginHistory(req, res) {
   }
 }
 
-module.exports = { signup, login, logout, session, listAccounts, listLoginHistory };
+// DELETE /api/auth/accounts/:id — Secretary only. Removes a login account
+// (its login history goes with it via the DB cascade). A secretary can't
+// delete their own account this way, to avoid locking themselves out.
+async function deleteAccount(req, res) {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid account id.' });
+    if (req.session.userId === id) {
+      return res.status(400).json({ error: "You can't delete the account you're logged in with." });
+    }
+    const deleted = await userModel.deleteById(id);
+    if (!deleted) return res.status(404).json({ error: 'Account not found.' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not delete the account.' });
+  }
+}
+
+module.exports = { signup, login, logout, session, listAccounts, listLoginHistory, deleteAccount };
