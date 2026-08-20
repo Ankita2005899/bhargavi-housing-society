@@ -1234,13 +1234,31 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${a.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
         <td>${Number(a.login_count) || 0}</td>
         <td>${formatDateTime(a.last_login_at)}</td>
-        <td>${formatDateTime(a.created_at)}</td>`;
+        <td>${formatDateTime(a.created_at)}</td>
+        <td><button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">🗑️</button></td>`;
       accountsTableBody.appendChild(tr);
     });
     document.getElementById('acctCountTotal').textContent = accounts.length;
     document.getElementById('acctCountResident').textContent = accounts.filter(a => a.role === 'resident').length;
     document.getElementById('acctCountSecretary').textContent = accounts.filter(a => a.role === 'secretary').length;
   }
+
+  accountsTableBody.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-act="del"]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const row = btn.closest('tr');
+    const name = row ? row.children[0].textContent : '';
+    const ok = await askConfirm('Delete this account?', `"${name}" will be permanently deleted from the database, along with its login history. This can't be undone.`);
+    if (!ok) return;
+    try {
+      await api('auth/accounts/' + id, { method: 'DELETE' });
+      showToast('Account deleted');
+      loadAccounts();
+    } catch (err) {
+      showToast('Could not delete account: ' + err.message);
+    }
+  });
 
   function renderLoginHistory(history) {
     loginHistoryTableBody.innerHTML = '';

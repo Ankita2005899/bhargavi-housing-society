@@ -11,5 +11,6 @@ router.get('/session', auth.session);
 // Secretary-section-only: registered accounts + login history.
 router.get('/accounts', requireAuth, requireSecretary, auth.listAccounts);
 router.get('/login-history', requireAuth, requireSecretary, auth.listLoginHistory);
+router.delete('/accounts/:id', requireAuth, requireSecretary, auth.deleteAccount);
 
 module.exports = router;
