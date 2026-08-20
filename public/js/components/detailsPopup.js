@@ -17,6 +17,7 @@ export function initDetailsPopup({ session }) {
   const back = document.getElementById('detailsPopupBack');
   const closeBtn = document.getElementById('detailsPopupClose');
   const triggerBtn = document.getElementById('viewDetailsBtn');
+  const maintenanceTriggerBtn = document.getElementById('viewMaintenanceBtn');
   if (!overlay || !triggerBtn) return;
 
   let stack = [];
@@ -43,6 +44,16 @@ export function initDetailsPopup({ session }) {
   closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   back.addEventListener('click', goBack);
+
+  // "Maintenance" in the hamburger menu jumps straight into the popup's
+  // maintenance step, skipping the top-level directory menu.
+  if (maintenanceTriggerBtn) {
+    maintenanceTriggerBtn.addEventListener('click', () => {
+      stack = [];
+      overlay.classList.add('show');
+      goToStep(stepMaintenanceSelected);
+    });
+  }
 
   function renderListButtons(items) {
     content.innerHTML = items.map((it, i) =>
@@ -243,6 +254,47 @@ export function initDetailsPopup({ session }) {
           </dl>
         </div>
       </div>`;
+  }
+
+  /* ===== Maintenance: members the Secretary chose to feature here =====
+     Bridged from the Secretary Dashboard via localStorage — that
+     dashboard already has the data client-side when the Secretary
+     selects rows, and this page has no Secretary session to query the
+     protected /api/maintenance endpoint directly. */
+  function stepMaintenanceSelected() {
+    title.textContent = 'Maintenance';
+    menu.hidden = true; body.hidden = false;
+
+    let selected = [];
+    try { selected = JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]'); } catch (e) { selected = []; }
+
+    if (!selected.length) {
+      content.innerHTML = `
+        <div class="access-note">
+          <span class="access-note-icon">${icon('receipt', 22)}</span>
+          <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “Show on website”.</p>
+        </div>`;
+      return;
+    }
+
+    content.innerHTML = selected.map(r => {
+      const photo = r.profile_image
+        ? `<img class="member-avatar" src="${escapeHtml(r.profile_image)}" alt="">`
+        : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(r.name))}</span>`;
+      return `
+        <div class="profile-card">
+          ${photo}
+          <div class="profile-card-body">
+            <h4>${escapeHtml(r.name)}</h4>
+            <span class="tag ${r.status === 'Paid' ? 'paid' : 'due'}">${escapeHtml(r.status)}</span>
+            <dl class="profile-detail-list">
+              <div><dt>${icon('building', 15)} Wing / Flat</dt><dd>${escapeHtml(r.wing)}, ${escapeHtml(r.flat)}</dd></div>
+              <div><dt>${icon('wallet', 15)} Amount</dt><dd>₹${escapeHtml(String(r.amount))}</dd></div>
+              <div><dt>${icon('clock', 15)} Month</dt><dd>${escapeHtml(r.month || '—')}</dd></div>
+            </dl>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   const ENTRY_STEP = {
