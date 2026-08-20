@@ -118,6 +118,19 @@ button{font-family:var(--font-body);cursor:pointer;}
 .hamburger{background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:10px;width:42px;height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
 .hamburger span{display:block;width:19px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
 
+/* ---------- header auth (login / signup, or account pill) ---------- */
+.header-auth{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.header-auth .account-pill{background:rgba(255,255,255,.14);color:#fff;}
+.header-auth .btn-outline{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;}
+.header-auth .btn-outline:hover{background:rgba(255,255,255,.16);color:#fff;}
+@media (max-width:560px){
+  .header-auth{gap:.4rem;}
+  .header-auth .btn{padding:.5em .8em;font-size:.74rem;}
+}
+@media (max-width:400px){
+  .header-auth .btn-sm.auth-signup-btn{display:none;} /* keep just "Log in" on very small screens */
+}
+
 /* ---------- slide-in menu ---------- */
 .menu-overlay{position:fixed;inset:0;background:rgba(14,27,50,.45);opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;z-index:300;}
 .menu-overlay.show{opacity:1;visibility:visible;}

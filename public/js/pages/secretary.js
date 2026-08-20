@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAmbulances();
     loadStaff();
     loadMaintenance();
+    loadAccounts();
   }
 
   // Resize an image file down to a small square JPEG data URL so it's
@@ -1193,6 +1194,67 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = false;
     }
   });
+
+  /* ==================== ACCOUNTS (login/signup accounts + login history) ==================== */
+  const accountsTableBody = document.getElementById('accountsTableBody');
+  const accountsEmpty = document.getElementById('accountsEmpty');
+  const loginHistoryTableBody = document.getElementById('loginHistoryTableBody');
+  const loginHistoryEmpty = document.getElementById('loginHistoryEmpty');
+
+  function formatDateTime(value) {
+    if (!value) return '—';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  async function loadAccounts() {
+    try {
+      const [accounts, history] = await Promise.all([
+        api('auth/accounts'),
+        api('auth/login-history')
+      ]);
+      renderAccounts(accounts);
+      renderLoginHistory(history);
+    } catch (err) {
+      showToast('Could not load accounts: ' + err.message);
+    }
+  }
+
+  function renderAccounts(accounts) {
+    accountsTableBody.innerHTML = '';
+    accountsEmpty.hidden = accounts.length > 0;
+    accounts.forEach(a => {
+      const tr = document.createElement('tr');
+      const wingFlat = a.wing && a.flat ? `${escapeHtml(a.wing)} / ${escapeHtml(a.flat)}` : '—';
+      tr.innerHTML = `
+        <td>${escapeHtml(a.member_name || (a.role === 'secretary' ? 'Secretary' : '—'))}</td>
+        <td>${wingFlat}</td>
+        <td>${escapeHtml(a.email)}</td>
+        <td>${a.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
+        <td>${Number(a.login_count) || 0}</td>
+        <td>${formatDateTime(a.last_login_at)}</td>
+        <td>${formatDateTime(a.created_at)}</td>`;
+      accountsTableBody.appendChild(tr);
+    });
+    document.getElementById('acctCountTotal').textContent = accounts.length;
+    document.getElementById('acctCountResident').textContent = accounts.filter(a => a.role === 'resident').length;
+    document.getElementById('acctCountSecretary').textContent = accounts.filter(a => a.role === 'secretary').length;
+  }
+
+  function renderLoginHistory(history) {
+    loginHistoryTableBody.innerHTML = '';
+    loginHistoryEmpty.hidden = history.length > 0;
+    history.forEach(h => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(h.member_name || (h.role === 'secretary' ? 'Secretary' : '—'))}</td>
+        <td>${escapeHtml(h.email)}</td>
+        <td>${h.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
+        <td>${formatDateTime(h.logged_in_at)}</td>`;
+      loginHistoryTableBody.appendChild(tr);
+    });
+  }
 
   /* close confirm modal with Escape */
   document.addEventListener('keydown', (e) => {

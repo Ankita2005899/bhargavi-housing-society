@@ -42,6 +42,23 @@ async function migrate() {
   `);
 
   await pool.query(`
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS login_count INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+  `);
+
+  // Every successful login gets its own row here (who + exact time), so
+  // the Secretary section can show a full login history, not just the
+  // most recent one.
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS login_history (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      logged_in_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS finance (
       id SERIAL PRIMARY KEY,
       description TEXT NOT NULL,
