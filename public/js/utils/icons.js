@@ -17,7 +17,17 @@ const paths = {
   shield: '<path d="M12 3l7 3v6c0 4.6-3 8-7 9-4-1-7-4.4-7-9V6l7-3Z"/>',
   chevronLeft: '<path d="m14.5 5-7 7 7 7"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
-  logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>'
+  logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>',
+  users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6"/><path d="M15.5 6.5a3 3 0 0 1 0 5.6"/><path d="M17 14.2c2.3.5 4 2.6 4 5.3"/>',
+  wallet: '<path d="M20 7H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M4 9V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.1"/>',
+  folder: '<path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/>',
+  wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 4.6L3 17.2V21h3.8l6.3-6.3a4 4 0 0 0 4.6-5.4l-2.6 2.6-2-2 2.6-2.6Z"/>',
+  receipt: '<path d="M6 3h12v18l-2.5-1.5L13 21l-2.5-1.5L8 21l-2-1.5V3Z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  key: '<circle cx="7.5" cy="15.5" r="3.5"/><path d="M10.6 12.4 19 4"/><path d="M16 7l2 2"/><path d="M13.5 9.5l2 2"/>',
+  camera: '<path d="M4 8a1 1 0 0 1 1-1h2.2l1-1.6A1 1 0 0 1 9 5h6a1 1 0 0 1 .8.4L16.8 7H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z"/><circle cx="12" cy="13" r="3.4"/>',
+  trash: '<path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/><path d="M10 11v6M14 11v6"/>',
+  edit: '<path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M14 6l3 3"/>',
+  external: '<path d="M9 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/><path d="M14 4h6v6"/><path d="M20 4 11 13"/>'
 };
 
 // Returns a ready-to-insert SVG string. size in px, defaults to 18.
