@@ -4,6 +4,21 @@ const form = document.getElementById('signupForm');
 const errorEl = document.getElementById('signupError');
 const submitBtn = document.getElementById('signupSubmitBtn');
 
+// Same ?next=... handling as login.js — see there for why.
+function safeNextUrl() {
+  const next = new URLSearchParams(window.location.search).get('next');
+  if (!next) return null;
+  if (/^https?:\/\//i.test(next) || next.startsWith('//')) return null;
+  if (!/^[a-zA-Z0-9_\-./]/.test(next)) return null;
+  return next;
+}
+
+const nextParam = new URLSearchParams(window.location.search).get('next');
+if (nextParam) {
+  const switchLink = document.querySelector('.auth-switch a');
+  if (switchLink) switchLink.href = `login.html?next=${encodeURIComponent(nextParam)}`;
+}
+
 function showError(message) {
   errorEl.textContent = message;
   errorEl.classList.add('show');
@@ -34,7 +49,7 @@ form.addEventListener('submit', async (e) => {
         confirmPassword
       }
     });
-    window.location.href = 'index.html';
+    window.location.href = safeNextUrl() || 'index.html';
   } catch (err) {
     showError(err.message || 'Could not create the account. Please try again.');
     submitBtn.disabled = false;

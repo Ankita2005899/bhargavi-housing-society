@@ -1,7 +1,20 @@
 import { initAccountMenu, getSession } from '../components/accountMenu.js';
 import { initDetailsPopup } from '../components/detailsPopup.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
+  /* ---------- require login before the homepage itself is shown ----------
+     Visitors must sign up / log in first; only once that's done does the
+     original site UI open. Anyone not logged in is sent to login.html
+     straight away (their intended page is remembered so they land back
+     here right after logging in). */
+  const session = await getSession(true);
+  if (!session.loggedIn) {
+    const next = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+    window.location.replace(`login.html?next=${next}`);
+    return;
+  }
+  document.body.classList.remove('site-gate-pending');
 
   /* ---------- live site edits: assign stable keys + restore any saved edits ---------- */
   const EDIT_STORAGE_KEY = 'bhsSiteEdits';
