@@ -31,9 +31,7 @@ export async function initAccountMenu() {
     slot.innerHTML = `
       <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
       <a href="signup.html" class="btn btn-primary btn-sm auth-signup-btn">Sign up</a>`;
-    if (secretaryTrigger) {
-      secretaryTrigger.querySelector('small').textContent = 'Committee access only — please log in';
-    }
+    if (secretaryTrigger) secretaryTrigger.style.display = 'none';
     return;
   }
 
@@ -48,17 +46,16 @@ export async function initAccountMenu() {
     window.location.reload();
   });
 
+  // The "Secretary Section" entry only appears at all for the account
+  // that's actually logged in as the Secretary — anyone else (logged
+  // out, or a resident account) never sees it in the menu.
   if (secretaryTrigger) {
     if (s.role === 'secretary') {
+      secretaryTrigger.style.display = '';
       secretaryTrigger.querySelector('small').textContent = 'Open the dashboard';
       secretaryTrigger.addEventListener('click', () => { window.location.href = 'secretary.html'; });
     } else {
-      secretaryTrigger.querySelector('small').textContent = 'Committee access only';
-      secretaryTrigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        secretaryTrigger.classList.add('shake');
-        setTimeout(() => secretaryTrigger.classList.remove('shake'), 500);
-      });
+      secretaryTrigger.style.display = 'none';
     }
   }
 }
