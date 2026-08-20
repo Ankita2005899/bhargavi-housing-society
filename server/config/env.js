@@ -22,6 +22,6 @@ module.exports = {
   // Bootstrap secretary account — created automatically on first boot if
   // no secretary user exists yet. Change these via Render environment
   // variables; the password is hashed before it ever touches the database.
-  secretaryEmail: required('SECRETARY_EMAIL', 'secretary@bhargavihousing.example'),
-  secretaryPassword: required('SECRETARY_PASSWORD', 'ChangeMe123!')
+  secretaryEmail: required('SECRETARY_EMAIL', 'secratery2@gmail.com'),
+  secretaryPassword: required('SECRETARY_PASSWORD', '12345')
 };
