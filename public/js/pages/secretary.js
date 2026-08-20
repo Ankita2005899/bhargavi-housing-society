@@ -1,4 +1,5 @@
 import { api as authApi } from '../utils/api.js';
+import { icon } from '../utils/icons.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showDenied({ title, message, showLogin }) {
-    secGateIcon.textContent = '🔒';
+    secGateIcon.innerHTML = icon('lock',26);
     secGateTitle.textContent = title;
     secGateMsg.textContent = message;
     secGateLoginBtn.hidden = !showLogin;
@@ -220,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function goToRooms(wing) {
     currentWing = wing; currentRoom = null;
-    crumbWing.textContent = '🏢 ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
+    crumbWing.innerHTML = icon('building',14) + ' ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
     crumbRoom.hidden = true; crumbSep2.hidden = true;
     memStepWings.hidden = true; memStepRooms.hidden = false; memStepRoom.hidden = true;
     roomSelect.value = '';
@@ -228,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function goToRoom(wing, room) {
     currentWing = wing; currentRoom = room;
-    crumbWing.textContent = '🏢 ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
-    crumbRoom.textContent = '🚪 Room ' + room; crumbRoom.hidden = false; crumbSep2.hidden = false;
+    crumbWing.innerHTML = icon('building',14) + ' ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
+    crumbRoom.innerHTML = icon('door',14) + ' Room ' + room; crumbRoom.hidden = false; crumbSep2.hidden = false;
     memStepWings.hidden = true; memStepRooms.hidden = true; memStepRoom.hidden = false;
     renderRoomView();
   }
@@ -309,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const memberId = 'BHS-' + String(m.id).padStart(4, '0');
       const photoCell = m.profile_image
         ? `<img class="mem-photo-thumb" src="${escapeHtml(m.profile_image)}" alt="">`
-        : `<span class="mem-photo-thumb-fallback">👤</span>`;
+        : `<span class="mem-photo-thumb-fallback">${icon('user',16)}</span>`;
       tr.innerHTML = `
         <td>${photoCell}</td>
         <td>${memberId}</td>
@@ -334,8 +335,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><span class="tag ${m.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(m.status)}</span></td>
         <td><span class="tag ${m.dues === 'Dues paid' ? 'paid' : 'due'}">${escapeHtml(m.dues)}</span></td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${m.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${m.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${m.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${m.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       memberTableBody.appendChild(tr);
     });
@@ -599,8 +600,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${rupee(f.amount)}</td>
         <td>${dateStr}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${f.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${f.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${f.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${f.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       financeTableBody.appendChild(tr);
     });
@@ -702,8 +703,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${rupee(p.budget)}</td>
         <td>${rupee(p.spent)}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${p.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${p.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${p.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${p.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       projectTableBody.appendChild(tr);
     });
@@ -798,14 +799,14 @@ document.addEventListener('DOMContentLoaded', () => {
     hospitals.forEach(h => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>🏥 ${escapeHtml(h.name)}</td>
+        <td>${icon('hospital',15)} ${escapeHtml(h.name)}</td>
         <td>${escapeHtml(h.address)}</td>
         <td>${escapeHtml(h.phone_main || '—')}</td>
         <td>${escapeHtml(h.phone_staff || '—')}</td>
         <td>${escapeHtml(h.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${h.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${h.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${h.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${h.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       hospitalTableBody.appendChild(tr);
     });
@@ -898,13 +899,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ambulances.forEach(a => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>🚑 ${escapeHtml(a.service_name)}</td>
+        <td>${icon('ambulance',15)} ${escapeHtml(a.service_name)}</td>
         <td>${escapeHtml(a.phone)}</td>
         <td><span class="tag ${a.eta_minutes <= 10 ? 'paid' : 'due'}">${escapeHtml(String(a.eta_minutes))} min</span></td>
         <td>${escapeHtml(a.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${a.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${a.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       ambulanceTableBody.appendChild(tr);
     });
@@ -1006,8 +1007,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><span class="tag ${s.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(s.status)}</span></td>
         <td>${escapeHtml(s.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${s.id}" title="Edit">✏️</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${s.id}" title="Delete">🗑️</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${s.id}" title="Edit">${icon('edit',15)}</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${s.id}" title="Delete">${icon('trash',15)}</button>
         </td>`;
       staffTableBody.appendChild(tr);
     });
@@ -1114,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r.status === 'Paid') { paid++; collected += Number(r.amount) || 0; } else { unpaid++; }
       const photoCell = r.profile_image
         ? `<img class="mem-photo-thumb" src="${escapeHtml(r.profile_image)}" alt="">`
-        : `<span class="mem-photo-thumb-fallback">👤</span>`;
+        : `<span class="mem-photo-thumb-fallback">${icon('user',16)}</span>`;
       const screenshotCellHtml = r.screenshot
         ? `<img class="maint-screenshot-thumb" src="${escapeHtml(r.screenshot)}" alt="Payment screenshot" data-act="view-screenshot">`
         : `<span class="maint-screenshot-none">No screenshot</span>`;
@@ -1231,11 +1232,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${escapeHtml(a.member_name || (a.role === 'secretary' ? 'Secretary' : '—'))}</td>
         <td>${wingFlat}</td>
         <td>${escapeHtml(a.email)}</td>
-        <td>${a.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
+        <td>${a.role === 'secretary' ? icon('key',14) + ' Secretary' : icon('users',14) + ' Resident'}</td>
         <td>${Number(a.login_count) || 0}</td>
         <td>${formatDateTime(a.last_login_at)}</td>
         <td>${formatDateTime(a.created_at)}</td>
-        <td><button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">🗑️</button></td>`;
+        <td><button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">${icon('trash',15)}</button></td>`;
       accountsTableBody.appendChild(tr);
     });
     document.getElementById('acctCountTotal').textContent = accounts.length;
@@ -1268,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td>${escapeHtml(h.member_name || (h.role === 'secretary' ? 'Secretary' : '—'))}</td>
         <td>${escapeHtml(h.email)}</td>
-        <td>${h.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
+        <td>${h.role === 'secretary' ? icon('key',14) + ' Secretary' : icon('users',14) + ' Resident'}</td>
         <td>${formatDateTime(h.logged_in_at)}</td>`;
       loginHistoryTableBody.appendChild(tr);
     });
