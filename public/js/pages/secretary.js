@@ -1277,7 +1277,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateMaintSelectBar() {
     const n = maintSelectedIds.size;
-    maintSelectBar.classList.toggle('show', maintSelectMode && n > 0);
+    const shouldShow = maintSelectMode && n > 0;
+    maintSelectBar.hidden = !shouldShow;
+    maintSelectBar.classList.toggle('show', shouldShow);
     maintSelectCount.textContent = n + (n === 1 ? ' member selected' : ' members selected');
   }
 
