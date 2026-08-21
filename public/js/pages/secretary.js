@@ -1294,7 +1294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     try {
       localStorage.setItem('secMaintenanceSelection', JSON.stringify(payload));
-      showToast('Saved — open the website\'s Maintenance menu to see it');
+      showToast('Saved — open the website\'s Maintenance menu (☰) to see it');
     } catch (err) {
       showToast('Could not save selection: ' + err.message);
     }

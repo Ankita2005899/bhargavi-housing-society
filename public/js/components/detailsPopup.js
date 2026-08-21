@@ -51,7 +51,7 @@ export function initDetailsPopup({ session }) {
     maintenanceTriggerBtn.addEventListener('click', () => {
       stack = [];
       overlay.classList.add('show');
-      goToStep(stepMaintenanceSelected);
+      goToStep(stepMaintenanceWings);
     });
   }
 
@@ -260,39 +260,72 @@ export function initDetailsPopup({ session }) {
      Bridged from the Secretary Dashboard via localStorage — that
      dashboard already has the data client-side when the Secretary
      selects rows, and this page has no Secretary session to query the
-     protected /api/maintenance endpoint directly. */
-  function stepMaintenanceSelected() {
-    title.textContent = 'Maintenance';
+     protected /api/maintenance endpoint directly.
+     Flow is deliberately different from the Members flow above:
+     Wing -> one row per room directly (no separate room-picker step),
+     and rows show amount/payment status instead of a member profile. */
+  function getMaintenanceSelection() {
+    try { return JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]'); }
+    catch (e) { return []; }
+  }
+
+  function stepMaintenanceWings() {
+    title.textContent = 'Maintenance — select wing';
     menu.hidden = true; body.hidden = false;
 
-    let selected = [];
-    try { selected = JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]'); } catch (e) { selected = []; }
-
+    const selected = getMaintenanceSelection();
     if (!selected.length) {
       content.innerHTML = `
         <div class="access-note">
           <span class="access-note-icon">${icon('receipt', 22)}</span>
-          <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “Show on website”.</p>
+          <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “View on Dashboard”.</p>
         </div>`;
       return;
     }
 
-    content.innerHTML = selected.map(r => {
-      const photo = r.profile_image
-        ? `<img class="member-avatar" src="${escapeHtml(r.profile_image)}" alt="">`
-        : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(r.name))}</span>`;
+    const wings = [...new Set(selected.map(r => r.wing))].sort();
+    renderListButtons(wings.map(w => ({
+      iconSvg: icon('building'), label: w, onClick: () => goToStep(() => stepMaintenanceWingRooms(w))
+    })));
+  }
+
+  function stepMaintenanceWingRooms(wing) {
+    title.textContent = wing + ' — Maintenance';
+    menu.hidden = true; body.hidden = false;
+
+    const selected = getMaintenanceSelection().filter(r => r.wing === wing);
+    if (!selected.length) {
+      content.innerHTML = '<p class="popup-status">No featured members in this wing.</p>';
+      return;
+    }
+
+    // One row per room: if more than one featured member shares a room,
+    // combine their names and amounts into that single room row.
+    const byRoom = new Map();
+    selected.forEach(r => {
+      const key = r.flat;
+      if (!byRoom.has(key)) byRoom.set(key, []);
+      byRoom.get(key).push(r);
+    });
+    const rooms = [...byRoom.keys()].sort();
+
+    content.innerHTML = rooms.map(room => {
+      const entries = byRoom.get(room);
+      const names = entries.map(e => e.name).join(', ');
+      const totalAmount = entries.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+      const allPaid = entries.every(e => e.status === 'Paid');
+      const month = entries[0].month;
+      const photo = entries[0].profile_image
+        ? `<img class="member-avatar" src="${escapeHtml(entries[0].profile_image)}" alt="">`
+        : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(entries[0].name))}</span>`;
       return `
-        <div class="profile-card">
+        <div class="member-row maint-popup-row">
           ${photo}
-          <div class="profile-card-body">
-            <h4>${escapeHtml(r.name)}</h4>
-            <span class="tag ${r.status === 'Paid' ? 'paid' : 'due'}">${escapeHtml(r.status)}</span>
-            <dl class="profile-detail-list">
-              <div><dt>${icon('building', 15)} Wing / Flat</dt><dd>${escapeHtml(r.wing)}, ${escapeHtml(r.flat)}</dd></div>
-              <div><dt>${icon('wallet', 15)} Amount</dt><dd>₹${escapeHtml(String(r.amount))}</dd></div>
-              <div><dt>${icon('clock', 15)} Month</dt><dd>${escapeHtml(r.month || '—')}</dd></div>
-            </dl>
-          </div>
+          <span class="member-row-body">
+            <span class="member-row-name">Room ${escapeHtml(room)} — ${escapeHtml(names)}</span>
+            <span class="tag ${allPaid ? 'paid' : 'due'}">${allPaid ? 'Paid' : 'Unpaid'}${month ? ' · ' + escapeHtml(month) : ''}</span>
+          </span>
+          <span class="maint-popup-amount">₹${totalAmount.toLocaleString('en-IN')}</span>
         </div>`;
     }).join('');
   }
