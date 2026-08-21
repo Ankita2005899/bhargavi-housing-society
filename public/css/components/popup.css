@@ -18,6 +18,8 @@
 .details-popup-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--line);}
 .details-popup-head h3{font-size:1.05rem;margin:0;letter-spacing:-.01em;}
 .details-popup-menu{display:flex;flex-direction:column;gap:.5rem;}
+.details-popup-menu[hidden]{display:none;}
+.details-popup-body[hidden]{display:none;}
 
 .details-popup-option{
   display:flex;align-items:center;gap:.85rem;width:100%;text-align:left;
