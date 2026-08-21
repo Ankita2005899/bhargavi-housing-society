@@ -1,5 +1,4 @@
 import { api as authApi } from '../utils/api.js';
-import { icon } from '../utils/icons.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showDenied({ title, message, showLogin }) {
-    secGateIcon.innerHTML = icon('lock',26);
+    secGateIcon.textContent = '🔒';
     secGateTitle.textContent = title;
     secGateMsg.textContent = message;
     secGateLoginBtn.hidden = !showLogin;
@@ -221,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function goToRooms(wing) {
     currentWing = wing; currentRoom = null;
-    crumbWing.innerHTML = icon('building',14) + ' ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
+    crumbWing.textContent = '🏢 ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
     crumbRoom.hidden = true; crumbSep2.hidden = true;
     memStepWings.hidden = true; memStepRooms.hidden = false; memStepRoom.hidden = true;
     roomSelect.value = '';
@@ -229,8 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function goToRoom(wing, room) {
     currentWing = wing; currentRoom = room;
-    crumbWing.innerHTML = icon('building',14) + ' ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
-    crumbRoom.innerHTML = icon('door',14) + ' Room ' + room; crumbRoom.hidden = false; crumbSep2.hidden = false;
+    crumbWing.textContent = '🏢 ' + wing; crumbWing.hidden = false; crumbSep1.hidden = false;
+    crumbRoom.textContent = '🚪 Room ' + room; crumbRoom.hidden = false; crumbSep2.hidden = false;
     memStepWings.hidden = true; memStepRooms.hidden = true; memStepRoom.hidden = false;
     renderRoomView();
   }
@@ -310,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const memberId = 'BHS-' + String(m.id).padStart(4, '0');
       const photoCell = m.profile_image
         ? `<img class="mem-photo-thumb" src="${escapeHtml(m.profile_image)}" alt="">`
-        : `<span class="mem-photo-thumb-fallback">${icon('user',16)}</span>`;
+        : `<span class="mem-photo-thumb-fallback">👤</span>`;
       tr.innerHTML = `
         <td>${photoCell}</td>
         <td>${memberId}</td>
@@ -335,8 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><span class="tag ${m.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(m.status)}</span></td>
         <td><span class="tag ${m.dues === 'Dues paid' ? 'paid' : 'due'}">${escapeHtml(m.dues)}</span></td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${m.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${m.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${m.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${m.id}" title="Delete">🗑️</button>
         </td>`;
       memberTableBody.appendChild(tr);
     });
@@ -600,8 +599,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${rupee(f.amount)}</td>
         <td>${dateStr}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${f.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${f.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${f.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${f.id}" title="Delete">🗑️</button>
         </td>`;
       financeTableBody.appendChild(tr);
     });
@@ -703,8 +702,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${rupee(p.budget)}</td>
         <td>${rupee(p.spent)}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${p.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${p.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${p.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${p.id}" title="Delete">🗑️</button>
         </td>`;
       projectTableBody.appendChild(tr);
     });
@@ -799,14 +798,14 @@ document.addEventListener('DOMContentLoaded', () => {
     hospitals.forEach(h => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${icon('hospital',15)} ${escapeHtml(h.name)}</td>
+        <td>🏥 ${escapeHtml(h.name)}</td>
         <td>${escapeHtml(h.address)}</td>
         <td>${escapeHtml(h.phone_main || '—')}</td>
         <td>${escapeHtml(h.phone_staff || '—')}</td>
         <td>${escapeHtml(h.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${h.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${h.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${h.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${h.id}" title="Delete">🗑️</button>
         </td>`;
       hospitalTableBody.appendChild(tr);
     });
@@ -899,13 +898,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ambulances.forEach(a => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${icon('ambulance',15)} ${escapeHtml(a.service_name)}</td>
+        <td>🚑 ${escapeHtml(a.service_name)}</td>
         <td>${escapeHtml(a.phone)}</td>
         <td><span class="tag ${a.eta_minutes <= 10 ? 'paid' : 'due'}">${escapeHtml(String(a.eta_minutes))} min</span></td>
         <td>${escapeHtml(a.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${a.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${a.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">🗑️</button>
         </td>`;
       ambulanceTableBody.appendChild(tr);
     });
@@ -1007,8 +1006,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><span class="tag ${s.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(s.status)}</span></td>
         <td>${escapeHtml(s.notes || '—')}</td>
         <td>
-          <button class="sec-row-btn" data-act="edit" data-id="${s.id}" title="Edit">${icon('edit',15)}</button>
-          <button class="sec-row-btn danger" data-act="del" data-id="${s.id}" title="Delete">${icon('trash',15)}</button>
+          <button class="sec-row-btn" data-act="edit" data-id="${s.id}" title="Edit">✏️</button>
+          <button class="sec-row-btn danger" data-act="del" data-id="${s.id}" title="Delete">🗑️</button>
         </td>`;
       staffTableBody.appendChild(tr);
     });
@@ -1115,30 +1114,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r.status === 'Paid') { paid++; collected += Number(r.amount) || 0; } else { unpaid++; }
       const photoCell = r.profile_image
         ? `<img class="mem-photo-thumb" src="${escapeHtml(r.profile_image)}" alt="">`
-        : `<span class="mem-photo-thumb-fallback">${icon('user',16)}</span>`;
+        : `<span class="mem-photo-thumb-fallback">👤</span>`;
       const screenshotCellHtml = r.screenshot
         ? `<img class="maint-screenshot-thumb" src="${escapeHtml(r.screenshot)}" alt="Payment screenshot" data-act="view-screenshot">`
         : `<span class="maint-screenshot-none">No screenshot</span>`;
       const tr = document.createElement('tr');
       tr.dataset.memberId = r.member_id;
-      tr.dataset.name = r.name;
       tr.innerHTML = `
         <td>${photoCell}</td>
-        <td class="maint-name-cell">
-          <button type="button" class="maint-name-trigger" title="Edit name / photo">
-            ${icon('edit',13)} <span class="maint-name-current">${escapeHtml(r.name)}</span>
-          </button>
-          <div class="maint-name-edit">
-            <label>Full name
-              <input type="text" class="maint-name-input" value="${escapeHtml(r.name)}">
-            </label>
-            <label>Profile photo
-              <input type="file" class="maint-photo-file" accept="image/*">
-            </label>
-            <input type="hidden" class="maint-photo-data" value="">
-            <p class="maint-name-edit-hint">Changes are saved when you click Save on this row.</p>
-          </div>
-        </td>
+        <td class="maint-name-cell">${escapeHtml(r.name)}</td>
         <td>${escapeHtml(r.wing)} / Room ${escapeHtml(r.flat)}</td>
         <td><input type="number" class="maint-amount-input" min="0" value="${Number(r.amount) || 0}"></td>
         <td>
@@ -1150,10 +1134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>
           <div class="maint-screenshot-cell" data-current="${r.screenshot ? escapeHtml(r.screenshot) : ''}">
             <div class="maint-screenshot-preview">${screenshotCellHtml}</div>
-            <label class="maint-screenshot-upload-btn">
-              ${icon('camera',14)} <span>${r.screenshot ? 'Replace screenshot' : 'Upload screenshot'}</span>
-              <input type="file" class="maint-screenshot-file" accept="image/*">
-            </label>
+            <input type="file" class="maint-screenshot-file" accept="image/*" ${r.status === 'Paid' ? '' : 'hidden'}>
           </div>
         </td>
         <td><button class="btn btn-primary btn-sm maint-save-btn" type="button">Save</button></td>`;
@@ -1163,22 +1144,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maintCountPaid').textContent = paid;
     document.getElementById('maintCountUnpaid').textContent = unpaid;
     document.getElementById('maintCollected').textContent = rupee(collected);
-    updateMaintFeatureBadge();
   }
 
-  /* ---- name / photo inline edit dropdown ---- */
-  maintenanceTableBody.addEventListener('click', (e) => {
-    const trigger = e.target.closest('.maint-name-trigger');
-    if (!trigger) return;
-    e.stopPropagation();
-    const cell = trigger.closest('.maint-name-cell');
-    const wasOpen = cell.classList.contains('open');
-    maintenanceTableBody.querySelectorAll('.maint-name-cell.open').forEach(c => c.classList.remove('open'));
-    if (!wasOpen) cell.classList.add('open');
-  });
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.maint-name-cell')) return;
-    maintenanceTableBody.querySelectorAll('.maint-name-cell.open').forEach(c => c.classList.remove('open'));
+  // Toggle the screenshot upload field when Paid/Unpaid changes
+  maintenanceTableBody.addEventListener('change', (e) => {
+    if (e.target.classList.contains('maint-status-select')) {
+      const tr = e.target.closest('tr');
+      const fileInput = tr.querySelector('.maint-screenshot-file');
+      fileInput.hidden = e.target.value !== 'Paid';
+    }
   });
 
   // View a payment screenshot full-size in a new tab
@@ -1189,224 +1163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (win) win.document.write(`<img src="${thumb.src}" style="max-width:100%;">`);
   });
 
-  // New profile photo chosen in the name-edit dropdown -> stash as a data URL
-  maintenanceTableBody.addEventListener('change', async (e) => {
-    if (e.target.classList.contains('maint-photo-file')) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const tr = e.target.closest('tr');
-      try {
-        tr.querySelector('.maint-photo-data').value = await fileToResizedDataUrl(file, 400);
-        showToast('Photo ready — click Save to apply it');
-      } catch (err) {
-        showToast('Could not read that image: ' + err.message);
-      }
-      return;
-    }
-    // New payment screenshot chosen -> preview immediately, apply on Save
-    if (e.target.classList.contains('maint-screenshot-file')) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const cell = e.target.closest('.maint-screenshot-cell');
-      try {
-        const dataUrl = await fileToResizedDataUrl(file, 640);
-        cell.dataset.pending = dataUrl;
-        cell.querySelector('.maint-screenshot-preview').innerHTML =
-          `<img class="maint-screenshot-thumb" src="${dataUrl}" alt="Payment screenshot" data-act="view-screenshot">`;
-      } catch (err) {
-        showToast('Could not read that image: ' + err.message);
-      }
-      return;
-    }
-  });
-
-  /* ---- "Feature on public dashboard": wing -> room -> one member ----
-     Replaces the old checkbox multi-select. A room can only ever have
-     ONE featured member; picking a member for a room overwrites any
-     previous pick for that same room. Selections are bridged to the
-     public homepage via localStorage (that page has no Secretary
-     session to query the protected /api/maintenance endpoint). */
-  const maintFeatureBtn = document.getElementById('maintFeatureBtn');
-  const maintFeatureCountBadge = document.getElementById('maintFeatureCountBadge');
-  const maintFeatureModalOverlay = document.getElementById('maintFeatureModalOverlay');
-  const maintFeatureCloseBtn = document.getElementById('maintFeatureCloseBtn');
-  const maintFeatureBack = document.getElementById('maintFeatureBack');
-  const maintFeatureBody = document.getElementById('maintFeatureBody');
-  const maintFeatureChips = document.getElementById('maintFeatureChips');
-  const maintFeatureClearBtn = document.getElementById('maintFeatureClearBtn');
-  const maintFeaturePublishBtn = document.getElementById('maintFeaturePublishBtn');
-
-  // Map keyed by "Wing|Room" -> featured record for that room
-  let maintFeatured = new Map();
-  let maintFeatureStack = [];
-
-  function roomKey(wing, flat) { return wing + '|' + flat; }
-
-  function loadFeaturedFromStorage() {
-    maintFeatured = new Map();
-    try {
-      const saved = JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]');
-      saved.forEach(r => maintFeatured.set(roomKey(r.wing, r.flat), r));
-    } catch (e) { /* ignore malformed storage */ }
-  }
-
-  function updateMaintFeatureBadge() {
-    loadFeaturedFromStorage();
-    const n = maintFeatured.size;
-    maintFeatureCountBadge.hidden = n === 0;
-    maintFeatureCountBadge.textContent = n;
-  }
-
-  function goToFeatureStep(fn) { maintFeatureStack.push(fn); fn(); maintFeatureBack.hidden = maintFeatureStack.length < 2; }
-  function goBackFeatureStep() {
-    maintFeatureStack.pop();
-    const prev = maintFeatureStack[maintFeatureStack.length - 1];
-    maintFeatureBack.hidden = maintFeatureStack.length < 2;
-    if (prev) prev();
-  }
-  maintFeatureBack.addEventListener('click', goBackFeatureStep);
-
-  function openMaintFeatureModal() {
-    loadFeaturedFromStorage();
-    maintFeatureStack = [];
-    renderFeatureChips();
-    goToFeatureStep(renderFeatureWings);
-    maintFeatureModalOverlay.classList.add('show');
-  }
-  function closeMaintFeatureModal() { maintFeatureModalOverlay.classList.remove('show'); }
-  maintFeatureBtn.addEventListener('click', openMaintFeatureModal);
-  maintFeatureCloseBtn.addEventListener('click', closeMaintFeatureModal);
-  maintFeatureModalOverlay.addEventListener('click', e => { if (e.target === maintFeatureModalOverlay) closeMaintFeatureModal(); });
-
-  function initialsOf(name) {
-    return String(name || '').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '—';
-  }
-
-  function renderFeatureWings() {
-    const wings = [...new Set(maintenanceRows.map(r => r.wing))].sort();
-    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">Step 1 — select a wing</p><div class="maint-tile-grid" id="maintFeatureGrid"></div>`;
-    const grid = document.getElementById('maintFeatureGrid');
-    if (!wings.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No members found.</p>'; return; }
-    wings.forEach(w => {
-      const roomsInWing = new Set(maintenanceRows.filter(r => r.wing === w).map(r => r.flat));
-      const featuredInWing = [...maintFeatured.values()].filter(r => r.wing === w).length;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'maint-tile';
-      btn.innerHTML = `
-        <span class="maint-tile-icon">${icon('building', 17)}</span>
-        <span class="maint-tile-label">${escapeHtml(w)}</span>
-        <span class="maint-tile-sub">${roomsInWing.size} room${roomsInWing.size === 1 ? '' : 's'}</span>
-        <span class="maint-tile-status ${featuredInWing ? 'on' : 'off'}">${featuredInWing ? featuredInWing + ' featured' : 'None featured'}</span>`;
-      btn.addEventListener('click', () => goToFeatureStep(() => renderFeatureRooms(w)));
-      grid.appendChild(btn);
-    });
-  }
-
-  function renderFeatureRooms(wing) {
-    const rooms = [...new Set(maintenanceRows.filter(r => r.wing === wing).map(r => r.flat))].sort();
-    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">${escapeHtml(wing)} — Step 2 — select a room</p><div class="maint-tile-grid" id="maintFeatureGrid"></div>`;
-    const grid = document.getElementById('maintFeatureGrid');
-    if (!rooms.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No rooms in this wing.</p>'; return; }
-    rooms.forEach(room => {
-      const membersInRoom = maintenanceRows.filter(r => r.wing === wing && r.flat === room).length;
-      const featured = maintFeatured.get(roomKey(wing, room));
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'maint-tile';
-      btn.innerHTML = `
-        <span class="maint-tile-icon">${icon('door', 17)}</span>
-        <span class="maint-tile-label">Room ${escapeHtml(room)}</span>
-        <span class="maint-tile-sub">${membersInRoom} member${membersInRoom === 1 ? '' : 's'}</span>
-        <span class="maint-tile-status ${featured ? 'on' : 'off'}">${featured ? '✓ ' + escapeHtml(featured.name) : 'Not selected'}</span>`;
-      btn.addEventListener('click', () => goToFeatureStep(() => renderFeaturePick(wing, room)));
-      grid.appendChild(btn);
-    });
-  }
-
-  function renderFeaturePick(wing, room) {
-    const members = maintenanceRows.filter(r => r.wing === wing && r.flat === room);
-    const currentKey = roomKey(wing, room);
-    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">${escapeHtml(wing)} · Room ${escapeHtml(room)} — Step 3 — select the member to feature</p><div id="maintFeatureGrid" style="display:flex;flex-direction:column;gap:.55rem;"></div>`;
-    const grid = document.getElementById('maintFeatureGrid');
-    if (!members.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No members in this room.</p>'; return; }
-    members.forEach(m => {
-      const isFeatured = maintFeatured.get(currentKey) && String(maintFeatured.get(currentKey).member_id) === String(m.member_id);
-      const photo = m.profile_image
-        ? `<img class="maint-pick-photo" src="${escapeHtml(m.profile_image)}" alt="">`
-        : `<span class="maint-pick-photo-fallback">${escapeHtml(initialsOf(m.name))}</span>`;
-      const shot = m.screenshot ? `<img class="maint-pick-shot" src="${escapeHtml(m.screenshot)}" alt="Payment screenshot">` : '';
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'maint-pick-card' + (isFeatured ? ' is-featured' : '');
-      card.innerHTML = `
-        ${photo}
-        <span class="maint-pick-body">
-          <span class="maint-pick-name">${escapeHtml(m.name)}</span>
-          <span class="maint-pick-meta">
-            <span class="maint-pick-pill ${m.status === 'Paid' ? 'paid' : 'unpaid'}">${escapeHtml(m.status)}</span>
-            <span>₹${(Number(m.amount) || 0).toLocaleString('en-IN')}</span>
-          </span>
-        </span>
-        ${shot}
-        ${isFeatured ? `<span class="maint-pick-check">${icon('check', 20)}</span>` : ''}`;
-      card.addEventListener('click', () => {
-        maintFeatured.set(currentKey, {
-          member_id: m.member_id, name: m.name, wing: m.wing, flat: m.flat,
-          profile_image: m.profile_image || '', amount: Number(m.amount) || 0,
-          status: m.status, screenshot: m.screenshot || '', month: maintMonthPicker.value
-        });
-        renderFeatureChips();
-        showToast(`${m.name} set as the featured member for Room ${room}`);
-        goToFeatureStep(() => renderFeatureRooms(wing));
-      });
-      grid.appendChild(card);
-    });
-  }
-
-  function renderFeatureChips() {
-    const entries = [...maintFeatured.values()];
-    if (!entries.length) {
-      maintFeatureChips.innerHTML = '<span class="maint-feature-chips-empty">No rooms featured yet.</span>';
-      return;
-    }
-    maintFeatureChips.innerHTML = '';
-    entries.forEach(r => {
-      const chip = document.createElement('span');
-      chip.className = 'maint-feature-chip';
-      chip.innerHTML = `${escapeHtml(r.wing)} / Room ${escapeHtml(r.flat)} — ${escapeHtml(r.name)} <button type="button" title="Remove">&times;</button>`;
-      chip.querySelector('button').addEventListener('click', () => {
-        maintFeatured.delete(roomKey(r.wing, r.flat));
-        renderFeatureChips();
-        // Refresh whichever step is currently showing so its status badges stay in sync
-        const current = maintFeatureStack[maintFeatureStack.length - 1];
-        if (current) current();
-      });
-      maintFeatureChips.appendChild(chip);
-    });
-  }
-
-  maintFeatureClearBtn.addEventListener('click', () => {
-    maintFeatured.clear();
-    renderFeatureChips();
-    const current = maintFeatureStack[maintFeatureStack.length - 1];
-    if (current) current();
-  });
-
-  maintFeaturePublishBtn.addEventListener('click', () => {
-    const payload = [...maintFeatured.values()];
-    try {
-      localStorage.setItem('secMaintenanceSelection', JSON.stringify(payload));
-      updateMaintFeatureBadge();
-      showToast(payload.length
-        ? 'Published — open the website\'s Maintenance menu (☰) to see it'
-        : 'Cleared — nothing is featured on the public dashboard now');
-      closeMaintFeatureModal();
-    } catch (err) {
-      showToast('Could not save selection: ' + err.message);
-    }
-  });
-
   maintenanceTableBody.addEventListener('click', async (e) => {
     const btn = e.target.closest('.maint-save-btn');
     if (!btn) return;
@@ -1415,23 +1171,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const amount = Number(tr.querySelector('.maint-amount-input').value) || 0;
     const status = tr.querySelector('.maint-status-select').value;
     const screenshotCell = tr.querySelector('.maint-screenshot-cell');
-    const screenshot = screenshotCell.dataset.pending || screenshotCell.dataset.current || null;
-
-    const newName = tr.querySelector('.maint-name-input').value.trim();
-    const newPhoto = tr.querySelector('.maint-photo-data').value;
-    const nameChanged = newName && newName !== tr.dataset.name;
-    const photoChanged = !!newPhoto;
+    const fileInput = tr.querySelector('.maint-screenshot-file');
+    let screenshot = screenshotCell.dataset.current || null;
 
     btn.disabled = true;
     try {
-      if (nameChanged || photoChanged) {
-        const member = await api('members/' + memberId + '/profile');
-        const merged = {
-          ...member,
-          name: nameChanged ? newName : member.name,
-          profile_image: photoChanged ? newPhoto : member.profile_image
-        };
-        await api('members/' + memberId, { method: 'PUT', body: JSON.stringify(merged) });
+      const file = fileInput.files && fileInput.files[0];
+      if (status === 'Paid' && file) {
+        screenshot = await fileToResizedDataUrl(file, 640);
+      } else if (status === 'Unpaid') {
+        screenshot = null; // clear proof if marked unpaid
       }
       await api('maintenance', {
         method: 'POST',
@@ -1482,11 +1231,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${escapeHtml(a.member_name || (a.role === 'secretary' ? 'Secretary' : '—'))}</td>
         <td>${wingFlat}</td>
         <td>${escapeHtml(a.email)}</td>
-        <td>${a.role === 'secretary' ? icon('key',14) + ' Secretary' : icon('users',14) + ' Resident'}</td>
+        <td>${a.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
         <td>${Number(a.login_count) || 0}</td>
         <td>${formatDateTime(a.last_login_at)}</td>
         <td>${formatDateTime(a.created_at)}</td>
-        <td><button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">${icon('trash',15)}</button></td>`;
+        <td><button class="sec-row-btn danger" data-act="del" data-id="${a.id}" title="Delete">🗑️</button></td>`;
       accountsTableBody.appendChild(tr);
     });
     document.getElementById('acctCountTotal').textContent = accounts.length;
@@ -1519,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td>${escapeHtml(h.member_name || (h.role === 'secretary' ? 'Secretary' : '—'))}</td>
         <td>${escapeHtml(h.email)}</td>
-        <td>${h.role === 'secretary' ? icon('key',14) + ' Secretary' : icon('users',14) + ' Resident'}</td>
+        <td>${h.role === 'secretary' ? '👑 Secretary' : '🏠 Resident'}</td>
         <td>${formatDateTime(h.logged_in_at)}</td>`;
       loginHistoryTableBody.appendChild(tr);
     });
