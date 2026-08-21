@@ -1089,16 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const maintMonthPicker = document.getElementById('maintMonthPicker');
   const maintenanceTableBody = document.getElementById('maintenanceTableBody');
   const maintenanceEmpty = document.getElementById('maintenanceEmpty');
-  const maintSelectAllCell = document.getElementById('maintSelectAllCell');
-  const maintSelectAll = document.getElementById('maintSelectAll');
-  const maintSelectBar = document.getElementById('maintSelectBar');
-  const maintSelectCount = document.getElementById('maintSelectCount');
-  const maintSelectHint = document.getElementById('maintSelectHint');
-  const maintShowOnSiteBtn = document.getElementById('maintShowOnSiteBtn');
-  const maintCancelSelectBtn = document.getElementById('maintCancelSelectBtn');
   let maintenanceRows = [];
-  let maintSelectMode = false;
-  let maintSelectedIds = new Set();
 
   function currentMonthStr() {
     const d = new Date();
@@ -1109,7 +1100,6 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadMaintenance() {
     try {
       maintenanceRows = await api('maintenance?month=' + encodeURIComponent(maintMonthPicker.value));
-      exitMaintSelectMode();
       renderMaintenance();
     } catch (err) {
       showToast('Could not load maintenance records: ' + err.message);
@@ -1133,7 +1123,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.dataset.memberId = r.member_id;
       tr.dataset.name = r.name;
       tr.innerHTML = `
-        <td class="maint-select-col" hidden><input type="checkbox" class="maint-row-check"></td>
         <td>${photoCell}</td>
         <td class="maint-name-cell">
           <button type="button" class="maint-name-trigger" title="Edit name / photo">
@@ -1174,9 +1163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maintCountPaid').textContent = paid;
     document.getElementById('maintCountUnpaid').textContent = unpaid;
     document.getElementById('maintCollected').textContent = rupee(collected);
-    // Re-apply select mode column visibility if a reload happened mid-selection
-    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = !maintSelectMode);
-    updateMaintSelectBar();
+    updateMaintFeatureBadge();
   }
 
   /* ---- name / photo inline edit dropdown ---- */
@@ -1231,72 +1218,190 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       return;
     }
-    // Row checkbox toggled (select mode)
-    if (e.target.classList.contains('maint-row-check')) {
-      const tr = e.target.closest('tr');
-      const id = String(tr.dataset.memberId);
-      if (e.target.checked) { maintSelectedIds.add(id); tr.classList.add('maint-row-selected'); }
-      else { maintSelectedIds.delete(id); tr.classList.remove('maint-row-selected'); }
-      updateMaintSelectBar();
-    }
   });
 
-  /* ---- row selection: double-click any row to turn on checkboxes ---- */
-  maintenanceTableBody.addEventListener('dblclick', (e) => {
-    if (e.target.closest('.maint-name-trigger, .maint-name-edit, .maint-screenshot-cell, input, select, button')) return;
-    enterMaintSelectMode();
-  });
+  /* ---- "Feature on public dashboard": wing -> room -> one member ----
+     Replaces the old checkbox multi-select. A room can only ever have
+     ONE featured member; picking a member for a room overwrites any
+     previous pick for that same room. Selections are bridged to the
+     public homepage via localStorage (that page has no Secretary
+     session to query the protected /api/maintenance endpoint). */
+  const maintFeatureBtn = document.getElementById('maintFeatureBtn');
+  const maintFeatureCountBadge = document.getElementById('maintFeatureCountBadge');
+  const maintFeatureModalOverlay = document.getElementById('maintFeatureModalOverlay');
+  const maintFeatureCloseBtn = document.getElementById('maintFeatureCloseBtn');
+  const maintFeatureBack = document.getElementById('maintFeatureBack');
+  const maintFeatureBody = document.getElementById('maintFeatureBody');
+  const maintFeatureChips = document.getElementById('maintFeatureChips');
+  const maintFeatureClearBtn = document.getElementById('maintFeatureClearBtn');
+  const maintFeaturePublishBtn = document.getElementById('maintFeaturePublishBtn');
 
-  function enterMaintSelectMode() {
-    if (maintSelectMode) return;
-    maintSelectMode = true;
-    maintSelectAllCell.hidden = false;
-    maintSelectHint.classList.add('hide');
-    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = false);
-    updateMaintSelectBar();
-  }
-  function exitMaintSelectMode() {
-    maintSelectMode = false;
-    maintSelectedIds.clear();
-    maintSelectAllCell.hidden = true;
-    maintSelectHint.classList.remove('hide');
-    maintSelectAll.checked = false;
-    maintenanceTableBody.querySelectorAll('.maint-select-col').forEach(td => td.hidden = true);
-    maintenanceTableBody.querySelectorAll('.maint-row-check').forEach(cb => cb.checked = false);
-    maintenanceTableBody.querySelectorAll('tr.maint-row-selected').forEach(tr => tr.classList.remove('maint-row-selected'));
-    updateMaintSelectBar();
-  }
-  maintCancelSelectBtn.addEventListener('click', exitMaintSelectMode);
+  // Map keyed by "Wing|Room" -> featured record for that room
+  let maintFeatured = new Map();
+  let maintFeatureStack = [];
 
-  maintSelectAll.addEventListener('change', () => {
-    maintenanceTableBody.querySelectorAll('.maint-row-check').forEach(cb => {
-      cb.checked = maintSelectAll.checked;
-      cb.dispatchEvent(new Event('change', { bubbles: true }));
+  function roomKey(wing, flat) { return wing + '|' + flat; }
+
+  function loadFeaturedFromStorage() {
+    maintFeatured = new Map();
+    try {
+      const saved = JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]');
+      saved.forEach(r => maintFeatured.set(roomKey(r.wing, r.flat), r));
+    } catch (e) { /* ignore malformed storage */ }
+  }
+
+  function updateMaintFeatureBadge() {
+    loadFeaturedFromStorage();
+    const n = maintFeatured.size;
+    maintFeatureCountBadge.hidden = n === 0;
+    maintFeatureCountBadge.textContent = n;
+  }
+
+  function goToFeatureStep(fn) { maintFeatureStack.push(fn); fn(); maintFeatureBack.hidden = maintFeatureStack.length < 2; }
+  function goBackFeatureStep() {
+    maintFeatureStack.pop();
+    const prev = maintFeatureStack[maintFeatureStack.length - 1];
+    maintFeatureBack.hidden = maintFeatureStack.length < 2;
+    if (prev) prev();
+  }
+  maintFeatureBack.addEventListener('click', goBackFeatureStep);
+
+  function openMaintFeatureModal() {
+    loadFeaturedFromStorage();
+    maintFeatureStack = [];
+    renderFeatureChips();
+    goToFeatureStep(renderFeatureWings);
+    maintFeatureModalOverlay.classList.add('show');
+  }
+  function closeMaintFeatureModal() { maintFeatureModalOverlay.classList.remove('show'); }
+  maintFeatureBtn.addEventListener('click', openMaintFeatureModal);
+  maintFeatureCloseBtn.addEventListener('click', closeMaintFeatureModal);
+  maintFeatureModalOverlay.addEventListener('click', e => { if (e.target === maintFeatureModalOverlay) closeMaintFeatureModal(); });
+
+  function initialsOf(name) {
+    return String(name || '').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '—';
+  }
+
+  function renderFeatureWings() {
+    const wings = [...new Set(maintenanceRows.map(r => r.wing))].sort();
+    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">Step 1 — select a wing</p><div class="maint-tile-grid" id="maintFeatureGrid"></div>`;
+    const grid = document.getElementById('maintFeatureGrid');
+    if (!wings.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No members found.</p>'; return; }
+    wings.forEach(w => {
+      const roomsInWing = new Set(maintenanceRows.filter(r => r.wing === w).map(r => r.flat));
+      const featuredInWing = [...maintFeatured.values()].filter(r => r.wing === w).length;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'maint-tile';
+      btn.innerHTML = `
+        <span class="maint-tile-icon">${icon('building', 17)}</span>
+        <span class="maint-tile-label">${escapeHtml(w)}</span>
+        <span class="maint-tile-sub">${roomsInWing.size} room${roomsInWing.size === 1 ? '' : 's'}</span>
+        <span class="maint-tile-status ${featuredInWing ? 'on' : 'off'}">${featuredInWing ? featuredInWing + ' featured' : 'None featured'}</span>`;
+      btn.addEventListener('click', () => goToFeatureStep(() => renderFeatureRooms(w)));
+      grid.appendChild(btn);
     });
-  });
-
-  function updateMaintSelectBar() {
-    const n = maintSelectedIds.size;
-    const shouldShow = maintSelectMode && n > 0;
-    maintSelectBar.hidden = !shouldShow;
-    maintSelectBar.classList.toggle('show', shouldShow);
-    maintSelectCount.textContent = n + (n === 1 ? ' member selected' : ' members selected');
   }
 
-  // Feature the selected member(s) under "Maintenance" in the public
-  // site's hamburger menu — bridged via localStorage since that menu
-  // has no Secretary session to query the protected maintenance API.
-  maintShowOnSiteBtn.addEventListener('click', () => {
-    const selected = maintenanceRows.filter(r => maintSelectedIds.has(String(r.member_id)));
-    if (!selected.length) return;
-    const payload = selected.map(r => ({
-      member_id: r.member_id, name: r.name, wing: r.wing, flat: r.flat,
-      profile_image: r.profile_image || '', amount: Number(r.amount) || 0,
-      status: r.status, month: maintMonthPicker.value
-    }));
+  function renderFeatureRooms(wing) {
+    const rooms = [...new Set(maintenanceRows.filter(r => r.wing === wing).map(r => r.flat))].sort();
+    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">${escapeHtml(wing)} — Step 2 — select a room</p><div class="maint-tile-grid" id="maintFeatureGrid"></div>`;
+    const grid = document.getElementById('maintFeatureGrid');
+    if (!rooms.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No rooms in this wing.</p>'; return; }
+    rooms.forEach(room => {
+      const membersInRoom = maintenanceRows.filter(r => r.wing === wing && r.flat === room).length;
+      const featured = maintFeatured.get(roomKey(wing, room));
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'maint-tile';
+      btn.innerHTML = `
+        <span class="maint-tile-icon">${icon('door', 17)}</span>
+        <span class="maint-tile-label">Room ${escapeHtml(room)}</span>
+        <span class="maint-tile-sub">${membersInRoom} member${membersInRoom === 1 ? '' : 's'}</span>
+        <span class="maint-tile-status ${featured ? 'on' : 'off'}">${featured ? '✓ ' + escapeHtml(featured.name) : 'Not selected'}</span>`;
+      btn.addEventListener('click', () => goToFeatureStep(() => renderFeaturePick(wing, room)));
+      grid.appendChild(btn);
+    });
+  }
+
+  function renderFeaturePick(wing, room) {
+    const members = maintenanceRows.filter(r => r.wing === wing && r.flat === room);
+    const currentKey = roomKey(wing, room);
+    maintFeatureBody.innerHTML = `<p class="maint-feature-step-label">${escapeHtml(wing)} · Room ${escapeHtml(room)} — Step 3 — select the member to feature</p><div id="maintFeatureGrid" style="display:flex;flex-direction:column;gap:.55rem;"></div>`;
+    const grid = document.getElementById('maintFeatureGrid');
+    if (!members.length) { maintFeatureBody.innerHTML += '<p class="sec-empty">No members in this room.</p>'; return; }
+    members.forEach(m => {
+      const isFeatured = maintFeatured.get(currentKey) && String(maintFeatured.get(currentKey).member_id) === String(m.member_id);
+      const photo = m.profile_image
+        ? `<img class="maint-pick-photo" src="${escapeHtml(m.profile_image)}" alt="">`
+        : `<span class="maint-pick-photo-fallback">${escapeHtml(initialsOf(m.name))}</span>`;
+      const shot = m.screenshot ? `<img class="maint-pick-shot" src="${escapeHtml(m.screenshot)}" alt="Payment screenshot">` : '';
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'maint-pick-card' + (isFeatured ? ' is-featured' : '');
+      card.innerHTML = `
+        ${photo}
+        <span class="maint-pick-body">
+          <span class="maint-pick-name">${escapeHtml(m.name)}</span>
+          <span class="maint-pick-meta">
+            <span class="maint-pick-pill ${m.status === 'Paid' ? 'paid' : 'unpaid'}">${escapeHtml(m.status)}</span>
+            <span>₹${(Number(m.amount) || 0).toLocaleString('en-IN')}</span>
+          </span>
+        </span>
+        ${shot}
+        ${isFeatured ? `<span class="maint-pick-check">${icon('check', 20)}</span>` : ''}`;
+      card.addEventListener('click', () => {
+        maintFeatured.set(currentKey, {
+          member_id: m.member_id, name: m.name, wing: m.wing, flat: m.flat,
+          profile_image: m.profile_image || '', amount: Number(m.amount) || 0,
+          status: m.status, screenshot: m.screenshot || '', month: maintMonthPicker.value
+        });
+        renderFeatureChips();
+        showToast(`${m.name} set as the featured member for Room ${room}`);
+        goToFeatureStep(() => renderFeatureRooms(wing));
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function renderFeatureChips() {
+    const entries = [...maintFeatured.values()];
+    if (!entries.length) {
+      maintFeatureChips.innerHTML = '<span class="maint-feature-chips-empty">No rooms featured yet.</span>';
+      return;
+    }
+    maintFeatureChips.innerHTML = '';
+    entries.forEach(r => {
+      const chip = document.createElement('span');
+      chip.className = 'maint-feature-chip';
+      chip.innerHTML = `${escapeHtml(r.wing)} / Room ${escapeHtml(r.flat)} — ${escapeHtml(r.name)} <button type="button" title="Remove">&times;</button>`;
+      chip.querySelector('button').addEventListener('click', () => {
+        maintFeatured.delete(roomKey(r.wing, r.flat));
+        renderFeatureChips();
+        // Refresh whichever step is currently showing so its status badges stay in sync
+        const current = maintFeatureStack[maintFeatureStack.length - 1];
+        if (current) current();
+      });
+      maintFeatureChips.appendChild(chip);
+    });
+  }
+
+  maintFeatureClearBtn.addEventListener('click', () => {
+    maintFeatured.clear();
+    renderFeatureChips();
+    const current = maintFeatureStack[maintFeatureStack.length - 1];
+    if (current) current();
+  });
+
+  maintFeaturePublishBtn.addEventListener('click', () => {
+    const payload = [...maintFeatured.values()];
     try {
       localStorage.setItem('secMaintenanceSelection', JSON.stringify(payload));
-      showToast('Saved — open the website\'s Maintenance menu (☰) to see it');
+      updateMaintFeatureBadge();
+      showToast(payload.length
+        ? 'Published — open the website\'s Maintenance menu (☰) to see it'
+        : 'Cleared — nothing is featured on the public dashboard now');
+      closeMaintFeatureModal();
     } catch (err) {
       showToast('Could not save selection: ' + err.message);
     }

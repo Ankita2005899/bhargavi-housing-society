@@ -35,6 +35,7 @@ export function initDetailsPopup({ session }) {
   }
   function open() {
     stack = [];
+    overlay.classList.remove('popup-wide');
     showMenuStep();
     overlay.classList.add('show');
   }
@@ -46,13 +47,31 @@ export function initDetailsPopup({ session }) {
   back.addEventListener('click', goBack);
 
   // "Maintenance" in the hamburger menu jumps straight into the popup's
-  // maintenance step, skipping the top-level directory menu.
+  // maintenance step, skipping the top-level directory menu. That step
+  // shows richer cards (photo, amount, receipt screenshot) so the popup
+  // opens in a wider layout than the plain directory menu.
   if (maintenanceTriggerBtn) {
     maintenanceTriggerBtn.addEventListener('click', () => {
       stack = [];
-      overlay.classList.add('show');
+      overlay.classList.add('show', 'popup-wide');
       goToStep(stepMaintenanceWings);
     });
+  }
+
+  /* ===== Lightbox: full-size payment screenshot viewer ===== */
+  let lightbox = null;
+  function openLightbox(src) {
+    if (!lightbox) {
+      lightbox = document.createElement('div');
+      lightbox.className = 'maint-lightbox';
+      lightbox.innerHTML = `<button class="maint-lightbox-close" aria-label="Close">${icon('close', 18)}</button><img alt="Payment screenshot">`;
+      lightbox.addEventListener('click', e => {
+        if (e.target === lightbox || e.target.closest('.maint-lightbox-close')) lightbox.classList.remove('show');
+      });
+      document.body.appendChild(lightbox);
+    }
+    lightbox.querySelector('img').src = src;
+    lightbox.classList.add('show');
   }
 
   function renderListButtons(items) {
@@ -261,9 +280,8 @@ export function initDetailsPopup({ session }) {
      dashboard already has the data client-side when the Secretary
      selects rows, and this page has no Secretary session to query the
      protected /api/maintenance endpoint directly.
-     Flow is deliberately different from the Members flow above:
-     Wing -> one row per room directly (no separate room-picker step),
-     and rows show amount/payment status instead of a member profile. */
+     One room = one featured member, enforced on the Secretary side, so
+     the Wing -> Room flow below always renders a single card per room. */
   function getMaintenanceSelection() {
     try { return JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]'); }
     catch (e) { return []; }
@@ -278,56 +296,70 @@ export function initDetailsPopup({ session }) {
       content.innerHTML = `
         <div class="access-note">
           <span class="access-note-icon">${icon('receipt', 22)}</span>
-          <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “View on Dashboard”.</p>
+          <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “Feature on public dashboard”.</p>
         </div>`;
       return;
     }
 
     const wings = [...new Set(selected.map(r => r.wing))].sort();
-    renderListButtons(wings.map(w => ({
-      iconSvg: icon('building'), label: w, onClick: () => goToStep(() => stepMaintenanceWingRooms(w))
-    })));
+    content.innerHTML = `<div class="maint-wing-grid"></div>`;
+    const grid = content.querySelector('.maint-wing-grid');
+    wings.forEach(w => {
+      const roomsInWing = selected.filter(r => r.wing === w);
+      const paidCount = roomsInWing.filter(r => r.status === 'Paid').length;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'maint-wing-tile';
+      btn.innerHTML = `
+        <span class="maint-wing-tile-icon">${icon('building', 20)}</span>
+        <span class="maint-wing-tile-label">${escapeHtml(w)}</span>
+        <span class="maint-wing-tile-sub">${roomsInWing.length} room${roomsInWing.length === 1 ? '' : 's'} featured</span>
+        <span class="maint-wing-tile-progress"><span style="width:${roomsInWing.length ? (paidCount / roomsInWing.length * 100) : 0}%"></span></span>
+        <span class="maint-wing-tile-foot">${paidCount}/${roomsInWing.length} paid ${icon('chevronLeft', 14)}</span>`;
+      btn.addEventListener('click', () => goToStep(() => stepMaintenanceWingRooms(w)));
+      grid.appendChild(btn);
+    });
   }
 
   function stepMaintenanceWingRooms(wing) {
     title.textContent = wing + ' — Maintenance';
     menu.hidden = true; body.hidden = false;
 
-    const selected = getMaintenanceSelection().filter(r => r.wing === wing);
+    const selected = getMaintenanceSelection().filter(r => r.wing === wing)
+      .sort((a, b) => String(a.flat).localeCompare(String(b.flat)));
     if (!selected.length) {
       content.innerHTML = '<p class="popup-status">No featured members in this wing.</p>';
       return;
     }
 
-    // One row per room: if more than one featured member shares a room,
-    // combine their names and amounts into that single room row.
-    const byRoom = new Map();
-    selected.forEach(r => {
-      const key = r.flat;
-      if (!byRoom.has(key)) byRoom.set(key, []);
-      byRoom.get(key).push(r);
-    });
-    const rooms = [...byRoom.keys()].sort();
-
-    content.innerHTML = rooms.map(room => {
-      const entries = byRoom.get(room);
-      const names = entries.map(e => e.name).join(', ');
-      const totalAmount = entries.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-      const allPaid = entries.every(e => e.status === 'Paid');
-      const month = entries[0].month;
-      const photo = entries[0].profile_image
-        ? `<img class="member-avatar" src="${escapeHtml(entries[0].profile_image)}" alt="">`
-        : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(entries[0].name))}</span>`;
+    content.innerHTML = selected.map((r, i) => {
+      const paid = r.status === 'Paid';
+      const photo = r.profile_image
+        ? `<img class="member-avatar" src="${escapeHtml(r.profile_image)}" alt="">`
+        : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(r.name))}</span>`;
+      const screenshotHtml = paid && r.screenshot
+        ? `<button type="button" class="maint-card-receipt" data-i="${i}">
+             <img src="${escapeHtml(r.screenshot)}" alt="Payment receipt">
+             <span>${icon('camera', 13)} View receipt</span>
+           </button>`
+        : (paid ? `<p class="maint-card-no-receipt">No receipt uploaded yet.</p>` : '');
       return `
-        <div class="member-row maint-popup-row">
-          ${photo}
-          <span class="member-row-body">
-            <span class="member-row-name">Room ${escapeHtml(room)} — ${escapeHtml(names)}</span>
-            <span class="tag ${allPaid ? 'paid' : 'due'}">${allPaid ? 'Paid' : 'Unpaid'}${month ? ' · ' + escapeHtml(month) : ''}</span>
-          </span>
-          <span class="maint-popup-amount">₹${totalAmount.toLocaleString('en-IN')}</span>
+        <div class="maint-card">
+          <div class="maint-card-top">
+            ${photo}
+            <span class="member-row-body">
+              <span class="member-row-name">Room ${escapeHtml(r.flat)} — ${escapeHtml(r.name)}</span>
+              <span class="tag ${paid ? 'paid' : 'due'}">${paid ? 'Paid' : 'Unpaid'}${r.month ? ' · ' + escapeHtml(r.month) : ''}</span>
+            </span>
+            <span class="maint-popup-amount">₹${(Number(r.amount) || 0).toLocaleString('en-IN')}</span>
+          </div>
+          ${screenshotHtml}
         </div>`;
     }).join('');
+
+    content.querySelectorAll('.maint-card-receipt').forEach(btn => {
+      btn.addEventListener('click', () => openLightbox(selected[Number(btn.dataset.i)].screenshot));
+    });
   }
 
   const ENTRY_STEP = {
