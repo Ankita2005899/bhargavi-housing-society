@@ -460,6 +460,142 @@ const maintenanceModel = {
   }
 };
 
+const noticeModel = {
+  // Secretary view: every notice with live like/dislike/comment counts.
+  async findAllWithStats() {
+    const { rows } = await pool.query(`
+      SELECT n.*,
+        COALESCE(l.likes, 0)::int AS likes,
+        COALESCE(d.dislikes, 0)::int AS dislikes,
+        COALESCE(c.comments, 0)::int AS comments
+      FROM notices n
+      LEFT JOIN (SELECT notice_id, COUNT(*) likes FROM notice_reactions WHERE reaction='like' GROUP BY notice_id) l ON l.notice_id = n.id
+      LEFT JOIN (SELECT notice_id, COUNT(*) dislikes FROM notice_reactions WHERE reaction='dislike' GROUP BY notice_id) d ON d.notice_id = n.id
+      LEFT JOIN (SELECT notice_id, COUNT(*) comments FROM notice_comments GROUP BY notice_id) c ON c.notice_id = n.id
+      ORDER BY n.pinned DESC, n.created_at DESC
+    `);
+    return rows;
+  },
+  // Resident-facing view: only non-expired notices, optionally scoped to a
+  // wing (a notice with target_wing NULL/'' is shown to everyone), plus
+  // whether the requesting user has already reacted.
+  async findActiveForUser({ wing, userId }) {
+    const { rows } = await pool.query(`
+      SELECT n.*,
+        COALESCE(l.likes, 0)::int AS likes,
+        COALESCE(d.dislikes, 0)::int AS dislikes,
+        COALESCE(c.comments, 0)::int AS comments,
+        r.reaction AS my_reaction
+      FROM notices n
+      LEFT JOIN (SELECT notice_id, COUNT(*) likes FROM notice_reactions WHERE reaction='like' GROUP BY notice_id) l ON l.notice_id = n.id
+      LEFT JOIN (SELECT notice_id, COUNT(*) dislikes FROM notice_reactions WHERE reaction='dislike' GROUP BY notice_id) d ON d.notice_id = n.id
+      LEFT JOIN (SELECT notice_id, COUNT(*) comments FROM notice_comments GROUP BY notice_id) c ON c.notice_id = n.id
+      LEFT JOIN notice_reactions r ON r.notice_id = n.id AND r.user_id = $2
+      WHERE (n.expires_at IS NULL OR n.expires_at >= CURRENT_DATE)
+        AND (n.target_wing IS NULL OR n.target_wing = '' OR n.target_wing = $1)
+      ORDER BY n.pinned DESC, n.created_at DESC
+    `, [wing || null, userId || null]);
+    return rows;
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM notices WHERE id = $1', [id]);
+    return rows[0] || null;
+  },
+  async create({ title, message, category, priority, target_wing, expires_at, pinned, created_by }) {
+    const { rows } = await pool.query(
+      `INSERT INTO notices (title, message, category, priority, target_wing, expires_at, pinned, created_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [title.trim(), message.trim(), category || 'General', priority || 'Normal',
+       (target_wing || '').trim() || null, expires_at || null, !!pinned, created_by || 'Secretary']
+    );
+    return rows[0];
+  },
+  async update(id, { title, message, category, priority, target_wing, expires_at, pinned }) {
+    const { rows } = await pool.query(
+      `UPDATE notices SET title=$1, message=$2, category=$3, priority=$4, target_wing=$5,
+        expires_at=$6, pinned=$7, updated_at=now()
+       WHERE id=$8 RETURNING *`,
+      [title.trim(), message.trim(), category || 'General', priority || 'Normal',
+       (target_wing || '').trim() || null, expires_at || null, !!pinned, id]
+    );
+    return rows[0] || null;
+  },
+  async setPinned(id, pinned) {
+    const { rows } = await pool.query('UPDATE notices SET pinned=$1 WHERE id=$2 RETURNING *', [!!pinned, id]);
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM notices WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  },
+  // Full engagement breakdown for the Secretary's "who reacted" view —
+  // every like/dislike and every comment, each with who and when.
+  async engagement(id) {
+    const { rows: reactions } = await pool.query(
+      `SELECT nr.reaction, nr.created_at, u.email, u.role, m.name AS member_name, m.wing, m.flat
+       FROM notice_reactions nr
+       JOIN users u ON u.id = nr.user_id
+       LEFT JOIN members m ON m.id = u.member_id
+       WHERE nr.notice_id = $1
+       ORDER BY nr.created_at DESC`,
+      [id]
+    );
+    const { rows: comments } = await pool.query(
+      `SELECT nc.id, nc.comment, nc.created_at, nc.author_name, u.email, u.role, m.wing, m.flat
+       FROM notice_comments nc
+       LEFT JOIN users u ON u.id = nc.user_id
+       LEFT JOIN members m ON m.id = u.member_id
+       WHERE nc.notice_id = $1
+       ORDER BY nc.created_at ASC`,
+      [id]
+    );
+    return {
+      likes: reactions.filter(r => r.reaction === 'like'),
+      dislikes: reactions.filter(r => r.reaction === 'dislike'),
+      comments
+    };
+  }
+};
+
+const noticeReactionModel = {
+  // Toggle semantics: same reaction again removes it, a different
+  // reaction replaces it. Always records who + when via the unique
+  // (notice_id, user_id) row.
+  async setReaction(noticeId, userId, reaction) {
+    const { rows: existing } = await pool.query(
+      'SELECT reaction FROM notice_reactions WHERE notice_id=$1 AND user_id=$2', [noticeId, userId]
+    );
+    if (existing[0] && existing[0].reaction === reaction) {
+      await pool.query('DELETE FROM notice_reactions WHERE notice_id=$1 AND user_id=$2', [noticeId, userId]);
+      return { reaction: null };
+    }
+    await pool.query(
+      `INSERT INTO notice_reactions (notice_id, user_id, reaction) VALUES ($1,$2,$3)
+       ON CONFLICT (notice_id, user_id) DO UPDATE SET reaction=$3, created_at=now()`,
+      [noticeId, userId, reaction]
+    );
+    return { reaction };
+  }
+};
+
+const noticeCommentModel = {
+  async create({ notice_id, user_id, author_name, comment }) {
+    const { rows } = await pool.query(
+      `INSERT INTO notice_comments (notice_id, user_id, author_name, comment) VALUES ($1,$2,$3,$4) RETURNING *`,
+      [notice_id, user_id || null, author_name, comment.trim()]
+    );
+    return rows[0];
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM notice_comments WHERE id=$1', [id]);
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM notice_comments WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  }
+};
+
 // =====================================================================
 // Controllers
 // =====================================================================
@@ -791,6 +927,112 @@ const maintenanceController = {
   }
 };
 
+const noticesController = {
+  // GET /api/notices — Secretary only: every notice + counts.
+  async list(req, res) { try { res.json(await noticeModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
+
+  // GET /api/notices/active — any logged-in user (resident or secretary):
+  // active notices scoped to their wing, with their own reaction attached.
+  async listActive(req, res) {
+    try {
+      let wing = null;
+      if (req.session.role === 'resident' && req.session.memberId) {
+        const member = await memberModel.findById(req.session.memberId);
+        wing = member ? member.wing : null;
+      }
+      res.json(await noticeModel.findActiveForUser({ wing, userId: req.session.userId }));
+    } catch (err) { dbError(res, err); }
+  },
+
+  async create(req, res) {
+    try {
+      const { title, message } = req.body || {};
+      if (!title || !String(title).trim()) return res.status(400).json({ error: 'Title is required.' });
+      if (!message || !String(message).trim()) return res.status(400).json({ error: 'Notice message is required.' });
+      const created_by = req.session.userId ? (await userModel.findById(req.session.userId)).email : 'Secretary';
+      res.status(201).json(await noticeModel.create({ ...req.body, created_by }));
+    } catch (err) { dbError(res, err); }
+  },
+  async update(req, res) {
+    try {
+      const { title, message } = req.body || {};
+      if (!title || !String(title).trim()) return res.status(400).json({ error: 'Title is required.' });
+      if (!message || !String(message).trim()) return res.status(400).json({ error: 'Notice message is required.' });
+      const updated = await noticeModel.update(req.params.id, req.body);
+      if (!updated) return res.status(404).json({ error: 'Notice not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async setPinned(req, res) {
+    try {
+      const updated = await noticeModel.setPinned(req.params.id, !!(req.body || {}).pinned);
+      if (!updated) return res.status(404).json({ error: 'Notice not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const deleted = await noticeModel.remove(req.params.id);
+      if (!deleted) return res.status(404).json({ error: 'Notice not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  },
+  // GET /api/notices/:id/engagement — Secretary only: who liked, who
+  // disliked, and every comment, each with a timestamp.
+  async engagement(req, res) {
+    try {
+      const notice = await noticeModel.findById(req.params.id);
+      if (!notice) return res.status(404).json({ error: 'Notice not found' });
+      res.json(await noticeModel.engagement(req.params.id));
+    } catch (err) { dbError(res, err); }
+  },
+
+  // POST /api/notices/:id/react — any logged-in user. Body: { reaction: 'like'|'dislike' }
+  async react(req, res) {
+    try {
+      const { reaction } = req.body || {};
+      if (!['like', 'dislike'].includes(reaction)) return res.status(400).json({ error: 'reaction must be like or dislike' });
+      const notice = await noticeModel.findById(req.params.id);
+      if (!notice) return res.status(404).json({ error: 'Notice not found' });
+      const result = await noticeReactionModel.setReaction(req.params.id, req.session.userId, reaction);
+      res.json(result);
+    } catch (err) { dbError(res, err); }
+  },
+
+  // POST /api/notices/:id/comments — any logged-in user.
+  async addComment(req, res) {
+    try {
+      const { comment } = req.body || {};
+      if (!comment || !String(comment).trim()) return res.status(400).json({ error: 'Comment text is required.' });
+      const notice = await noticeModel.findById(req.params.id);
+      if (!notice) return res.status(404).json({ error: 'Notice not found' });
+      const user = await userModel.findById(req.session.userId);
+      let authorName = 'Secretary';
+      if (user.role === 'resident') {
+        const member = user.member_id ? await memberModel.findById(user.member_id) : null;
+        authorName = member ? `${member.name} (${member.wing}, ${member.flat})` : user.email;
+      }
+      const created = await noticeCommentModel.create({
+        notice_id: req.params.id, user_id: req.session.userId, author_name: authorName, comment
+      });
+      res.status(201).json(created);
+    } catch (err) { dbError(res, err); }
+  },
+  // DELETE /api/notices/comments/:id — Secretary, or the comment's own author.
+  async removeComment(req, res) {
+    try {
+      const comment = await noticeCommentModel.findById(req.params.id);
+      if (!comment) return res.status(404).json({ error: 'Comment not found' });
+      const isOwner = comment.user_id && String(comment.user_id) === String(req.session.userId);
+      if (req.session.role !== ROLES.SECRETARY && !isOwner) {
+        return res.status(403).json({ error: 'You can only delete your own comment.' });
+      }
+      await noticeCommentModel.remove(req.params.id);
+      res.json({ success: true, id: comment.id });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
 // =====================================================================
 // DB: migrate (idempotent schema) + seeds (demo data, first-boot only)
 // =====================================================================
@@ -936,6 +1178,42 @@ async function migrate() {
         ALTER TABLE maintenance_payments ADD CONSTRAINT maintenance_payments_wing_flat_month_key UNIQUE (wing, flat, month);
       END IF;
     END $$;
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notices (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'General',
+      priority TEXT NOT NULL DEFAULT 'Normal',
+      target_wing TEXT,
+      pinned BOOLEAN NOT NULL DEFAULT false,
+      expires_at DATE,
+      created_by TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notice_reactions (
+      id SERIAL PRIMARY KEY,
+      notice_id INTEGER NOT NULL REFERENCES notices(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      reaction TEXT NOT NULL CHECK (reaction IN ('like','dislike')),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE(notice_id, user_id)
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notice_comments (
+      id SERIAL PRIMARY KEY,
+      notice_id INTEGER NOT NULL REFERENCES notices(id) ON DELETE CASCADE,
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      author_name TEXT NOT NULL,
+      comment TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
   `);
 
   console.log('✅ Database schema ready');
@@ -1197,6 +1475,21 @@ staffRouter.post('/', requireSecretary, staffController.create);
 staffRouter.put('/:id', requireSecretary, staffController.update);
 staffRouter.delete('/:id', requireSecretary, staffController.remove);
 app.use('/api/staff', staffRouter);
+
+const noticesRouter = express.Router();
+// Static-prefixed routes are registered before the '/:id' catch-all so
+// e.g. GET /active never gets swallowed by GET /:id/engagement.
+noticesRouter.get('/', requireSecretary, noticesController.list);
+noticesRouter.get('/active', requireAuth, noticesController.listActive);
+noticesRouter.post('/', requireSecretary, noticesController.create);
+noticesRouter.delete('/comments/:id', requireAuth, noticesController.removeComment);
+noticesRouter.get('/:id/engagement', requireSecretary, noticesController.engagement);
+noticesRouter.patch('/:id/pin', requireSecretary, noticesController.setPinned);
+noticesRouter.post('/:id/react', requireAuth, noticesController.react);
+noticesRouter.post('/:id/comments', requireAuth, noticesController.addComment);
+noticesRouter.put('/:id', requireSecretary, noticesController.update);
+noticesRouter.delete('/:id', requireSecretary, noticesController.remove);
+app.use('/api/notices', noticesRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', society: 'Bhargavi Housing Society' });
