@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governance — Bhargavi Housing Society</title>
+<link rel="icon" href="images/branding/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---- base/variables.css ---- */
+/* =====================================================
+   DESIGN TOKENS — shared colours, type, radius, shadow
+   Loaded before every other stylesheet.
+   ===================================================== */
+:root{
+  --navy-950: #0E1B32;
+  --navy-900: #142A4C;
+  --navy-800: #1B3A6B;
+  --navy-700: #234B85;
+  --sky-500:  #4E8FC7;
+  --sky-100:  #E7F0F9;
+  --gold-500: #D9A441;
+  --gold-600: #C08A2A;
+  --diya-600: #C1522C;
+  --diya-700: #A5411F;
+  --paper:    #F6F5F1;
+  --paper-2:  #FFFFFF;
+  --ink-900:  #1B2130;
+  --ink-600:  #4A5468;
+  --ink-400:  #7C8598;
+  --line:     #E2E1D9;
+
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 10px 30px rgba(14,27,50,0.08);
+  --shadow-card: 0 4px 18px rgba(14,27,50,0.10);
+  --ease: cubic-bezier(.22,.85,.32,1);
+}
+
+
+/* ---- pages/site.css ---- */
+/* =====================================================
+   BHARGAVI HOUSING SOCIETY — DESIGN TOKENS
+   Palette: courtyard navy + marigold gold + diya orange
+   Type: Sora (display) / Inter (body) / IBM Plex Mono (utility)
+   Signature: the courtyard fountain — a recurring wave divider
+   ===================================================== */
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink-900);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0 0 .4em;color:var(--navy-950);letter-spacing:-.01em;}
+p{margin:0 0 1em;color:var(--ink-600);}
+ul,ol{color:var(--ink-600);}
+button{font-family:var(--font-body);cursor:pointer;}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+
+/* ---------- utility ---------- */
+.eyebrow-mono{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.16em;
+  color:var(--diya-600);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+.mini-label-mono{
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.1em;
+  color:var(--ink-400);
+  text-transform:uppercase;
+  margin:0 0 .3em;
+}
+.section{padding:5.5rem 1.5rem;max-width:1240px;margin:0 auto;}
+.section-head{max-width:640px;margin-bottom:2.6rem;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.4rem);}
+.section-sub{font-size:1.02rem;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-family:var(--font-body);font-weight:600;font-size:.92rem;
+  padding:.85em 1.6em;border-radius:999px;border:1.5px solid transparent;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  white-space:nowrap;
+}
+.btn-primary{background:var(--diya-600);color:#fff;box-shadow:0 8px 20px rgba(193,82,44,.28);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(193,82,44,.36);background:var(--diya-700);}
+.btn-ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.55);color:#fff;backdrop-filter:blur(6px);}
+.btn-ghost:hover{background:rgba(255,255,255,.22);transform:translateY(-2px);}
+.btn-outline{background:transparent;border-color:var(--navy-800);color:var(--navy-800);}
+.btn-outline:hover{background:var(--navy-800);color:#fff;}
+.btn-sm{padding:.55em 1.1em;font-size:.8rem;}
+.btn-block{width:100%;}
+
+.tag{
+  display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;
+  padding:.3em .7em;border-radius:6px;font-weight:600;text-transform:uppercase;
+}
+.tag.cultural{background:#FBEAD9;color:var(--diya-700);}
+.tag.national{background:#E4F2E7;color:#2E6B44;}
+.tag.social{background:var(--sky-100);color:var(--navy-800);}
+.tag.meetings{background:#F1E9F7;color:#6C3F91;}
+.tag.pending{background:#FDF0DA;color:#9A6716;margin-left:.5em;}
+.tag.review{background:#E4F2E7;color:#2E6B44;margin-left:.5em;}
+
+/* ---------- reveal-on-scroll ---------- */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+
+/* ---------- preloader ---------- */
+#preloader{
+  position:fixed;inset:0;background:var(--navy-950);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#preloader.hide{opacity:0;visibility:hidden;}
+.loader-ring{width:52px;height:52px;border-radius:50%;border:3px solid rgba(217,164,65,.25);border-top-color:var(--gold-500);animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- ticker ---------- */
+.ticker-bar{background:var(--navy-950);color:var(--sky-100);overflow:hidden;padding:.5rem 0;position:relative;z-index:210;}
+.ticker-track{display:flex;gap:3rem;white-space:nowrap;width:max-content;animation:ticker 28s linear infinite;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.02em;padding-left:1rem;}
+.ticker-track span{opacity:.92;}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---------- header ---------- */
+.site-header{
+  position:sticky;top:0;z-index:200;background:rgba(20,42,76,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);
+  transition:background .3s ease;
+}
+.header-inner{max-width:1240px;margin:0 auto;padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
+.brand{display:flex;align-items:center;gap:.7rem;}
+.brand-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.2;}
+.brand-text strong{font-family:var(--font-display);color:#fff;font-size:1rem;}
+.brand-text em{font-style:normal;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--sky-100);opacity:.75;}
+
+.main-nav{display:flex;gap:1.9rem;}
+.main-nav a{color:#EDEFF3;font-size:.88rem;font-weight:500;position:relative;padding:.2rem 0;}
+.main-nav a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--gold-500);transition:width .3s var(--ease);}
+.main-nav a:hover::after{width:100%;}
+
+.hamburger{background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:10px;width:42px;height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.hamburger span{display:block;width:19px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
+
+/* ---------- header auth (login / signup, or account pill) ---------- */
+.header-auth{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.header-auth .account-pill{background:rgba(255,255,255,.14);color:#fff;}
+.header-auth .btn-outline{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;}
+.header-auth .btn-outline:hover{background:rgba(255,255,255,.16);color:#fff;}
+@media (max-width:560px){
+  .header-auth{gap:.4rem;}
+  .header-auth .btn{padding:.5em .8em;font-size:.74rem;}
+}
+@media (max-width:400px){
+  .header-auth .btn-sm.auth-signup-btn{display:none;} /* keep just "Log in" on very small screens */
+}
+
+/* ---------- slide-in menu ---------- */
+.menu-overlay{position:fixed;inset:0;background:rgba(14,27,50,.45);opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;z-index:300;}
+.menu-overlay.show{opacity:1;visibility:visible;}
+.slide-menu{
+  position:fixed;top:0;right:0;height:100%;width:320px;max-width:88vw;background:var(--paper-2);
+  z-index:301;transform:translateX(100%);transition:transform .4s var(--ease);
+  box-shadow:-20px 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column;padding:1.6rem;
+}
+.slide-menu.show{transform:translateX(0);}
+.slide-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem;}
+.slide-menu-logo{width:38px;height:38px;border-radius:9px;}
+.close-btn{background:none;border:none;font-size:1.8rem;line-height:1;color:var(--ink-600);}
+.slide-menu-links{display:flex;flex-direction:column;gap:.2rem;}
+.slide-menu-links a{padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);font-size:1rem;transition:padding-left .25s ease, color .25s ease;}
+.slide-menu-links a:hover{padding-left:.7rem;color:var(--diya-600);}
+
+.view-details-trigger{
+  display:flex;align-items:center;gap:.5rem;width:100%;text-align:left;background:none;border:none;
+  padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);
+  font-size:1rem;font-family:var(--font-body);cursor:pointer;transition:padding-left .25s ease, color .25s ease;
+}
+.view-details-trigger:hover{padding-left:.7rem;color:var(--diya-600);}
+.slide-menu-divider{height:1px;background:var(--line);margin:1.4rem 0;}
+.secretary-trigger{
+  display:flex;align-items:center;gap:.8rem;background:var(--navy-950);color:#fff;border:none;
+  padding:.9rem 1rem;border-radius:var(--radius-md);text-align:left;transition:transform .25s ease, background .25s ease;
+}
+.secretary-trigger:hover{transform:translateY(-2px);background:var(--navy-800);}
+.secretary-trigger .lock-ic{font-size:1.3rem;}
+.secretary-trigger strong{display:block;font-size:.92rem;}
+.secretary-trigger small{color:var(--sky-100);opacity:.75;font-size:.72rem;}
+.slide-menu-foot{margin-top:auto;font-family:var(--font-mono);font-size:.7rem;color:var(--ink-400);text-align:center;}
+
+/* ---------- modals ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(14,27,50,.55);z-index:400;
+  display:flex;align-items:center;justify-content:center;padding:1.2rem;
+  opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;
+}
+.modal-overlay.show{opacity:1;visibility:visible;}
+.modal-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);padding:2.2rem;max-width:420px;width:100%;
+  position:relative;box-shadow:0 30px 60px rgba(0,0,0,.25);
+  transform:scale(.92) translateY(10px);opacity:0;transition:transform .35s var(--ease), opacity .35s var(--ease);
+  max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.show .modal-card{transform:scale(1) translateY(0);opacity:1;}
+.modal-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;font-size:1.6rem;color:var(--ink-400);line-height:1;}
+.modal-icon{font-size:2rem;margin-bottom:.4rem;}
+.modal-card h3{font-size:1.35rem;}
+.modal-card input[type=password]{
+  width:100%;padding:.85em 1em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-mono);letter-spacing:.3em;font-size:1rem;margin:1rem 0 .4rem;text-align:center;
+}
+.modal-card input[type=password]:focus{outline:none;border-color:var(--diya-600);}
+.modal-error{color:#B3261E;font-size:.82rem;display:none;margin-bottom:.8rem;}
+.modal-error.show{display:block;}
+
+.secretary-panel{max-width:640px;}
+.sec-panel-head{display:flex;gap:.9rem;align-items:flex-start;margin-bottom:0;}
+.sec-panel-head .lock-ic{font-size:1.8rem;}
+.sec-panel-head p{margin:0;}
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.sec-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.1rem;}
+.sec-card h4{font-size:.95rem;margin-bottom:.6rem;}
+.sec-card ul{list-style:none;margin:0;padding:0;font-size:.82rem;}
+.sec-card li{padding:.35rem 0;border-bottom:1px dashed var(--line);}
+.sec-card li:last-child{border-bottom:none;}
+.sec-mini{font-size:.82rem;margin:.2rem 0 .6rem;}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:.4rem;}
+.progress-fill{height:100%;background:var(--gold-500);border-radius:99px;}
+.sec-note{margin-top:1.2rem;font-size:.76rem;color:var(--ink-400);}
+
+/* ---------- secretary full admin panel ---------- */
+.secretary-panel-full{max-width:960px;width:96vw;padding:1.8rem 1.8rem 2rem;}
+.sec-top-bar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding-right:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1.1rem;margin-bottom:1.1rem;}
+.sec-top-actions{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.sec-top-actions .modal-close{position:static;font-size:1.5rem;}
+#secGoWebsiteBtn{white-space:nowrap;}
+
+.sec-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.sec-tab{
+  background:var(--paper);border:1.5px solid var(--line);color:var(--ink-600);
+  font-weight:600;font-size:.86rem;padding:.55em 1.1em;border-radius:999px;
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.sec-tab:hover{border-color:var(--gold-500);}
+.sec-tab.active{background:var(--navy-950);color:#fff;border-color:var(--navy-950);}
+
+.sec-tab-panel{display:none;}
+.sec-tab-panel.active{display:block;animation:fadeInTab .3s ease;}
+@keyframes fadeInTab{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.1rem;}
+.sec-summary-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:.8rem 1rem;}
+.sec-summary-box span{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;color:var(--ink-400);text-transform:uppercase;margin-bottom:.3rem;}
+.sec-summary-box strong{font-family:var(--font-display);font-size:1.25rem;color:var(--navy-950);}
+.sec-summary-box.income strong{color:#2E6B44;}
+.sec-summary-box.expense strong{color:#B3261E;}
+.sec-summary-box.balance strong{color:var(--diya-600);}
+
+.sec-inline-form{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;background:var(--paper);border:1px dashed var(--line);border-radius:var(--radius-md);padding:.9rem;margin-bottom:1.1rem;}
+.sec-inline-form input, .sec-inline-form select{
+  flex:1 1 140px;min-width:110px;padding:.6em .8em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-body);font-size:.85rem;background:#fff;color:var(--ink-900);
+}
+.sec-inline-form input:focus, .sec-inline-form select:focus{outline:none;border-color:var(--diya-600);}
+.sec-inline-form button{flex:0 0 auto;}
+
+.sec-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-md);}
+.sec-table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:560px;}
+.sec-table th{text-align:left;background:var(--paper);color:var(--ink-400);font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;padding:.7rem .8rem;border-bottom:1px solid var(--line);}
+.sec-table td{padding:.65rem .8rem;border-bottom:1px solid var(--line);color:var(--ink-900);vertical-align:middle;}
+.sec-table tbody tr:last-child td{border-bottom:none;}
+.sec-table tbody tr:hover{background:var(--sky-100);}
+.sec-row-btn{background:none;border:none;font-size:.95rem;padding:.15rem .35rem;border-radius:6px;color:var(--ink-400);}
+.sec-row-btn:hover{background:var(--line);color:var(--navy-950);}
+.sec-row-btn.danger:hover{background:#FBE4E1;color:#B3261E;}
+.sec-empty{padding:1.4rem;text-align:center;color:var(--ink-400);font-size:.85rem;}
+.tag.active{background:#E4F2E7;color:#2E6B44;}
+.tag.inactive{background:#F1E1E1;color:#8A3B3B;}
+.tag.due{background:#FDF0DA;color:#9A6716;}
+.tag.paid{background:#E4F2E7;color:#2E6B44;}
+.tag.ongoing{background:#F1E9F7;color:#6C3F91;}
+.tag.planned{background:var(--sky-100);color:var(--navy-800);}
+.tag.completed{background:#E4F2E7;color:#2E6B44;}
+
+@media (max-width:640px){
+  .sec-summary-row{grid-template-columns:1fr;}
+  .secretary-panel-full{padding:1.4rem 1.1rem 1.6rem;}
+  .edit-toolbar{flex-direction:column;align-items:stretch;text-align:center;border-radius:var(--radius-lg);padding:.9rem;}
+  .edit-toolbar-actions{justify-content:center;}
+}
+
+/* ---------- live edit mode: persistent yellow highlight on editable content ---------- */
+body.site-edit-mode{padding-bottom:64px;}
+.site-edit-mode [data-edit-key]{
+  outline:2px dashed var(--gold-500);outline-offset:3px;border-radius:4px;
+  background:rgba(217,164,65,.10);transition:background .2s ease, outline-color .2s ease;
+}
+.site-edit-mode [data-edit-key^="text-"]{cursor:text;}
+.site-edit-mode [data-edit-key]:hover{background:rgba(217,164,65,.26);outline-color:var(--diya-600);}
+.site-edit-mode [data-edit-key^="text-"]:focus{outline:2px solid var(--diya-600);background:rgba(217,164,65,.18);}
+.site-edit-mode [data-edit-key^="img-"]{cursor:pointer;position:relative;display:block;}
+.site-edit-mode [data-edit-key^="img-"]::after{
+  content:"✏️ Click to change photo";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  background:var(--navy-950);color:#fff;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.03em;
+  padding:.35em .7em;border-radius:999px;opacity:0;transition:opacity .2s ease;white-space:nowrap;pointer-events:none;
+}
+.site-edit-mode [data-edit-key^="img-"]:hover::after{opacity:1;}
+
+.edit-toolbar{
+  position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%) translateY(140%);
+  z-index:500;background:var(--navy-950);color:#fff;border-radius:999px;
+  display:flex;align-items:center;gap:1rem;padding:.6rem .7rem .6rem 1.3rem;
+  box-shadow:0 16px 40px rgba(0,0,0,.3);border:1.5px solid var(--gold-500);
+  transition:transform .35s var(--ease);max-width:92vw;flex-wrap:wrap;
+}
+.edit-toolbar.show{transform:translateX(-50%) translateY(0);}
+.edit-toolbar-msg{font-size:.82rem;color:var(--sky-100);}
+.edit-toolbar-actions{display:flex;gap:.5rem;flex-shrink:0;}
+
+/* ---------- yellow "re-entering the website" flash ---------- */
+.reentry-flash{
+  position:fixed;inset:0;background:var(--gold-500);opacity:0;pointer-events:none;
+  z-index:9998;transition:opacity .28s ease;
+}
+.reentry-flash.show{opacity:.5;}
+.glow-pulse{animation:glowPulse .8s ease;position:relative;z-index:1;}
+@keyframes glowPulse{
+  0%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+  35%{box-shadow:0 0 0 5px rgba(217,164,65,.6), 0 0 46px 12px rgba(217,164,65,.4);}
+  100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+}
+
+.meeting-popup{max-width:440px;}
+.meeting-detail-row{display:flex;align-items:center;gap:.6em;font-size:.92rem;color:var(--ink-600);margin-bottom:.4em;}
+.meeting-agenda{background:var(--paper);border-radius:var(--radius-md);padding:1rem 1.2rem;margin:1rem 0;}
+.meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
+.meeting-agenda li{margin-bottom:.3rem;}
+.meeting-actions{display:flex;gap:.6rem;flex-wrap:wrap;}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;color:#fff;}
+.hero-media{position:absolute;inset:0;z-index:0;}
+.hero-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);animation:heroZoom 16s ease-in-out infinite alternate;}
+@keyframes heroZoom{from{transform:scale(1.06);}to{transform:scale(1);}}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(14,27,50,.55) 0%, rgba(14,27,50,.72) 55%, rgba(14,27,50,.92) 100%);}
+.hero-content{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:6rem 1.5rem 3rem;text-align:center;}
+.hero-content h1{font-size:clamp(2.4rem,6vw,4.2rem);color:#fff;line-height:1.03;}
+.hero-sub{font-size:1.08rem;color:#DDE3EE;max-width:560px;margin:1.1rem auto 1.8rem;}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.hero-stats{
+  position:relative;z-index:1;display:flex;justify-content:center;gap:clamp(1.4rem,5vw,4rem);
+  padding:1.6rem 1.5rem 2.4rem;flex-wrap:wrap;
+}
+.hero-stats div{text-align:center;}
+.hero-stats strong{display:block;font-family:var(--font-mono);font-size:1.9rem;color:var(--gold-500);}
+.hero-stats span{font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:#C7CEDB;}
+
+/* ---------- fountain divider (signature) ---------- */
+.fountain-divider{width:100%;overflow:hidden;line-height:0;color:var(--navy-800);background:var(--paper);}
+.fountain-divider svg{width:100%;height:40px;display:block;}
+.fountain-divider path{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.35;}
+.fountain-divider.small svg{height:26px;}
+
+/* ---------- layout w/ left rail ---------- */
+.with-rail{display:grid;grid-template-columns:280px 1fr;gap:0;max-width:1400px;margin:0 auto;align-items:start;}
+.content-col{min-width:0;}
+
+.left-rail{
+  position:sticky;top:110px;align-self:start;padding:2.4rem 1.2rem 2.4rem 1.5rem;
+  display:flex;flex-direction:column;gap:1.6rem;
+}
+.rail-slider{background:var(--navy-950);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-soft);}
+.rail-track{display:flex;transition:transform .6s var(--ease);}
+.rail-slide{min-width:100%;position:relative;}
+.rail-slide img{width:100%;height:210px;object-fit:cover;}
+.rail-slide p{
+  position:absolute;left:0;right:0;bottom:0;margin:0;padding:1rem;
+  background:linear-gradient(180deg, transparent, rgba(14,27,50,.92));color:#fff;font-size:.8rem;
+}
+.rail-slide p strong{display:block;font-family:var(--font-display);font-size:.92rem;margin-bottom:.2rem;color:var(--gold-500);}
+.rail-dots{display:flex;justify-content:center;gap:.4rem;padding:.8rem;}
+.rail-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .25s ease, transform .25s ease;}
+.rail-dots span.active{background:var(--gold-500);transform:scale(1.3);}
+
+.rail-actions{display:flex;flex-direction:column;gap:.55rem;}
+.rail-btn{
+  text-align:left;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:.75rem .9rem;font-size:.84rem;font-weight:500;color:var(--navy-950);
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.rail-btn:hover{transform:translateX(4px);border-color:var(--diya-600);box-shadow:var(--shadow-card);}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2.8rem;align-items:center;}
+.about-facts{display:flex;gap:1.8rem;margin-top:1.4rem;flex-wrap:wrap;}
+.about-facts div{display:flex;flex-direction:column;gap:.15rem;}
+.fact-num-mono{font-family:var(--font-mono);font-weight:600;color:var(--navy-800);font-size:1.05rem;}
+.about-facts span:last-child{font-size:.74rem;color:var(--ink-400);text-transform:uppercase;letter-spacing:.05em;}
+.about-photos{position:relative;height:380px;}
+.about-photos .photo-a{position:absolute;top:0;left:0;width:72%;height:260px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);}
+.about-photos .photo-b{position:absolute;bottom:0;right:0;width:60%;height:220px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);border:6px solid var(--paper);}
+
+/* ---------- dashboard mock ---------- */
+.dashboard-mock{background:var(--navy-950);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:var(--shadow-soft);}
+.dash-topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.4rem;}
+.dash-tabs{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.dash-tab{font-size:.84rem;color:#AEB8CC;font-weight:500;padding-bottom:.3rem;border-bottom:2px solid transparent;cursor:default;}
+.dash-tab.active{color:#fff;border-color:var(--gold-500);}
+.dash-body{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.dash-card{background:var(--navy-900);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-md);padding:1.1rem;}
+.dash-card h4{color:#fff;font-size:1.05rem;margin-bottom:.15rem;}
+.dash-card .mini-label-mono{color:var(--gold-500);opacity:.85;}
+.dash-note{font-size:.78rem;color:#9AA6BC;margin-bottom:.8rem;}
+.dash-card .btn-outline{border-color:rgba(255,255,255,.4);color:#fff;}
+.dash-card .btn-outline:hover{background:#fff;color:var(--navy-950);}
+
+/* ---------- events ---------- */
+.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:2.2rem;}
+.filter-chip{
+  padding:.55em 1.2em;border-radius:999px;border:1.5px solid var(--line);background:var(--paper-2);
+  font-size:.82rem;font-weight:600;color:var(--ink-600);transition:all .25s ease;
+}
+.filter-chip:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.filter-chip.active{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
+
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.event-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
+.event-card img{height:190px;width:100%;object-fit:cover;transition:transform .5s ease;}
+.event-card:hover img{transform:scale(1.06);}
+.event-body{padding:1.2rem 1.3rem 1.4rem;}
+.event-body h3{font-size:1.12rem;margin:.5rem 0 .4rem;}
+.event-body p{font-size:.88rem;margin:0;}
+.event-card.hidden{display:none;}
+
+/* ---------- governance ---------- */
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+.gov-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.5rem;transition:transform .3s ease, box-shadow .3s ease;}
+.gov-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card);}
+.gov-num-mono{font-family:var(--font-mono);font-weight:700;color:var(--gold-600);font-size:1.5rem;display:block;margin-bottom:.5rem;}
+.gov-card h4{font-size:1rem;}
+.gov-card p{font-size:.85rem;}
+
+/* ---------- notice board ---------- */
+.notices-section{background:var(--paper);}
+.notice-board{
+  background:#FBF9F2;border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:1.6rem;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;
+  background-image:radial-gradient(circle, rgba(0,0,0,.03) 1px, transparent 1px);
+  background-size:14px 14px;
+}
+.pin-note{
+  background:var(--paper-2);border-radius:var(--radius-sm);padding:1rem 1.1rem;position:relative;
+  box-shadow:0 3px 10px rgba(14,27,50,.08);border-left:3px solid var(--diya-600);
+}
+.pin-date-mono{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;color:var(--diya-600);font-weight:700;display:block;margin-bottom:.35rem;}
+.pin-note p{margin:0;font-size:.88rem;color:var(--ink-900);}
+
+/* ---------- contact ---------- */
+.contact-section{background:var(--navy-950);color:#fff;max-width:none;margin:0;padding:5.5rem 1.5rem;}
+.contact-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center;}
+.contact-copy h2{color:#fff;}
+.contact-copy p{color:#B9C2D4;}
+.contact-buttons{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem;}
+.contact-copy .btn-outline{border-color:rgba(255,255,255,.5);color:#fff;}
+.contact-copy .btn-outline:hover{background:#fff;color:var(--navy-950);}
+.contact-photo img{border-radius:var(--radius-lg);height:340px;object-fit:cover;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+
+/* ---------- footer ---------- */
+.site-footer{background:var(--navy-950);color:#C7CEDB;border-top:1px solid rgba(255,255,255,.08);}
+.footer-top{
+  max-width:1240px;margin:0 auto;padding:3.4rem 1.5rem 2.4rem;
+  display:grid;grid-template-columns:1.4fr .8fr .8fr 1fr 1.2fr;gap:2rem;
+}
+.footer-brand img{width:44px;height:44px;border-radius:10px;margin-bottom:.7rem;}
+.footer-brand p{color:#fff;font-family:var(--font-display);font-size:1rem;}
+.footer-brand span{font-family:var(--font-body);font-size:.78rem;color:#8B96AC;font-weight:400;}
+.footer-col h5{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-500);margin:0 0 .9rem;}
+.footer-col a{display:block;font-size:.86rem;color:#C7CEDB;padding:.3rem 0;transition:color .2s ease, padding-left .2s ease;}
+.footer-col a:hover{color:var(--gold-500);padding-left:.3rem;}
+.footer-note{font-size:.82rem;color:#8B96AC;margin-bottom:.7rem;}
+.footer-form{display:flex;gap:.4rem;}
+.footer-form input{flex:1;min-width:0;padding:.6em .8em;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:.82rem;}
+.footer-form input::placeholder{color:#7C87A0;}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);padding:1.2rem 1.5rem;max-width:1240px;margin:0 auto;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.76rem;color:#7C87A0;
+}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(20px);
+  background:var(--navy-950);color:#fff;padding:.85em 1.4em;border-radius:999px;font-size:.86rem;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:opacity .3s ease, transform .3s ease, visibility .3s ease;
+  z-index:500;max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+
+/* ---------- scroll top ---------- */
+.scroll-top{
+  position:fixed;right:1.4rem;bottom:1.6rem;width:44px;height:44px;border-radius:50%;
+  background:var(--diya-600);color:#fff;border:none;font-size:1.1rem;box-shadow:0 8px 20px rgba(193,82,44,.35);
+  opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s ease, transform .3s ease, visibility .3s ease;z-index:150;
+}
+.scroll-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1080px){
+  .with-rail{grid-template-columns:1fr;}
+  .left-rail{position:static;flex-direction:row;overflow-x:auto;padding:1.6rem;gap:1rem;}
+  .rail-slider{min-width:280px;}
+  .rail-actions{flex-direction:row;flex-wrap:wrap;min-width:280px;}
+  .rail-btn{flex:1 1 auto;}
+  .dash-body{grid-template-columns:repeat(2,1fr);}
+  .gov-grid{grid-template-columns:repeat(2,1fr);}
+  .events-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media (max-width: 760px){
+  .main-nav{display:none;}
+  .about-grid{grid-template-columns:1fr;}
+  .about-photos{height:300px;margin-top:1rem;}
+  .contact-grid{grid-template-columns:1fr;}
+  .contact-photo img{height:220px;}
+  .events-grid{grid-template-columns:1fr;}
+  .dash-body{grid-template-columns:1fr;}
+  .sec-grid{grid-template-columns:1fr;}
+  .notice-board{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .hero-content{padding-top:4rem;}
+}
+/* =====================================================
+   NAV — refined pill-hover, better spacing/legibility
+   ===================================================== */
+.main-nav{align-items:center;gap:.3rem;}
+.main-nav a{
+  padding:.5rem .95rem;border-radius:999px;font-size:.85rem;letter-spacing:.01em;
+  transition:background .25s var(--ease), color .25s var(--ease);
+}
+.main-nav a::after{display:none;}
+.main-nav a:hover{background:rgba(255,255,255,.1);}
+.main-nav a.active{background:rgba(217,164,65,.16);color:var(--gold-500);font-weight:600;}
+
+/* =====================================================
+   TEASER CARDS — "read more" link that opens the full page
+   ===================================================== */
+.card-readmore{
+  display:inline-flex;align-items:center;gap:.35em;margin-top:.7em;
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;font-weight:600;
+  color:var(--diya-600);
+}
+.card-readmore svg{width:13px;height:13px;transition:transform .2s var(--ease);}
+.event-card:hover .card-readmore svg,
+.gov-card:hover .card-readmore svg,
+.pin-note:hover .card-readmore svg{transform:translateX(3px);}
+.event-card, .gov-card, .pin-note{cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);}
+.event-card:hover, .gov-card:hover, .pin-note:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+
+/* =====================================================
+   DETAIL PAGES — event.html / governance.html / notice.html
+   ===================================================== */
+.detail-breadcrumb{
+  font-family:var(--font-mono);font-size:.76rem;color:var(--ink-400);
+  display:flex;align-items:center;gap:.4em;flex-wrap:wrap;margin-bottom:1.4rem;
+}
+.detail-breadcrumb a{color:var(--diya-600);font-weight:600;}
+.detail-hero-img{width:100%;max-height:420px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:1.8rem;box-shadow:var(--shadow-card);}
+.detail-title-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8em;margin-bottom:.3em;}
+.detail-title-row h1{font-size:clamp(1.7rem,3.4vw,2.5rem);margin:0;}
+.detail-lede{font-size:1.05rem;color:var(--ink-600);max-width:680px;margin-bottom:1.8rem;}
+.detail-meta-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem;
+  background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.3rem 1.5rem;margin-bottom:2rem;
+}
+.detail-meta-item .mini-label-mono{margin-bottom:.25em;}
+.detail-meta-item p{margin:0;color:var(--navy-950);font-weight:600;font-size:.94rem;}
+.detail-body p{font-size:1.02rem;max-width:720px;}
+.detail-highlights{margin:0 0 2rem;padding:0;list-style:none;max-width:680px;}
+.detail-highlights li{
+  display:flex;align-items:flex-start;gap:.6em;padding:.55em 0;
+  border-bottom:1px solid var(--line);color:var(--ink-600);font-size:.96rem;
+}
+.detail-highlights li:last-child{border-bottom:none;}
+.detail-highlights li svg{flex:0 0 auto;width:16px;height:16px;color:var(--diya-600);margin-top:.15em;}
+.detail-related{margin-top:2.6rem;padding-top:2.2rem;border-top:1px solid var(--line);}
+.detail-related h3{font-size:1.15rem;margin-bottom:1rem;}
+.detail-related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+.detail-related-card{
+  display:block;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;
+  background:var(--paper-2);transition:transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+.detail-related-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+.detail-related-card img{width:100%;height:110px;object-fit:cover;}
+.detail-related-card .drc-body{padding:.8rem .9rem;}
+.detail-related-card h4{margin:0 0 .2em;font-size:.9rem;color:var(--navy-950);}
+.detail-related-card p{margin:0;font-size:.78rem;color:var(--ink-400);}
+.detail-back{
+  display:inline-flex;align-items:center;gap:.4em;margin-bottom:1.6rem;
+  font-family:var(--font-mono);font-size:.8rem;color:var(--ink-600);font-weight:600;
+}
+.detail-back:hover{color:var(--diya-600);}
+.detail-notfound{padding:5rem 0;text-align:center;}
+.detail-page-main{max-width:900px;margin:0 auto;padding:3.2rem 1.5rem 5rem;}
+
+@media (max-width: 760px){
+  .detail-meta-grid{grid-template-columns:1fr 1fr;}
+}
+
+</style>
+<style>body.site-gate-pending{visibility:hidden;}</style>
+</head>
+<body class="site-gate-pending">
+
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo" class="brand-logo">
+      <span class="brand-text">
+        <strong>Bhargavi Housing Society</strong>
+        <em>Community &amp; Home · Reg. No. 123/2026</em>
+      </span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html#about">About</a>
+      <a href="index.html#dashboard">Dashboard</a>
+      <a href="index.html#events">Events</a>
+      <a href="index.html#governance" class="active">Governance</a>
+      <a href="index.html#notices">Notices</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="header-auth" id="headerAuthSlot"></div>
+  </div>
+</header>
+
+<main class="detail-page-main" id="detailMain">
+  <!-- filled by JS -->
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Bhargavi Housing Society. Reg. No. 123/2026. All rights reserved.</p>
+    <p>Built with 🧡 by the residents, for the residents.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+'use strict';
+
+    // ---- utils/api.js (renamed to avoid collision) ----
+    // Thin wrapper around fetch() for JSON APIs: sends/receives JSON, always
+    // includes the session cookie, and throws a normal Error with the
+    // server's message so callers can just try/catch.
+
+    async function sharedApiCore(path, options = {}) {
+      const res = await fetch(path, {
+        method: options.method || 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* no body */ }
+      if (!res.ok) {
+        throw new Error((data && data.error) || `Request failed (${res.status})`);
+      }
+      return data;
+    }
+
+    // ---- utils/icons.js ----
+    // A small set of inline SVG icons (stroke-based, single colour via
+    // currentColor) used across the site instead of emoji, so the UI reads
+    // as a proper product rather than a chat message. Import the ones you
+    // need: `import { icon } from '/js/utils/icons.js'`.
+
+    const paths = {
+      building: '<path d="M4 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"/><path d="M14 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12"/><path d="M9 7h.01M9 11h.01M9 15h.01M18 12h.01M18 16h.01"/>',
+      door: '<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M14 12h.01"/>',
+      user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+      hospital: '<rect x="3" y="8" width="18" height="13" rx="1.2"/><path d="M9 21V8"/><path d="M12 12v4M10 14h4"/><path d="M9 8V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3"/>',
+      ambulance: '<path d="M3 17V9a1 1 0 0 1 1-1h9v9"/><path d="M13 12h4l3 3v2h-2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/><path d="M7 6v3M5.5 7.5h3"/>',
+      phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+      note: '<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+      lock: '<rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+      mail: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6 8.5 6.5L20.5 6"/>',
+      shield: '<path d="M12 3l7 3v6c0 4.6-3 8-7 9-4-1-7-4.4-7-9V6l7-3Z"/>',
+      chevronLeft: '<path d="m14.5 5-7 7 7 7"/>',
+      close: '<path d="m6 6 12 12M18 6 6 18"/>',
+      logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>',
+      users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6"/><path d="M15.5 6.5a3 3 0 0 1 0 5.6"/><path d="M17 14.2c2.3.5 4 2.6 4 5.3"/>',
+      wallet: '<path d="M20 7H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M4 9V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.1"/>',
+      folder: '<path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/>',
+      wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 4.6L3 17.2V21h3.8l6.3-6.3a4 4 0 0 0 4.6-5.4l-2.6 2.6-2-2 2.6-2.6Z"/>',
+      receipt: '<path d="M6 3h12v18l-2.5-1.5L13 21l-2.5-1.5L8 21l-2-1.5V3Z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+      key: '<circle cx="7.5" cy="15.5" r="3.5"/><path d="M10.6 12.4 19 4"/><path d="M16 7l2 2"/><path d="M13.5 9.5l2 2"/>',
+      camera: '<path d="M4 8a1 1 0 0 1 1-1h2.2l1-1.6A1 1 0 0 1 9 5h6a1 1 0 0 1 .8.4L16.8 7H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z"/><circle cx="12" cy="13" r="3.4"/>',
+      trash: '<path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/><path d="M10 11v6M14 11v6"/>',
+      edit: '<path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M14 6l3 3"/>',
+      external: '<path d="M9 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/><path d="M14 4h6v6"/><path d="M20 4 11 13"/>',
+      check: '<path d="M5 13l4 4L19 7"/>'
+    };
+
+    // Returns a ready-to-insert SVG string. size in px, defaults to 18.
+    function icon(name, size) {
+      const s = size || 18;
+      const body = paths[name] || paths.note;
+      return `<svg class="icon" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+    }
+
+    // ---- utils/dom.js ----
+    function escapeHtml(str) {
+      return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    // ---- content-data.js ----
+    // Shared content for Events, Governance and Notices — used by the
+    // homepage teaser cards AND the full detail pages (event.html,
+    // governance.html, notice.html). Kept as one data object so both sides
+    // always agree, and so a click on any card resolves to a real, working
+    // detail page via ?id=<slug>.
+    const SITE_CONTENT = {
+      events: [
+        { id: 'diwali', cat: 'cultural', tag: 'Cultural & Festive', title: 'Diwali', img: 'images/gallery/diwali.jpg',
+          teaser: 'Diyas, a hand-drawn rangoli and sparklers on every balcony.',
+          detail: 'Diyas are lit around the courtyard fountain, a hand-drawn rangoli forms the centrepiece near the main gate, and sparklers light up every balcony across all three wings. The evening usually wraps with a shared sweets table organised by volunteers.',
+          when: 'Late October / early November (as per the lunar calendar)', venue: 'Courtyard fountain & Wing A–C balconies',
+          highlights: ['Community rangoli competition', 'Diya lighting around the fountain', 'Sweets table for all residents', 'Kids\' sparkler zone (supervised)'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'ganesh-chaturthi', cat: 'cultural', tag: 'Cultural & Festive', title: 'Ganesh Chaturthi', img: 'images/gallery/ganesh-chaturthi.jpg',
+          teaser: 'A decorated pandal, dhol beats, and aarti performed by all three wings together.',
+          detail: 'A decorated pandal goes up in the central courtyard, with daily aarti performed by rotating wings and a dhol troupe on the first and last day. Visarjan is organised as a group procession with society transport arranged in advance.',
+          when: '10–11 days, typically late August / early September', venue: 'Central courtyard pandal',
+          highlights: ['Daily aarti (rotating by wing)', 'Dhol troupe on day 1 and final day', 'Group visarjan procession', 'Prasad distribution every evening'],
+          contact: 'Ganesh Utsav Committee — sign-up sheet at the gate office' },
+        { id: 'eid', cat: 'cultural', tag: 'Cultural & Festive', title: 'Eid', img: 'images/gallery/eid.jpg',
+          teaser: 'Crescent-lit balconies and a shared feast laid out across the courtyard.',
+          detail: 'Balconies are strung with crescent-moon lighting in the run-up to Eid, and on the day itself a shared feast is laid out courtyard-wide, with every household welcome to bring a dish and join.',
+          when: 'Date varies with the Islamic lunar calendar', venue: 'Courtyard, all wings',
+          highlights: ['Community feast (potluck-style)', 'Balcony lighting from one week prior', 'Eid Mubarak greetings board at the gate'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'christmas', cat: 'cultural', tag: 'Cultural & Festive', title: 'Christmas', img: 'images/gallery/christmas.jpg',
+          teaser: 'A courtyard Christmas tree, resident carollers, and a nativity corner.',
+          detail: 'A decorated tree goes up in the courtyard through December, resident carollers perform on the evening of the 24th, and a small nativity display is set up near Wing C for children.',
+          when: '24th December evening', venue: 'Courtyard, near Wing C',
+          highlights: ['Tree lighting ceremony', 'Resident carolling group', 'Nativity display for children', 'Hot chocolate stall'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'navratri', cat: 'cultural', tag: 'Cultural & Festive', title: 'Navratri', img: 'images/gallery/navratri.jpg',
+          teaser: 'Nine nights of garba and dandiya, with a buffet stall running late.',
+          detail: 'Nine consecutive evenings of garba and dandiya around the deity mandap, with a rotating buffet stall run by volunteer households and a small prize for the best-dressed each night.',
+          when: 'Nine nights, September / October', venue: 'Central courtyard mandap',
+          highlights: ['Garba & dandiya, all 9 nights', 'Nightly buffet stall (volunteer-run)', 'Best-dressed recognition', 'Dandiya sticks available at the gate desk'],
+          contact: 'Navratri Committee — sign-up sheet at the gate office' },
+        { id: 'holi', cat: 'cultural', tag: 'Cultural & Festive', title: 'Holi', img: 'images/gallery/holi.jpg',
+          teaser: 'Colour, water and music take over the courtyard for a morning.',
+          detail: 'The courtyard is handed over to colour and water games for the morning, with music through the society speakers and a designated "dry zone" near the entrance for anyone who\'d rather watch.',
+          when: 'Morning of Holi (as per the lunar calendar)', venue: 'Courtyard (dry zone kept near the main gate)',
+          highlights: ['Organic colours only (society-provided)', 'Water point set up near the fountain', 'Dry zone for non-participants', 'Post-Holi hosepipe clean-up by the maintenance team'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'makar-sankranti', cat: 'cultural', tag: 'Cultural & Festive', title: 'Makar Sankranti', img: 'images/gallery/makar-sankranti.jpg',
+          teaser: 'A bonfire, kite flying from every balcony, and a courtyard rangoli.',
+          detail: 'A small bonfire is lit at dusk in the open ground, kites go up from balconies through the afternoon, and an intricate rangoli is drawn near the main entrance for the day.',
+          when: '14th January', venue: 'Open ground + all balconies',
+          highlights: ['Evening bonfire (fire-safety supervised)', 'Kite flying from balconies', 'Til-gul distribution', 'Courtyard rangoli'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'new-year', cat: 'cultural', tag: 'Cultural & Festive', title: "New Year's Eve", img: 'images/gallery/new-year.jpg',
+          teaser: 'Fairy-lit balconies, a live band, and dinner for the whole society.',
+          detail: 'Balconies are fairy-lit through the last week of December, and on the 31st a live band performs on a courtyard stage followed by a sit-down dinner open to every household.',
+          when: '31st December evening', venue: 'Courtyard stage',
+          highlights: ['Live band performance', 'Society-wide sit-down dinner', 'Countdown & fireworks-free celebration', 'RSVP required for catering count'],
+          contact: 'Events Committee — RSVP via the gate office' },
+        { id: 'independence-day', cat: 'national', tag: 'National Day', title: 'Independence Day', img: 'images/gallery/independence-day.jpg',
+          teaser: 'Morning flag hoisting, the anthem sung together, and activities for children.',
+          detail: 'Flag hoisting takes place at 8 AM sharp in the courtyard, followed by the national anthem sung together and a set of tricolour-themed activities and a short cultural programme for children.',
+          when: '15th August, 8:00 AM', venue: 'Courtyard flagpole',
+          highlights: ['Flag hoisting at 8 AM', 'National anthem, all residents', "Children's tricolour activities", 'Light refreshments after'],
+          contact: 'Managing Committee' },
+        { id: 'republic-day', cat: 'national', tag: 'National Day', title: 'Republic Day', img: 'images/gallery/republic-day.jpg',
+          teaser: "Flag hoisting with a children's guard of honour and patriotic songs.",
+          detail: "Flag hoisting at 8 AM with a children's guard of honour, followed by patriotic songs performed on the courtyard stage by residents and a brief address by the Secretary.",
+          when: '26th January, 8:00 AM', venue: 'Courtyard flagpole & stage',
+          highlights: ['Flag hoisting at 8 AM', "Children's guard of honour", 'Patriotic songs on stage', "Secretary's address"],
+          contact: 'Managing Committee' },
+        { id: 'sports-day', cat: 'social', tag: 'Social & Community', title: 'Annual Sports Day & Fun Fair', img: 'images/gallery/sports-day.jpg',
+          teaser: 'Cricket, badminton and tug-of-war, plus a chaat and game-zone fair.',
+          detail: 'A full-day event combining a cricket and badminton tournament, a tug-of-war between wings, and a fun fair with chaat stalls, ice-cream carts and a small game zone for all ages.',
+          when: 'One Sunday in winter (date announced in advance)', venue: 'Open ground & courtyard',
+          highlights: ['Cricket & badminton tournament', 'Wing-vs-wing tug-of-war', 'Chaat & ice-cream stalls', "Kids' game zone"],
+          contact: 'Sports Committee — registration at the gate office' },
+        { id: 'senior-citizens-day', cat: 'social', tag: 'Social & Community', title: "Senior Citizens' Day", img: 'images/gallery/senior-citizens-day.jpg',
+          teaser: 'A felicitation evening honouring our elders, with music and dinner.',
+          detail: 'An evening dedicated to felicitating the society\'s senior residents, with light music, a few games suited to the occasion, and a shared dinner. Younger residents are encouraged to help host.',
+          when: 'One evening in October', venue: 'Community hall',
+          highlights: ['Felicitation of senior residents', 'Light music programme', 'Games suited for the occasion', 'Shared dinner'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'childrens-day', cat: 'social', tag: 'Social & Community', title: "Children's Day", img: 'images/gallery/childrens-day.jpg',
+          teaser: 'Story-telling, games and a talent show for every child in the society.',
+          detail: 'An afternoon of story-telling and games, ending with a talent show where every child who wants to gets a turn on the courtyard stage — singing, dancing, or anything they\'d like to share.',
+          when: '14th November, afternoon', venue: 'Courtyard stage',
+          highlights: ["Story-telling session", 'Games for all age groups', "Open talent show", "Small participation gifts for every child"],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        { id: 'agm-event', cat: 'meetings', tag: 'Governance', title: 'Annual General Body Meeting', img: 'images/gallery/agm.jpg',
+          teaser: 'Our most important meeting — accounts, budget and committee elections.',
+          detail: 'The AGM is the society\'s most important meeting of the year: audited accounts are presented, next year\'s budget is approved, and (in election years) the managing committee is elected. All members are strongly encouraged to attend.',
+          when: 'Once a year (usually August/September)', venue: 'Community Hall',
+          highlights: ['Audited accounts presented', 'Annual budget approval', 'Committee elections (as applicable)', 'Open floor for member questions'],
+          contact: 'Managing Committee — notice circulated 21 days in advance' },
+        { id: 'sgbm-event', cat: 'meetings', tag: 'Governance', title: 'Special General Body Meeting', img: 'images/gallery/sgbm.jpg',
+          teaser: "Called as needed for urgent matters that can't wait for the AGM.",
+          detail: 'An SGBM is called outside the regular AGM cycle when a matter is too urgent or significant to wait — major structural repairs, a change to society bye-laws, or unplanned large expenditure, for example.',
+          when: 'As required (advance notice circulated per bye-laws)', venue: 'Community Hall',
+          highlights: ['Called only for urgent/major matters', 'Requisitioned per society bye-laws', 'Minutes shared with all members'],
+          contact: 'Managing Committee' },
+        { id: 'committee-meeting', cat: 'meetings', tag: 'Governance', title: 'Managing Committee Meeting', img: 'images/gallery/committee-meeting.jpg',
+          teaser: 'Monthly — day-to-day operations, vendor payments and resident grievances.',
+          detail: 'The committee meets monthly (or quarterly, depending on the season) to handle day-to-day operations: vendor payments, staff management, maintenance planning, and resident grievances raised through the office.',
+          when: 'Monthly / quarterly', venue: 'Committee room, gate office',
+          highlights: ['Vendor payments & contracts', 'Staff management', 'Maintenance planning', 'Resident grievance redressal'],
+          contact: 'Managing Committee' },
+        { id: 'safety-workshop', cat: 'meetings', tag: 'Governance', title: 'Safety & Awareness Workshop', img: 'images/gallery/safety-workshop.jpg',
+          teaser: 'Fire drills, waste segregation and security protocols for every resident.',
+          detail: 'A practical workshop covering fire evacuation drills, correct waste segregation, basic disaster-management steps, and a refresher on the society\'s visitor and security protocols — open to every resident.',
+          when: 'Twice a year', venue: 'Community Hall & open ground (for drills)',
+          highlights: ['Fire evacuation drill', 'Waste segregation training', 'Disaster-management basics', 'Security protocol refresher'],
+          contact: 'Safety Committee — via the Secretary\'s office' }
+      ],
+      governance: [
+        { id: 'agm', code: 'AGM', title: 'Annual General Body Meeting', teaser: 'Reviews audits, approves budgets, and elects the managing committee.',
+          detail: 'Held once a year, the AGM is where the society\'s audited financial statements are presented for member approval, next year\'s maintenance budget is set, and — in election years — the managing committee is elected by member vote.',
+          frequency: 'Once a year', attend: 'All registered members', notice: '21 days\' written notice, as per bye-laws',
+          agenda: ['Presentation of audited accounts', 'Approval of annual budget', 'Committee elections (as applicable)', 'Any other business raised by members'] },
+        { id: 'sgbm', code: 'SGBM', title: 'Special General Body Meeting', teaser: "Called when urgent matters — repairs, amendments, expenditure — can't wait for the AGM.",
+          detail: 'An SGBM can be called at any time, either by the managing committee or by a requisition signed by the required number of members, to decide on a matter too urgent or significant to leave until the next AGM.',
+          frequency: 'As required', attend: 'All registered members', notice: 'Per society bye-laws, circulated as soon as the meeting is confirmed',
+          agenda: ['The specific urgent matter under discussion', 'Member vote / resolution', 'Minutes recorded and shared afterward'] },
+        { id: 'mc', code: 'MC', title: 'Managing Committee', teaser: 'Meets monthly to run operations: vendors, staff, maintenance, and resident grievances.',
+          detail: 'The managing committee is the elected body responsible for the society\'s day-to-day running between AGMs — approving vendor payments, overseeing staff, planning maintenance work, and resolving grievances residents raise through the office.',
+          frequency: 'Monthly', attend: 'Elected committee members (residents may request to raise an item)', notice: 'Internal — schedule posted on the notice board',
+          agenda: ['Vendor & contractor payments', 'Staff management', 'Maintenance & repair planning', 'Resident grievances'] },
+        { id: 'saw', code: 'SAW', title: 'Safety & Awareness', teaser: 'Workshops on fire safety, waste segregation, disaster management and security.',
+          detail: 'A recurring set of workshops aimed at keeping every household prepared — covering fire safety and evacuation, correct waste segregation, basic disaster-management steps, and updates to the society\'s security protocols.',
+          frequency: 'Twice a year', attend: 'Open to all residents', notice: 'Announced via the notice board and ticker',
+          agenda: ['Fire safety & evacuation drill', 'Waste segregation training', 'Disaster-management basics', 'Security protocol updates'] }
+      ],
+      notices: [
+        { id: 'independence-photos', date: '17 AUG', dateFull: '17 August 2026', teaser: 'Independence Day flag hoisting photos are up in the Wing B lobby gallery.',
+          detail: 'Photos from this year\'s Independence Day flag hoisting ceremony have been printed and put up in the Wing B lobby gallery board. Digital copies are also available on request from the gate office.',
+          category: 'Community', contact: 'Gate office' },
+        { id: 'water-tank-cleaning', date: '22 AUG', dateFull: '22 August 2026', teaser: 'Water tank cleaning across all wings, 10 AM – 1 PM. Please store water in advance.',
+          detail: 'The society\'s overhead water tanks will be cleaned across all three wings between 10 AM and 1 PM. Water supply will be interrupted during this window — residents are requested to store sufficient water in advance.',
+          category: 'Maintenance', contact: 'Maintenance team, via the gate office' },
+        { id: 'ganesh-committee', date: '25 AUG', dateFull: '25 August 2026', teaser: 'Ganesh Chaturthi decoration committee meeting — volunteers, please register.',
+          detail: 'A short meeting for anyone interested in helping decorate the pandal and coordinate this year\'s Ganesh Chaturthi celebrations. Please register your interest at the gate office beforehand so seating and material can be planned.',
+          category: 'Events', contact: 'Ganesh Utsav Committee, via the gate office' },
+        { id: 'agm-notice', date: '30 AUG', dateFull: '30 August 2026', teaser: 'Annual General Body Meeting, 6:00 PM, Community Hall. Attendance strongly encouraged.',
+          detail: 'This year\'s Annual General Body Meeting will be held at 6:00 PM in the Community Hall. Audited accounts, the annual budget, and (as applicable) committee elections will be on the agenda. Attendance is strongly encouraged for all members.',
+          category: 'Governance', contact: 'Managing Committee' }
+      ]
+    };
+
+
+    // ---- detail-shared.js ----
+    async function gateAndInitHeader() {
+      let session;
+      try { session = await sharedApiCore('/api/auth/session'); }
+      catch (e) { session = { loggedIn: false }; }
+      if (!session.loggedIn) {
+        const next = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace(`login.html?next=${next}`);
+        return null;
+      }
+      document.body.classList.remove('site-gate-pending');
+
+      const slot = document.getElementById('headerAuthSlot');
+      if (slot) {
+        const label = session.role === 'secretary' ? 'Secretary' : 'Resident';
+        slot.innerHTML = `
+          <span class="account-pill">${icon('user', 15)} ${label}</span>
+          <button class="btn btn-outline btn-sm" id="logoutBtn">${icon('logout', 14)} Log out</button>`;
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+          await sharedApiCore('/api/auth/logout', { method: 'POST' });
+          window.location.href = 'login.html';
+        });
+      }
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      return session;
+    }
+
+    function notFoundHtml(backHref, backLabel) {
+      return `
+        <div class="detail-notfound">
+          <span class="eyebrow-mono">NOT FOUND</span>
+          <h1>We couldn't find that.</h1>
+          <p>It may have been removed, or the link might be out of date.</p>
+          <a class="btn btn-primary" href="${backHref}">${backLabel}</a>
+        </div>`;
+    }
+
+
+    // ---- page script ----
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await gateAndInitHeader();
+      if (!session) return;
+
+      const id = new URLSearchParams(window.location.search).get('id');
+      const item = SITE_CONTENT.governance.find(g => g.id === id);
+      const main = document.getElementById('detailMain');
+
+      if (!item) {
+        main.innerHTML = notFoundHtml('index.html#governance', '← Back to Governance');
+        return;
+      }
+
+      const related = SITE_CONTENT.governance.filter(g => g.id !== item.id).slice(0, 3);
+
+      main.innerHTML = `
+        <a class="detail-back" href="index.html#governance">${icon('chevronLeft', 16)} Back to Governance</a>
+        <div class="detail-breadcrumb">
+          <a href="index.html">Home</a> <span>/</span> <a href="index.html#governance">Governance</a> <span>/</span> <span>${escapeHtml(item.title)}</span>
+        </div>
+        <div class="detail-title-row">
+          <span class="tag meetings">${escapeHtml(item.code)}</span>
+        </div>
+        <h1>${escapeHtml(item.title)}</h1>
+        <p class="detail-lede">${escapeHtml(item.teaser)}</p>
+
+        <div class="detail-meta-grid">
+          <div class="detail-meta-item"><p class="mini-label-mono">FREQUENCY</p><p>${escapeHtml(item.frequency)}</p></div>
+          <div class="detail-meta-item"><p class="mini-label-mono">WHO ATTENDS</p><p>${escapeHtml(item.attend)}</p></div>
+          <div class="detail-meta-item"><p class="mini-label-mono">NOTICE PERIOD</p><p>${escapeHtml(item.notice)}</p></div>
+        </div>
+
+        <div class="detail-body"><p>${escapeHtml(item.detail)}</p></div>
+
+        <p class="mini-label-mono">TYPICAL AGENDA</p>
+        <ul class="detail-highlights">
+          ${item.agenda.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
+        </ul>
+
+        ${related.length ? `
+        <div class="detail-related">
+          <h3>Other governance bodies</h3>
+          <div class="detail-related-grid">
+            ${related.map(r => `
+              <a class="detail-related-card" href="governance.html?id=${r.id}">
+                <div class="drc-body"><h4>${escapeHtml(r.code)} — ${escapeHtml(r.title)}</h4><p>${escapeHtml(r.teaser)}</p></div>
+              </a>`).join('')}
+          </div>
+        </div>` : ''}
+      `;
+    });
+
+})();
+</script>
+</body>
+</html>
