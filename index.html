@@ -353,35 +353,49 @@ body.site-edit-mode{padding-bottom:64px;}
   100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
 }
 
-.meeting-popup{max-width:460px;}
-.meeting-popup-icon{
-  width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(150deg,var(--diya-600),var(--diya-700));color:#fff;
-  box-shadow:0 8px 18px rgba(193,82,44,.3);margin-bottom:1rem;
+.meeting-popup{max-width:460px;padding:0;overflow-x:hidden;}
+.meeting-popup .modal-close{
+  background:rgba(255,255,255,.25);color:#fff;border-radius:50%;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;top:.9rem;right:.9rem;backdrop-filter:blur(3px);
 }
-.meeting-popup-icon svg{width:22px;height:22px;}
+.meeting-popup .modal-close:hover{background:rgba(255,255,255,.4);}
+.meeting-popup-banner{
+  position:relative;overflow:hidden;padding:1.9rem 1.9rem 2.3rem;color:#fff;
+  background:linear-gradient(135deg,var(--navy-900) 0%,var(--diya-600) 58%,var(--gold-500) 100%);
+}
+.meeting-popup-banner::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.12);top:-95px;right:-60px;}
+.meeting-popup-banner::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-80px;left:-40px;}
+.meeting-popup-banner > *{position:relative;}
+.meeting-popup-icon{
+  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.22);backdrop-filter:blur(4px);color:#fff;margin-bottom:1rem;
+}
+.meeting-popup-icon svg{width:23px;height:23px;}
+.meeting-popup-banner .eyebrow-mono{color:rgba(255,255,255,.85);margin-bottom:.5em;}
+.meeting-popup-banner h3{color:#fff;margin:.5rem 0 0;font-size:1.32rem;}
 .meeting-status-pill{
   display:inline-flex;align-items:center;gap:.5em;font-family:var(--font-mono);font-size:.68rem;
   letter-spacing:.08em;font-weight:600;text-transform:uppercase;padding:.34em .8em;
-  border-radius:999px;margin-bottom:1rem;
+  border-radius:999px;background:rgba(255,255,255,.24);color:#fff;
 }
-.meeting-status-pill.live{background:#FDEBEA;color:#C6362A;}
-.meeting-status-pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#C6362A;animation:meetingLivePulse 1.4s ease-in-out infinite;}
-.meeting-status-pill.upcoming{background:var(--sky-100);color:var(--navy-800);}
-.meeting-status-pill.upcoming::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--navy-800);}
+.meeting-status-pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:meetingLivePulse 1.4s ease-in-out infinite;}
+.meeting-status-pill.upcoming::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;}
 @keyframes meetingLivePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.meeting-popup h3{font-size:1.28rem;margin-bottom:1rem;}
+.meeting-popup-body{padding:1.7rem 1.9rem 1.9rem;}
 .meeting-detail-row{display:flex;align-items:center;gap:.75em;font-size:.9rem;color:var(--ink-600);margin-bottom:.55em;}
 .meeting-detail-row .row-icon{
   flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--paper);
   color:var(--navy-800);display:flex;align-items:center;justify-content:center;
 }
 .meeting-detail-row .row-icon svg{width:15px;height:15px;}
-.meeting-agenda{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.1rem 1.2rem;margin:1.2rem 0 1.4rem;}
+.meeting-agenda{background:var(--paper);border-left:3px solid var(--diya-600);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1.1rem 1.2rem;margin:1.2rem 0 1.4rem;}
 .meeting-agenda p.mini-label-mono{margin-bottom:.5rem;}
 .meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
 .meeting-agenda li{margin-bottom:.3rem;}
 .meeting-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.4rem;}
+.meeting-actions .btn-primary{background:linear-gradient(135deg,var(--diya-600),var(--gold-600));box-shadow:0 10px 24px -6px rgba(193,82,44,.42);}
+.meeting-actions .btn-primary:hover{background:linear-gradient(135deg,var(--diya-700),var(--gold-600));}
 
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;color:#fff;}
@@ -896,7 +910,8 @@ body.site-edit-mode{padding-bottom:64px;}
 /* ---------- category / status pills — used on event cards & detail panels ---------- */
 .category-pill{
   display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;font-weight:600;
-  text-transform:uppercase;padding:.32em .7em;border-radius:6px;background:#F1E9F7;color:#6C3F91;
+  text-transform:uppercase;padding:.32em .7em;border-radius:6px;
+  background:var(--cat-soft,#F1E9F7);color:var(--cat-dark,#6C3F91);
 }
 .status-pill{
   display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;font-weight:600;
@@ -909,13 +924,41 @@ body.site-edit-mode{padding-bottom:64px;}
 
 .gov-docs-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem;}
 .gov-doc-card{
-  background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-md);
-  padding:1.1rem 1.2rem;cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+  position:relative;overflow:hidden;
+  background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:1.35rem 1.3rem 1.2rem;cursor:pointer;
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
 }
-.gov-doc-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
-.gov-doc-card .gov-doc-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.65rem;}
-.gov-doc-card h4{font-size:.98rem;margin:0 0 .4rem;}
+.gov-doc-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--cat-a,var(--diya-600)),var(--cat-b,var(--gold-500)));
+}
+.gov-doc-card:hover{transform:translateY(-5px);box-shadow:0 18px 34px -10px var(--cat-glow,rgba(193,82,44,.35));border-color:transparent;}
+.gov-doc-card .gov-doc-icon{
+  width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;
+  background:linear-gradient(135deg,var(--cat-a,var(--diya-600)),var(--cat-b,var(--gold-500)));
+  margin-bottom:.85rem;box-shadow:0 8px 16px -5px var(--cat-glow,rgba(193,82,44,.4));
+}
+.gov-doc-card .gov-doc-icon svg{width:18px;height:18px;}
+.gov-doc-card .gov-doc-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.6rem;}
+.gov-doc-card h4{font-size:1rem;margin:0 0 .35rem;}
 .gov-doc-card p{font-size:.83rem;color:var(--ink-400);margin:0;}
+
+/* ---------- colourful detail banner (event detail panel) ---------- */
+.inline-detail-banner{
+  position:relative;overflow:hidden;margin:-1.5rem -1.7rem 1.3rem;padding:1.7rem 1.7rem 2.1rem;color:#fff;
+  background:linear-gradient(135deg,var(--cat-a,var(--navy-800)),var(--cat-b,var(--navy-950)));
+}
+.inline-detail-banner::before{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.13);top:-75px;right:-45px;}
+.inline-detail-banner::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-60px;left:-30px;}
+.inline-detail-banner > *{position:relative;}
+.inline-detail-banner .gov-doc-icon{background:rgba(255,255,255,.22);box-shadow:none;}
+.inline-detail-banner h3{color:#fff;margin:.6rem 0 0;padding-right:0;}
+.inline-detail-banner .inline-detail-meta{margin-bottom:0;}
+.inline-detail-banner .category-pill,
+.inline-detail-banner .status-pill{background:rgba(255,255,255,.22)!important;color:#fff!important;}
+.inline-detail-card:has(.inline-detail-banner) .inline-detail-close{background:rgba(255,255,255,.25);color:#fff;}
+.inline-detail-card:has(.inline-detail-banner) .inline-detail-close:hover{background:rgba(255,255,255,.4);color:#fff;}
 
 /* =====================================================
    DETAIL PAGES — event.html / governance.html / notice.html
@@ -1079,8 +1122,6 @@ body.site-edit-mode{padding-bottom:64px;}
 <div class="modal-overlay" id="meetingPopupOverlay">
   <div class="modal-card meeting-popup">
     <button class="modal-close" id="meetingPopupClose">&times;</button>
-    <div class="meeting-popup-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
-    <span class="eyebrow-mono">CURRENTLY SCHEDULING</span>
     <div id="meetingPopupContent"></div>
   </div>
 </div>
@@ -1618,6 +1659,10 @@ body.site-edit-mode{padding-bottom:64px;}
       clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
       calendar: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
       pin: '<path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/>',
+      star: '<path d="M12 3l2.5 5.5L20 9l-4.2 3.8L17 19l-5-3-5 3 1.2-6.2L4 9l5.5-.5L12 3Z"/>',
+      gift: '<rect x="4" y="9" width="16" height="11" rx="1.2"/><path d="M4 9h16M12 9v11M8 9c-1.7 0-3-1.1-3-3s1.3-2 2.6-1.4C9.1 5.2 10 6.8 10.3 9H8Zm8 0c1.7 0 3-1.1 3-3s-1.3-2-2.6-1.4C14.9 5.2 14 6.8 13.7 9H16Z"/>',
+      trophy: '<path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M6 5H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3M18 5h2a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3"/><path d="M9 15h6l1 5H8l1-5Z"/><path d="M12 12v3"/>',
+      flame: '<path d="M12 2c1 3-3 4-3 8a3 3 0 0 0 6 0c1 1 2 2 2 4a5 5 0 1 1-10 0c0-4 3-5 3-8 0-1.4.7-3 2-4Z"/>',
       note: '<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
       lock: '<rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
       mail: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6 8.5 6.5L20.5 6"/>',
@@ -1650,6 +1695,21 @@ body.site-edit-mode{padding-bottom:64px;}
       return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       }[c]));
+    }
+
+    // ---- theming: colourful per-category accent used on event cards & their detail banner ----
+    const CATEGORY_THEME = {
+      festival:    { a: '#F0A93C', b: '#C9821E', soft: '#FDF1DE', icon: 'star' },
+      meeting:     { a: '#3E76C4', b: '#1F4C86', soft: '#E7F0FB', icon: 'calendar' },
+      celebration: { a: '#E8608F', b: '#C13D6C', soft: '#FCE7EE', icon: 'gift' },
+      sports:      { a: '#33A66B', b: '#1E7A4B', soft: '#E4F5EC', icon: 'trophy' },
+      religious:   { a: '#9B6BE0', b: '#6C3F91', soft: '#F1E9F7', icon: 'flame' },
+      'maintenance drive': { a: '#17A6A0', b: '#0C7873', soft: '#E1F5F4', icon: 'wrench' },
+      general:     { a: '#6B7690', b: '#454E63', soft: '#EDEEF2', icon: 'note' },
+      other:       { a: '#B08D5B', b: '#8A6B3D', soft: '#F3ECE0', icon: 'note' }
+    };
+    function categoryTheme(cat) {
+      return CATEGORY_THEME[String(cat || '').toLowerCase().trim()] || CATEGORY_THEME.general;
     }
 
     // ---- components/accountMenu.js ----
@@ -2371,17 +2431,23 @@ body.site-edit-mode{padding-bottom:64px;}
           const { d, t } = formatMeetingWhen(m);
           const status = meetingStatus(m);
           return `
-            <span class="meeting-status-pill ${status.cls}">${status.text}</span>
-            <h3>${escapeHtml(m.title || 'Committee meeting')}</h3>
-            ${d ? `<div class="meeting-detail-row"><span class="row-icon">${icon('calendar', 15)}</span> ${escapeHtml(d)}</div>` : ''}
-            ${t ? `<div class="meeting-detail-row"><span class="row-icon">${icon('clock', 15)}</span> ${escapeHtml(t)}</div>` : ''}
-            ${m.location ? `<div class="meeting-detail-row"><span class="row-icon">${icon('pin', 15)}</span> ${escapeHtml(m.location)}</div>` : ''}
-            ${m.description ? `<div class="meeting-agenda"><p class="mini-label-mono">Agenda</p><p>${escapeHtml(m.description)}</p></div>` : ''}
-            <div class="meeting-actions">
-              ${m.meeting_link ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join meeting</a>` : ''}
-              <button class="btn btn-outline btn-sm meeting-dismiss-btn">Remind me later</button>
+            <div class="meeting-popup-banner">
+              <div class="meeting-popup-icon">${icon('calendar', 23)}</div>
+              <span class="eyebrow-mono">CURRENTLY SCHEDULING</span><br>
+              <span class="meeting-status-pill ${status.cls}">${status.text}</span>
+              <h3>${escapeHtml(m.title || 'Committee meeting')}</h3>
+            </div>
+            <div class="meeting-popup-body">
+              ${d ? `<div class="meeting-detail-row"><span class="row-icon">${icon('calendar', 15)}</span> ${escapeHtml(d)}</div>` : ''}
+              ${t ? `<div class="meeting-detail-row"><span class="row-icon">${icon('clock', 15)}</span> ${escapeHtml(t)}</div>` : ''}
+              ${m.location ? `<div class="meeting-detail-row"><span class="row-icon">${icon('pin', 15)}</span> ${escapeHtml(m.location)}</div>` : ''}
+              ${m.description ? `<div class="meeting-agenda"><p class="mini-label-mono">Agenda</p><p>${escapeHtml(m.description)}</p></div>` : ''}
+              <div class="meeting-actions">
+                ${m.meeting_link ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join meeting</a>` : ''}
+                <button class="btn btn-outline btn-sm meeting-dismiss-btn">Remind me later</button>
+              </div>
             </div>`;
-        }).join('<hr style="margin:1.4rem 0;border:none;border-top:1px solid var(--line);">');
+        }).join('<hr style="margin:0;border:none;border-top:1px solid var(--line);">');
         meetingPopupContent.querySelectorAll('.meeting-dismiss-btn').forEach(btn => btn.addEventListener('click', closeMeetingPopup));
       }
 
@@ -2775,8 +2841,15 @@ body.site-edit-mode{padding-bottom:64px;}
         liveEvents.forEach(ev => {
           const card = document.createElement('div');
           card.className = 'gov-doc-card';
+          const theme = categoryTheme(ev.category);
+          card.style.setProperty('--cat-a', theme.a);
+          card.style.setProperty('--cat-b', theme.b);
+          card.style.setProperty('--cat-glow', theme.a + '59');
+          card.style.setProperty('--cat-soft', theme.soft);
+          card.style.setProperty('--cat-dark', theme.b);
           const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
           card.innerHTML = `
+            <div class="gov-doc-icon">${icon(theme.icon, 18)}</div>
             <div class="gov-doc-badges">
               ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
               ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
@@ -2792,14 +2865,18 @@ body.site-edit-mode{padding-bottom:64px;}
         const ev = liveEvents.find(x => String(x.id) === String(id));
         if (!ev) return;
         const when = [formatDateLong(ev.start_date), ev.end_date && ev.end_date !== ev.start_date ? '– ' + formatDateLong(ev.end_date) : ''].filter(Boolean).join(' ');
+        const theme = categoryTheme(ev.category);
         const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
         openInlinePanel(secretaryEventDetailPanel, `
+          <div class="inline-detail-banner" style="--cat-a:${theme.a};--cat-b:${theme.b}">
+            <div class="gov-doc-icon">${icon(theme.icon, 20)}</div>
+            ${ev.category || ev.status ? `<div class="inline-detail-meta">
+              ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
+              ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
+            </div>` : ''}
+            <h3>${escapeHtml(ev.title || 'Untitled event')}</h3>
+          </div>
           ${ev.image ? `<img src="${ev.image}" alt="">` : ''}
-          ${ev.category || ev.status ? `<div class="inline-detail-meta">
-            ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
-            ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
-          </div>` : ''}
-          <h3>${escapeHtml(ev.title || 'Untitled event')}</h3>
           <div class="inline-detail-meta">
             ${when ? `<span>${icon('calendar', 14)} ${escapeHtml(when)}</span>` : ''}
             ${ev.location ? `<span>${icon('pin', 14)} ${escapeHtml(ev.location)}</span>` : ''}
