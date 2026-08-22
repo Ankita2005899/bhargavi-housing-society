@@ -760,16 +760,17 @@ body.site-edit-mode{padding-bottom:64px;}
 /* =====================================================
    TEASER CARDS — "read more" link that opens the full page
    ===================================================== */
-.card-readmore{
-  display:inline-flex;align-items:center;gap:.35em;margin-top:.7em;
-  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;font-weight:600;
-  color:var(--diya-600);
+.event-body{display:flex;flex-direction:column;}
+.gov-card{display:flex;flex-direction:column;}
+.pin-note{display:flex;flex-direction:column;}
+.card-open-btn{
+  align-self:flex-end;margin-top:.9em;display:inline-flex;align-items:center;gap:.4em;
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;font-weight:700;
+  color:#fff;background:var(--diya-600);padding:.45em .9em;border-radius:999px;
+  transition:background .2s var(--ease), transform .2s var(--ease);
 }
-.card-readmore svg{width:13px;height:13px;transition:transform .2s var(--ease);}
-.event-card:hover .card-readmore svg,
-.gov-card:hover .card-readmore svg,
-.pin-note:hover .card-readmore svg{transform:translateX(3px);}
-.event-card, .gov-card, .pin-note{cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);}
+.card-open-btn:hover{background:var(--diya-700);transform:translateX(2px);}
+.card-open-btn svg{width:13px;height:13px;}
 .event-card:hover, .gov-card:hover, .pin-note:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
 
 /* =====================================================
@@ -1121,173 +1122,173 @@ body.site-edit-mode{padding-bottom:64px;}
 
         <div class="events-grid" id="eventsGrid">
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=diwali'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/diwali.jpg" alt="Diwali">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Diwali</h3>
               <p>Diyas, rangoli and sparklers light up the whole courtyard.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=diwali">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=ganesh-chaturthi'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/ganesh-chaturthi.jpg" alt="Ganesh Chaturthi">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Ganesh Chaturthi</h3>
               <p>A decorated pandal and daily aarti bring all three wings together.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=ganesh-chaturthi">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=eid'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/eid.jpg" alt="Eid">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Eid</h3>
               <p>Crescent-lit balconies and a courtyard-wide shared feast.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=eid">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=christmas'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/christmas.jpg" alt="Christmas">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Christmas</h3>
               <p>A courtyard tree, resident carollers, and a nativity corner.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=christmas">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=navratri'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/navratri.jpg" alt="Navratri">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Navratri</h3>
               <p>Nine nights of garba and dandiya around the mandap.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=navratri">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=holi'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/holi.jpg" alt="Holi">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Holi</h3>
               <p>Colour, water and music take over the courtyard.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=holi">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=makar-sankranti'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/makar-sankranti.jpg" alt="Makar Sankranti">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Makar Sankranti</h3>
               <p>A bonfire, kites from every balcony, and a rangoli.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=makar-sankranti">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural" onclick="window.location.href='event.html?id=new-year'">
+          <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/new-year.jpg" alt="New Year&#39;s Eve">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>New Year&#39;s Eve</h3>
               <p>Fairy lights, a live band, and dinner for the society.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=new-year">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="national" onclick="window.location.href='event.html?id=independence-day'">
+          <article class="event-card reveal" data-cat="national">
             <img src="images/gallery/independence-day.jpg" alt="Independence Day">
             <div class="event-body">
               <span class="tag national">National Day</span>
               <h3>Independence Day</h3>
               <p>Flag hoisting and tricolour activities for children.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=independence-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="national" onclick="window.location.href='event.html?id=republic-day'">
+          <article class="event-card reveal" data-cat="national">
             <img src="images/gallery/republic-day.jpg" alt="Republic Day">
             <div class="event-body">
               <span class="tag national">National Day</span>
               <h3>Republic Day</h3>
               <p>A children's guard of honour and patriotic songs.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=republic-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social" onclick="window.location.href='event.html?id=sports-day'">
+          <article class="event-card reveal" data-cat="social">
             <img src="images/gallery/sports-day.jpg" alt="Annual Sports Day &amp; Fun Fair">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Annual Sports Day &amp; Fun Fair</h3>
               <p>Cricket, tug-of-war, chaat stalls and a game zone.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=sports-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social" onclick="window.location.href='event.html?id=senior-citizens-day'">
+          <article class="event-card reveal" data-cat="social">
             <img src="images/gallery/senior-citizens-day.jpg" alt="Senior Citizens&#39; Day">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Senior Citizens&#39; Day</h3>
               <p>An evening honouring our elders, with music and dinner.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=senior-citizens-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social" onclick="window.location.href='event.html?id=childrens-day'">
+          <article class="event-card reveal" data-cat="social">
             <img src="images/gallery/childrens-day.jpg" alt="Children&#39;s Day">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Children&#39;s Day</h3>
               <p>Story-telling, games and a talent show for every child.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=childrens-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings" onclick="window.location.href='event.html?id=agm-event'">
+          <article class="event-card reveal" data-cat="meetings">
             <img src="images/gallery/agm.jpg" alt="Annual General Body Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Annual General Body Meeting</h3>
               <p>Accounts, budget approval and committee elections.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=agm-event">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings" onclick="window.location.href='event.html?id=sgbm-event'">
+          <article class="event-card reveal" data-cat="meetings">
             <img src="images/gallery/sgbm.jpg" alt="Special General Body Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Special General Body Meeting</h3>
               <p>Called for urgent matters that can't wait for the AGM.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=sgbm-event">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings" onclick="window.location.href='event.html?id=committee-meeting'">
+          <article class="event-card reveal" data-cat="meetings">
             <img src="images/gallery/committee-meeting.jpg" alt="Managing Committee Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Managing Committee Meeting</h3>
               <p>Vendor payments, staff and grievances — monthly.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=committee-meeting">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings" onclick="window.location.href='event.html?id=safety-workshop'">
+          <article class="event-card reveal" data-cat="meetings">
             <img src="images/gallery/safety-workshop.jpg" alt="Safety &amp; Awareness Workshop">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Safety &amp; Awareness Workshop</h3>
               <p>Fire drills, waste segregation and security refreshers.</p>
-              <span class="card-readmore">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              <a class="card-open-btn" href="event.html?id=safety-workshop">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
         </div>
@@ -1304,29 +1305,29 @@ body.site-edit-mode{padding-bottom:64px;}
           <h2>Governance, in plain terms</h2>
         </div>
         <div class="gov-grid reveal">
-          <div class="gov-card" onclick="window.location.href='governance.html?id=agm'">
+          <div class="gov-card">
             <span class="gov-num-mono">AGM</span>
             <h4>Annual General Body Meeting</h4>
             <p>Reviews audits, approves budgets, and elects the managing committee.</p>
-            <span class="card-readmore">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="governance.html?id=agm">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="gov-card" onclick="window.location.href='governance.html?id=sgbm'">
+          <div class="gov-card">
             <span class="gov-num-mono">SGBM</span>
             <h4>Special General Body Meeting</h4>
             <p>Called when urgent matters can't wait for the AGM.</p>
-            <span class="card-readmore">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="governance.html?id=sgbm">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="gov-card" onclick="window.location.href='governance.html?id=mc'">
+          <div class="gov-card">
             <span class="gov-num-mono">MC</span>
             <h4>Managing Committee</h4>
             <p>Runs operations: vendors, staff, maintenance and grievances.</p>
-            <span class="card-readmore">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="governance.html?id=mc">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="gov-card" onclick="window.location.href='governance.html?id=saw'">
+          <div class="gov-card">
             <span class="gov-num-mono">SAW</span>
             <h4>Safety &amp; Awareness</h4>
             <p>Workshops on fire safety, waste segregation and security.</p>
-            <span class="card-readmore">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="governance.html?id=saw">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
         </div>
       </section>
@@ -1338,25 +1339,25 @@ body.site-edit-mode{padding-bottom:64px;}
           <h2>Pinned this week</h2>
         </div>
         <div class="notice-board reveal">
-          <div class="pin-note" onclick="window.location.href='notice.html?id=independence-photos'">
+          <div class="pin-note">
             <span class="pin-date-mono">17 AUG</span>
             <p>Independence Day flag hoisting photos are up in the Wing B lobby gallery.</p>
-            <span class="card-readmore">Full notice <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="notice.html?id=independence-photos">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="pin-note" onclick="window.location.href='notice.html?id=water-tank-cleaning'">
+          <div class="pin-note">
             <span class="pin-date-mono">22 AUG</span>
             <p>Water tank cleaning across all wings, 10 AM – 1 PM. Please store water in advance.</p>
-            <span class="card-readmore">Full notice <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="notice.html?id=water-tank-cleaning">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="pin-note" onclick="window.location.href='notice.html?id=ganesh-committee'">
+          <div class="pin-note">
             <span class="pin-date-mono">25 AUG</span>
             <p>Ganesh Chaturthi decoration committee meeting — volunteers, please register at the gate office.</p>
-            <span class="card-readmore">Full notice <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="notice.html?id=ganesh-committee">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
-          <div class="pin-note" onclick="window.location.href='notice.html?id=agm-notice'">
+          <div class="pin-note">
             <span class="pin-date-mono">30 AUG</span>
             <p>Annual General Body Meeting, 6:00 PM, Community Hall. Attendance strongly encouraged.</p>
-            <span class="card-readmore">Full notice <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <a class="card-open-btn" href="notice.html?id=agm-notice">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
         </div>
       </section>
