@@ -1167,6 +1167,10 @@ const governanceController = {
 const meetingsController = {
   async list(req, res) { try { res.json(await meetingModel.findAll()); } catch (err) { dbError(res, err); } },
   async active(req, res) { try { res.json(await meetingModel.findActive()); } catch (err) { dbError(res, err); } },
+  // GET /api/public/meetings/active — anyone (no login needed): drives the
+  // resident-facing "scheduled meeting" pop-up on index.html, same data and
+  // same "stays until end time" rule as the Secretary dashboard banner.
+  async publicActive(req, res) { try { res.json(await meetingModel.findActive()); } catch (err) { dbError(res, err); } },
   async create(req, res) {
     try {
       const { meeting_date, end_time } = req.body || {};
@@ -1893,6 +1897,7 @@ publicRouter.get('/ambulances', ambulancesController.publicList);
 publicRouter.get('/notices', noticesController.publicActive);
 publicRouter.get('/events', eventsController.publicList);
 publicRouter.get('/governance', governanceController.publicList);
+publicRouter.get('/meetings/active', meetingsController.publicActive);
 app.use('/api/public', publicRouter);
 
 const maintenanceRouter = express.Router();
