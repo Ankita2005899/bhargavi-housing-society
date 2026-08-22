@@ -353,12 +353,35 @@ body.site-edit-mode{padding-bottom:64px;}
   100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
 }
 
-.meeting-popup{max-width:440px;}
-.meeting-detail-row{display:flex;align-items:center;gap:.6em;font-size:.92rem;color:var(--ink-600);margin-bottom:.4em;}
-.meeting-agenda{background:var(--paper);border-radius:var(--radius-md);padding:1rem 1.2rem;margin:1rem 0;}
+.meeting-popup{max-width:460px;}
+.meeting-popup-icon{
+  width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,var(--diya-600),var(--diya-700));color:#fff;
+  box-shadow:0 8px 18px rgba(193,82,44,.3);margin-bottom:1rem;
+}
+.meeting-popup-icon svg{width:22px;height:22px;}
+.meeting-status-pill{
+  display:inline-flex;align-items:center;gap:.5em;font-family:var(--font-mono);font-size:.68rem;
+  letter-spacing:.08em;font-weight:600;text-transform:uppercase;padding:.34em .8em;
+  border-radius:999px;margin-bottom:1rem;
+}
+.meeting-status-pill.live{background:#FDEBEA;color:#C6362A;}
+.meeting-status-pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#C6362A;animation:meetingLivePulse 1.4s ease-in-out infinite;}
+.meeting-status-pill.upcoming{background:var(--sky-100);color:var(--navy-800);}
+.meeting-status-pill.upcoming::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--navy-800);}
+@keyframes meetingLivePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.meeting-popup h3{font-size:1.28rem;margin-bottom:1rem;}
+.meeting-detail-row{display:flex;align-items:center;gap:.75em;font-size:.9rem;color:var(--ink-600);margin-bottom:.55em;}
+.meeting-detail-row .row-icon{
+  flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--paper);
+  color:var(--navy-800);display:flex;align-items:center;justify-content:center;
+}
+.meeting-detail-row .row-icon svg{width:15px;height:15px;}
+.meeting-agenda{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.1rem 1.2rem;margin:1.2rem 0 1.4rem;}
+.meeting-agenda p.mini-label-mono{margin-bottom:.5rem;}
 .meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
 .meeting-agenda li{margin-bottom:.3rem;}
-.meeting-actions{display:flex;gap:.6rem;flex-wrap:wrap;}
+.meeting-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.4rem;}
 
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;color:#fff;}
@@ -864,10 +887,25 @@ body.site-edit-mode{padding-bottom:64px;}
 .inline-detail-close:hover{background:var(--diya-600);color:#fff;}
 .inline-detail-card img{width:100%;max-height:280px;object-fit:cover;border-radius:var(--radius-md);margin-bottom:1.1rem;}
 .inline-detail-card h3{font-size:1.3rem;margin:0 0 .6rem;padding-right:2.4rem;}
-.inline-detail-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;font-size:.84rem;color:var(--ink-400);margin-bottom:1rem;}
+.inline-detail-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;font-size:.84rem;color:var(--ink-400);margin-bottom:1.1rem;}
+.inline-detail-meta > span{display:inline-flex;align-items:center;gap:.4em;}
 .inline-detail-card p.inline-detail-text{font-size:.95rem;line-height:1.65;color:var(--ink-700);margin:0 0 1rem;white-space:pre-wrap;}
 .inline-detail-card a.inline-detail-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:600;color:var(--diya-600);}
 .inline-detail-card a.inline-detail-link:hover{text-decoration:underline;}
+
+/* ---------- category / status pills — used on event cards & detail panels ---------- */
+.category-pill{
+  display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;font-weight:600;
+  text-transform:uppercase;padding:.32em .7em;border-radius:6px;background:#F1E9F7;color:#6C3F91;
+}
+.status-pill{
+  display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;font-weight:600;
+  text-transform:uppercase;padding:.32em .7em;border-radius:6px;background:#F1F0EC;color:var(--ink-400);
+}
+.status-pill.status-ongoing{background:#FDEBEA;color:#C6362A;}
+.status-pill.status-upcoming{background:var(--sky-100);color:var(--navy-800);}
+.status-pill.status-completed{background:#E8F3EA;color:#2F7D46;}
+.status-pill.status-cancelled{background:#F1F0EC;color:var(--ink-400);}
 
 .gov-docs-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem;}
 .gov-doc-card{
@@ -875,6 +913,7 @@ body.site-edit-mode{padding-bottom:64px;}
   padding:1.1rem 1.2rem;cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .gov-doc-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+.gov-doc-card .gov-doc-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.65rem;}
 .gov-doc-card h4{font-size:.98rem;margin:0 0 .4rem;}
 .gov-doc-card p{font-size:.83rem;color:var(--ink-400);margin:0;}
 
@@ -1040,6 +1079,7 @@ body.site-edit-mode{padding-bottom:64px;}
 <div class="modal-overlay" id="meetingPopupOverlay">
   <div class="modal-card meeting-popup">
     <button class="modal-close" id="meetingPopupClose">&times;</button>
+    <div class="meeting-popup-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
     <span class="eyebrow-mono">CURRENTLY SCHEDULING</span>
     <div id="meetingPopupContent"></div>
   </div>
@@ -1576,6 +1616,8 @@ body.site-edit-mode{padding-bottom:64px;}
       ambulance: '<path d="M3 17V9a1 1 0 0 1 1-1h9v9"/><path d="M13 12h4l3 3v2h-2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/><path d="M7 6v3M5.5 7.5h3"/>',
       phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
       clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+      calendar: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+      pin: '<path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/>',
       note: '<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
       lock: '<rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
       mail: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6 8.5 6.5L20.5 6"/>',
@@ -2295,19 +2337,45 @@ body.site-edit-mode{padding-bottom:64px;}
       let activeMeetings = [];
 
       function formatMeetingWhen(m) {
-        const d = m.meeting_date ? new Date(m.meeting_date + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        // meeting_date comes back from the DATE column as either a plain
+        // 'YYYY-MM-DD' string or a full ISO timestamp (e.g. from pg's Date
+        // serialization) — take just the date part before parsing, or a
+        // stray 'T00:00:00' gets appended to an already-ISO string and
+        // produces an Invalid Date.
+        let d = '';
+        if (m.meeting_date) {
+          const datePart = String(m.meeting_date).slice(0, 10);
+          const dateObj = new Date(datePart + 'T00:00:00');
+          if (!isNaN(dateObj.getTime())) {
+            d = dateObj.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+          }
+        }
         const t = [m.start_time, m.end_time].filter(Boolean).join(' – ');
         return { d, t };
+      }
+
+      function meetingStatus(m) {
+        if (!m.meeting_date || !m.start_time || !m.end_time) return { text: 'Upcoming', cls: 'upcoming' };
+        const datePart = String(m.meeting_date).slice(0, 10);
+        const start = new Date(`${datePart}T${m.start_time}`);
+        const end = new Date(`${datePart}T${m.end_time}`);
+        const now = new Date();
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && now >= start && now <= end) {
+          return { text: 'Live now', cls: 'live' };
+        }
+        return { text: 'Upcoming', cls: 'upcoming' };
       }
 
       function renderMeetingPopup() {
         meetingPopupContent.innerHTML = activeMeetings.map(m => {
           const { d, t } = formatMeetingWhen(m);
+          const status = meetingStatus(m);
           return `
+            <span class="meeting-status-pill ${status.cls}">${status.text}</span>
             <h3>${escapeHtml(m.title || 'Committee meeting')}</h3>
-            ${d ? `<div class="meeting-detail-row"><span>🗓</span> ${escapeHtml(d)}</div>` : ''}
-            ${t ? `<div class="meeting-detail-row"><span>🕕</span> ${escapeHtml(t)}</div>` : ''}
-            ${m.location ? `<div class="meeting-detail-row"><span>📍</span> ${escapeHtml(m.location)}</div>` : ''}
+            ${d ? `<div class="meeting-detail-row"><span class="row-icon">${icon('calendar', 15)}</span> ${escapeHtml(d)}</div>` : ''}
+            ${t ? `<div class="meeting-detail-row"><span class="row-icon">${icon('clock', 15)}</span> ${escapeHtml(t)}</div>` : ''}
+            ${m.location ? `<div class="meeting-detail-row"><span class="row-icon">${icon('pin', 15)}</span> ${escapeHtml(m.location)}</div>` : ''}
             ${m.description ? `<div class="meeting-agenda"><p class="mini-label-mono">Agenda</p><p>${escapeHtml(m.description)}</p></div>` : ''}
             <div class="meeting-actions">
               ${m.meeting_link ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join meeting</a>` : ''}
@@ -2707,7 +2775,14 @@ body.site-edit-mode{padding-bottom:64px;}
         liveEvents.forEach(ev => {
           const card = document.createElement('div');
           card.className = 'gov-doc-card';
-          card.innerHTML = `<h4>${escapeHtml(ev.title || 'Untitled event')}</h4><p>${escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • '))}</p>`;
+          const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
+          card.innerHTML = `
+            <div class="gov-doc-badges">
+              ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
+              ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
+            </div>
+            <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
+            <p>${escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • ')) || 'Date to be announced'}</p>`;
           card.addEventListener('click', () => openSecretaryEventDetail(ev.id));
           secretaryEventsList.appendChild(card);
         });
@@ -2717,14 +2792,17 @@ body.site-edit-mode{padding-bottom:64px;}
         const ev = liveEvents.find(x => String(x.id) === String(id));
         if (!ev) return;
         const when = [formatDateLong(ev.start_date), ev.end_date && ev.end_date !== ev.start_date ? '– ' + formatDateLong(ev.end_date) : ''].filter(Boolean).join(' ');
+        const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
         openInlinePanel(secretaryEventDetailPanel, `
           ${ev.image ? `<img src="${ev.image}" alt="">` : ''}
+          ${ev.category || ev.status ? `<div class="inline-detail-meta">
+            ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
+            ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
+          </div>` : ''}
           <h3>${escapeHtml(ev.title || 'Untitled event')}</h3>
           <div class="inline-detail-meta">
-            ${when ? `<span>${icon('clock', 14)} ${escapeHtml(when)}</span>` : ''}
-            ${ev.location ? `<span>${icon('building', 14)} ${escapeHtml(ev.location)}</span>` : ''}
-            ${ev.category ? `<span>${escapeHtml(ev.category)}</span>` : ''}
-            ${ev.status ? `<span>${escapeHtml(ev.status)}</span>` : ''}
+            ${when ? `<span>${icon('calendar', 14)} ${escapeHtml(when)}</span>` : ''}
+            ${ev.location ? `<span>${icon('pin', 14)} ${escapeHtml(ev.location)}</span>` : ''}
           </div>
           ${ev.description ? `<p class="inline-detail-text">${escapeHtml(ev.description)}</p>` : ''}`);
       }
