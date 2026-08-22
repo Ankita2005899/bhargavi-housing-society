@@ -353,47 +353,48 @@ body.site-edit-mode{padding-bottom:64px;}
   100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
 }
 
-.meeting-popup{max-width:460px;padding:0;overflow-x:hidden;}
+.meeting-popup{max-width:620px;padding:0;overflow-x:hidden;}
 .meeting-popup .modal-close{
   background:rgba(255,255,255,.25);color:#fff;border-radius:50%;
-  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
-  font-size:1.3rem;top:.9rem;right:.9rem;backdrop-filter:blur(3px);
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;top:1.1rem;right:1.1rem;backdrop-filter:blur(3px);
 }
 .meeting-popup .modal-close:hover{background:rgba(255,255,255,.4);}
 .meeting-popup-banner{
-  position:relative;overflow:hidden;padding:1.9rem 1.9rem 2.3rem;color:#fff;
+  position:relative;overflow:hidden;padding:2.6rem 2.6rem 3.1rem;color:#fff;
   background:linear-gradient(135deg,var(--navy-900) 0%,var(--diya-600) 58%,var(--gold-500) 100%);
 }
-.meeting-popup-banner::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.12);top:-95px;right:-60px;}
-.meeting-popup-banner::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-80px;left:-40px;}
+.meeting-popup-banner::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.12);top:-130px;right:-80px;}
+.meeting-popup-banner::after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-110px;left:-55px;}
 .meeting-popup-banner > *{position:relative;}
 .meeting-popup-icon{
-  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.22);backdrop-filter:blur(4px);color:#fff;margin-bottom:1rem;
+  width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.22);backdrop-filter:blur(4px);color:#fff;margin-bottom:1.2rem;
 }
-.meeting-popup-icon svg{width:23px;height:23px;}
-.meeting-popup-banner .eyebrow-mono{color:rgba(255,255,255,.85);margin-bottom:.5em;}
-.meeting-popup-banner h3{color:#fff;margin:.5rem 0 0;font-size:1.32rem;}
+.meeting-popup-icon svg{width:29px;height:29px;}
+.meeting-popup-banner .eyebrow-mono{color:rgba(255,255,255,.85);margin-bottom:.5em;font-size:.78rem;}
+.meeting-popup-banner h3{color:#fff;margin:.6rem 0 0;font-size:1.75rem;}
 .meeting-status-pill{
-  display:inline-flex;align-items:center;gap:.5em;font-family:var(--font-mono);font-size:.68rem;
-  letter-spacing:.08em;font-weight:600;text-transform:uppercase;padding:.34em .8em;
+  display:inline-flex;align-items:center;gap:.5em;font-family:var(--font-mono);font-size:.72rem;
+  letter-spacing:.08em;font-weight:600;text-transform:uppercase;padding:.4em .9em;
   border-radius:999px;background:rgba(255,255,255,.24);color:#fff;
 }
-.meeting-status-pill.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:meetingLivePulse 1.4s ease-in-out infinite;}
-.meeting-status-pill.upcoming::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;}
+.meeting-status-pill.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;display:inline-block;animation:meetingLivePulse 1.4s ease-in-out infinite;}
+.meeting-status-pill.upcoming::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;display:inline-block;}
 @keyframes meetingLivePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.meeting-popup-body{padding:1.7rem 1.9rem 1.9rem;}
-.meeting-detail-row{display:flex;align-items:center;gap:.75em;font-size:.9rem;color:var(--ink-600);margin-bottom:.55em;}
+.meeting-popup-body{padding:2.2rem 2.6rem 2.5rem;}
+.meeting-detail-row{display:flex;align-items:center;gap:.9em;font-size:1rem;color:var(--ink-600);margin-bottom:.75em;}
 .meeting-detail-row .row-icon{
-  flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--paper);
+  flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--paper);
   color:var(--navy-800);display:flex;align-items:center;justify-content:center;
 }
-.meeting-detail-row .row-icon svg{width:15px;height:15px;}
-.meeting-agenda{background:var(--paper);border-left:3px solid var(--diya-600);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1.1rem 1.2rem;margin:1.2rem 0 1.4rem;}
-.meeting-agenda p.mini-label-mono{margin-bottom:.5rem;}
-.meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
-.meeting-agenda li{margin-bottom:.3rem;}
-.meeting-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.4rem;}
+.meeting-detail-row .row-icon svg{width:17px;height:17px;}
+.meeting-agenda{background:var(--paper);border-left:4px solid var(--diya-600);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1.3rem 1.5rem;margin:1.5rem 0 1.7rem;}
+.meeting-agenda p.mini-label-mono{margin-bottom:.6rem;}
+.meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.92rem;}
+.meeting-agenda li{margin-bottom:.35rem;}
+.meeting-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.5rem;}
+.meeting-actions .btn{padding:.9em 1.8em;font-size:.95rem;}
 .meeting-actions .btn-primary{background:linear-gradient(135deg,var(--diya-600),var(--gold-600));box-shadow:0 10px 24px -6px rgba(193,82,44,.42);}
 .meeting-actions .btn-primary:hover{background:linear-gradient(135deg,var(--diya-700),var(--gold-600));}
 
@@ -2432,15 +2433,15 @@ body.site-edit-mode{padding-bottom:64px;}
           const status = meetingStatus(m);
           return `
             <div class="meeting-popup-banner">
-              <div class="meeting-popup-icon">${icon('calendar', 23)}</div>
+              <div class="meeting-popup-icon">${icon('calendar', 29)}</div>
               <span class="eyebrow-mono">CURRENTLY SCHEDULING</span><br>
               <span class="meeting-status-pill ${status.cls}">${status.text}</span>
               <h3>${escapeHtml(m.title || 'Committee meeting')}</h3>
             </div>
             <div class="meeting-popup-body">
-              ${d ? `<div class="meeting-detail-row"><span class="row-icon">${icon('calendar', 15)}</span> ${escapeHtml(d)}</div>` : ''}
-              ${t ? `<div class="meeting-detail-row"><span class="row-icon">${icon('clock', 15)}</span> ${escapeHtml(t)}</div>` : ''}
-              ${m.location ? `<div class="meeting-detail-row"><span class="row-icon">${icon('pin', 15)}</span> ${escapeHtml(m.location)}</div>` : ''}
+              ${d ? `<div class="meeting-detail-row"><span class="row-icon">${icon('calendar', 17)}</span> ${escapeHtml(d)}</div>` : ''}
+              ${t ? `<div class="meeting-detail-row"><span class="row-icon">${icon('clock', 17)}</span> ${escapeHtml(t)}</div>` : ''}
+              ${m.location ? `<div class="meeting-detail-row"><span class="row-icon">${icon('pin', 17)}</span> ${escapeHtml(m.location)}</div>` : ''}
               ${m.description ? `<div class="meeting-agenda"><p class="mini-label-mono">Agenda</p><p>${escapeHtml(m.description)}</p></div>` : ''}
               <div class="meeting-actions">
                 ${m.meeting_link ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join meeting</a>` : ''}
