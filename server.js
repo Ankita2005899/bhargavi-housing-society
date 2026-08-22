@@ -1049,6 +1049,137 @@ const eventFieldModel = {
   }
 };
 
+const governanceModel = {
+  async findAll() {
+    const { rows } = await pool.query('SELECT * FROM governance_items ORDER BY created_at DESC');
+    return rows;
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM governance_items WHERE id = $1', [id]);
+    return rows[0] || null;
+  },
+  async create(b) {
+    const { rows } = await pool.query(
+      `INSERT INTO governance_items (title, description, link, image)
+       VALUES ($1,$2,$3,$4) RETURNING *`,
+      [(b.title || '').trim() || null, (b.description || '').trim() || null,
+       (b.link || '').trim() || null, b.image || null]
+    );
+    return rows[0];
+  },
+  async update(id, b) {
+    const { rows } = await pool.query(
+      `UPDATE governance_items SET title=$1, description=$2, link=$3, image=$4, updated_at=now()
+       WHERE id=$5 RETURNING *`,
+      [(b.title || '').trim() || null, (b.description || '').trim() || null,
+       (b.link || '').trim() || null, b.image || null, id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM governance_items WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  }
+};
+
+const meetingModel = {
+  async findAll() {
+    const { rows } = await pool.query('SELECT * FROM meetings ORDER BY meeting_date DESC NULLS LAST, start_time DESC NULLS LAST, created_at DESC');
+    return rows;
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM meetings WHERE id = $1', [id]);
+    return rows[0] || null;
+  },
+  // Any meeting whose date + end time hasn't passed yet — used to drive the
+  // compulsory pop-up on the Secretary dashboard until the meeting ends.
+  async findActive() {
+    const { rows } = await pool.query(`
+      SELECT * FROM meetings
+      WHERE meeting_date IS NOT NULL AND end_time IS NOT NULL
+        AND (meeting_date + end_time::time) >= now()
+      ORDER BY meeting_date ASC, start_time ASC
+    `);
+    return rows;
+  },
+  async create(b) {
+    const { rows } = await pool.query(
+      `INSERT INTO meetings (title, description, meeting_date, start_time, end_time, location, meeting_link, image)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [(b.title || '').trim() || null, (b.description || '').trim() || null, b.meeting_date || null,
+       b.start_time || null, b.end_time || null, (b.location || '').trim() || null,
+       (b.meeting_link || '').trim() || null, b.image || null]
+    );
+    return rows[0];
+  },
+  async update(id, b) {
+    const { rows } = await pool.query(
+      `UPDATE meetings SET title=$1, description=$2, meeting_date=$3, start_time=$4, end_time=$5,
+        location=$6, meeting_link=$7, image=$8, updated_at=now()
+       WHERE id=$9 RETURNING *`,
+      [(b.title || '').trim() || null, (b.description || '').trim() || null, b.meeting_date || null,
+       b.start_time || null, b.end_time || null, (b.location || '').trim() || null,
+       (b.meeting_link || '').trim() || null, b.image || null, id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM meetings WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  }
+};
+
+const governanceController = {
+  async list(req, res) { try { res.json(await governanceModel.findAll()); } catch (err) { dbError(res, err); } },
+  async create(req, res) {
+    try { res.status(201).json(await governanceModel.create(req.body || {})); } catch (err) { dbError(res, err); }
+  },
+  async update(req, res) {
+    try {
+      const updated = await governanceModel.update(req.params.id, req.body || {});
+      if (!updated) return res.status(404).json({ error: 'Governance item not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const deleted = await governanceModel.remove(req.params.id);
+      if (!deleted) return res.status(404).json({ error: 'Governance item not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const meetingsController = {
+  async list(req, res) { try { res.json(await meetingModel.findAll()); } catch (err) { dbError(res, err); } },
+  async active(req, res) { try { res.json(await meetingModel.findActive()); } catch (err) { dbError(res, err); } },
+  async create(req, res) {
+    try {
+      const { meeting_date, end_time } = req.body || {};
+      if (!meeting_date || !String(meeting_date).trim()) return res.status(400).json({ error: 'Meeting date is required.' });
+      if (!end_time || !String(end_time).trim()) return res.status(400).json({ error: 'Meeting end time is required.' });
+      res.status(201).json(await meetingModel.create(req.body));
+    } catch (err) { dbError(res, err); }
+  },
+  async update(req, res) {
+    try {
+      const { meeting_date, end_time } = req.body || {};
+      if (!meeting_date || !String(meeting_date).trim()) return res.status(400).json({ error: 'Meeting date is required.' });
+      if (!end_time || !String(end_time).trim()) return res.status(400).json({ error: 'Meeting end time is required.' });
+      const updated = await meetingModel.update(req.params.id, req.body);
+      if (!updated) return res.status(404).json({ error: 'Meeting not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const deleted = await meetingModel.remove(req.params.id);
+      if (!deleted) return res.status(404).json({ error: 'Meeting not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
 const noticesController = {
   // GET /api/notices — Secretary only: every notice + counts.
   async list(req, res) { try { res.json(await noticeModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
@@ -1489,6 +1620,34 @@ async function migrate() {
     );
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS governance_items (
+      id SERIAL PRIMARY KEY,
+      title TEXT,
+      description TEXT,
+      link TEXT,
+      image TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS meetings (
+      id SERIAL PRIMARY KEY,
+      title TEXT,
+      description TEXT,
+      meeting_date DATE,
+      start_time TEXT,
+      end_time TEXT,
+      location TEXT,
+      meeting_link TEXT,
+      image TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
   console.log('✅ Database schema ready');
 }
 
@@ -1779,6 +1938,21 @@ eventsRouter.delete('/payments/:paymentId', requireSecretary, eventsController.r
 eventsRouter.post('/:id/fields', requireSecretary, eventsController.addField);
 eventsRouter.delete('/fields/:fieldId', requireSecretary, eventsController.removeField);
 app.use('/api/events', eventsRouter);
+
+const governanceRouter = express.Router();
+governanceRouter.get('/', requireSecretary, governanceController.list);
+governanceRouter.post('/', requireSecretary, governanceController.create);
+governanceRouter.put('/:id', requireSecretary, governanceController.update);
+governanceRouter.delete('/:id', requireSecretary, governanceController.remove);
+app.use('/api/governance', governanceRouter);
+
+const meetingsRouter = express.Router();
+meetingsRouter.get('/', requireSecretary, meetingsController.list);
+meetingsRouter.get('/active', requireSecretary, meetingsController.active);
+meetingsRouter.post('/', requireSecretary, meetingsController.create);
+meetingsRouter.put('/:id', requireSecretary, meetingsController.update);
+meetingsRouter.delete('/:id', requireSecretary, meetingsController.remove);
+app.use('/api/meetings', meetingsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', society: 'Bhargavi Housing Society' });
