@@ -450,7 +450,10 @@ body.site-edit-mode{padding-bottom:64px;}
   font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--ink-400);
   text-transform:uppercase;margin:-1.6rem 0 1.6rem;
 }
-.events-carousel-wrap{position:relative;margin:0 -1.5rem;padding:0 1.5rem;}
+.events-layout{display:flex;align-items:flex-start;gap:0;transition:gap .45s var(--ease);}
+.events-layout.has-detail{gap:1.8rem;}
+.events-carousel-wrap{position:relative;margin:0 -1.5rem;padding:0 1.5rem;flex:1 1 100%;min-width:0;transition:flex-basis .45s var(--ease);}
+.events-layout.has-detail .events-carousel-wrap{flex:1 1 44%;}
 .events-grid{
   display:flex;gap:1.8rem;overflow-x:auto;scroll-snap-type:x mandatory;
   padding:1rem 3vw 2.4rem;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
@@ -460,9 +463,10 @@ body.site-edit-mode{padding-bottom:64px;}
 .events-grid::-webkit-scrollbar-thumb{background:var(--diya-600);border-radius:99px;}
 .events-grid::-webkit-scrollbar-track{background:transparent;}
 .event-card{
-  flex:0 0 auto;width:min(78vw,400px);scroll-snap-align:center;
+  flex:0 0 auto;width:min(78vw,400px);scroll-snap-align:center;cursor:pointer;
   background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease), outline-color .25s ease;
+  outline:2px solid transparent;outline-offset:3px;
 }
 .event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
 .event-card img{height:260px;width:100%;object-fit:cover;transition:transform .5s ease;}
@@ -471,6 +475,52 @@ body.site-edit-mode{padding-bottom:64px;}
 .event-body h3{font-size:1.2rem;margin:.5rem 0 .5rem;}
 .event-body p{font-size:.92rem;margin:0;}
 .event-card.hidden{display:none;}
+.event-card.is-active{outline-color:var(--diya-600);transform:translateY(-6px) scale(.97);box-shadow:0 20px 40px rgba(14,27,50,.16);opacity:.72;}
+
+/* ---------- event detail panel (slides in from the right on card click) ---------- */
+.event-detail-panel{
+  flex:0 0 0;width:0;opacity:0;overflow:hidden;
+  transform:translateX(28px);
+  transition:flex-basis .45s var(--ease), width .45s var(--ease), opacity .35s ease, transform .45s var(--ease);
+}
+.events-layout.has-detail .event-detail-panel{
+  flex:0 0 46%;width:46%;opacity:1;transform:translateX(0);
+}
+.event-detail-card{
+  position:sticky;top:1rem;background:var(--paper-2);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-soft);overflow:hidden;
+}
+.event-detail-img-wrap{position:relative;height:220px;}
+.event-detail-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.event-detail-close{
+  position:absolute;top:.9rem;right:.9rem;width:36px;height:36px;border-radius:50%;
+  background:rgba(14,27,50,.55);backdrop-filter:blur(4px);color:#fff;
+  display:flex;align-items:center;justify-content:center;transition:background .2s ease,transform .2s ease;
+}
+.event-detail-close:hover{background:var(--diya-600);transform:scale(1.06);}
+.event-detail-body{padding:1.5rem 1.6rem 1.7rem;}
+.event-detail-body h3{font-size:1.35rem;margin:.6rem 0 .8rem;}
+.event-detail-meta{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;font-size:.86rem;color:var(--ink-600);}
+.event-detail-meta span{display:flex;gap:.5rem;align-items:flex-start;}
+.event-detail-meta svg{flex:0 0 auto;margin-top:.15rem;color:var(--diya-600);}
+.event-detail-body p.event-detail-text{font-size:.92rem;line-height:1.6;margin:0 0 1.1rem;}
+.event-detail-highlights{list-style:none;margin:0 0 1.2rem;padding:0;display:flex;flex-direction:column;gap:.5rem;}
+.event-detail-highlights li{font-size:.86rem;padding-left:1.3rem;position:relative;}
+.event-detail-highlights li::before{content:'';position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--diya-600);}
+.event-detail-contact{font-size:.8rem;color:var(--ink-400);margin-bottom:1.2rem;}
+.event-detail-fullpage{display:inline-flex;align-items:center;gap:.4rem;font-size:.84rem;font-weight:600;color:var(--diya-600);}
+.event-detail-fullpage:hover{text-decoration:underline;}
+@keyframes eventDetailFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.event-detail-body{animation:eventDetailFadeIn .35s var(--ease);}
+
+@media(max-width:900px){
+  .events-layout, .events-layout.has-detail{flex-direction:column;gap:1.6rem;}
+  .events-layout.has-detail .events-carousel-wrap,
+  .events-layout.has-detail .event-detail-panel{flex:1 1 auto;width:100%;}
+  .event-detail-panel{transform:translateY(18px);}
+  .events-layout.has-detail .event-detail-panel{transform:translateY(0);}
+  .event-detail-card{position:static;}
+}
 .carousel-arrow{
   position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
   background:var(--paper-2);border:1px solid var(--line);box-shadow:var(--shadow-soft);
@@ -1144,181 +1194,184 @@ body.site-edit-mode{padding-bottom:64px;}
         </div>
 
         <p class="events-carousel-hint">&larr; scroll or drag to explore &rarr;</p>
+        <div class="events-layout" id="eventsLayout">
         <div class="events-carousel-wrap">
           <button class="carousel-arrow prev" id="eventsPrevBtn" aria-label="Previous event">&#8249;</button>
           <div class="events-grid" id="eventsGrid">
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="diwali" tabindex="0" role="button" aria-label="View Diwali details">
             <img src="images/gallery/diwali.jpg" alt="Diwali">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Diwali</h3>
               <p>Diyas, rangoli and sparklers light up the whole courtyard.</p>
-              <a class="card-open-btn" href="event.html?id=diwali">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="ganesh-chaturthi" tabindex="0" role="button" aria-label="View Ganesh Chaturthi details">
             <img src="images/gallery/ganesh-chaturthi.jpg" alt="Ganesh Chaturthi">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Ganesh Chaturthi</h3>
               <p>A decorated pandal and daily aarti bring all three wings together.</p>
-              <a class="card-open-btn" href="event.html?id=ganesh-chaturthi">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="eid" tabindex="0" role="button" aria-label="View Eid details">
             <img src="images/gallery/eid.jpg" alt="Eid">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Eid</h3>
               <p>Crescent-lit balconies and a courtyard-wide shared feast.</p>
-              <a class="card-open-btn" href="event.html?id=eid">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="christmas" tabindex="0" role="button" aria-label="View Christmas details">
             <img src="images/gallery/christmas.jpg" alt="Christmas">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Christmas</h3>
               <p>A courtyard tree, resident carollers, and a nativity corner.</p>
-              <a class="card-open-btn" href="event.html?id=christmas">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="navratri" tabindex="0" role="button" aria-label="View Navratri details">
             <img src="images/gallery/navratri.jpg" alt="Navratri">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Navratri</h3>
               <p>Nine nights of garba and dandiya around the mandap.</p>
-              <a class="card-open-btn" href="event.html?id=navratri">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="holi" tabindex="0" role="button" aria-label="View Holi details">
             <img src="images/gallery/holi.jpg" alt="Holi">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Holi</h3>
               <p>Colour, water and music take over the courtyard.</p>
-              <a class="card-open-btn" href="event.html?id=holi">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="makar-sankranti" tabindex="0" role="button" aria-label="View Makar Sankranti details">
             <img src="images/gallery/makar-sankranti.jpg" alt="Makar Sankranti">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>Makar Sankranti</h3>
               <p>A bonfire, kites from every balcony, and a rangoli.</p>
-              <a class="card-open-btn" href="event.html?id=makar-sankranti">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="cultural">
+          <article class="event-card reveal" data-cat="cultural" data-id="new-year" tabindex="0" role="button" aria-label="View New Year&#39;s Eve details">
             <img src="images/gallery/new-year.jpg" alt="New Year&#39;s Eve">
             <div class="event-body">
               <span class="tag cultural">Cultural &amp; Festive</span>
               <h3>New Year&#39;s Eve</h3>
               <p>Fairy lights, a live band, and dinner for the society.</p>
-              <a class="card-open-btn" href="event.html?id=new-year">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="national">
+          <article class="event-card reveal" data-cat="national" data-id="independence-day" tabindex="0" role="button" aria-label="View Independence Day details">
             <img src="images/gallery/independence-day.jpg" alt="Independence Day">
             <div class="event-body">
               <span class="tag national">National Day</span>
               <h3>Independence Day</h3>
               <p>Flag hoisting and tricolour activities for children.</p>
-              <a class="card-open-btn" href="event.html?id=independence-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="national">
+          <article class="event-card reveal" data-cat="national" data-id="republic-day" tabindex="0" role="button" aria-label="View Republic Day details">
             <img src="images/gallery/republic-day.jpg" alt="Republic Day">
             <div class="event-body">
               <span class="tag national">National Day</span>
               <h3>Republic Day</h3>
               <p>A children's guard of honour and patriotic songs.</p>
-              <a class="card-open-btn" href="event.html?id=republic-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social">
+          <article class="event-card reveal" data-cat="social" data-id="sports-day" tabindex="0" role="button" aria-label="View Annual Sports Day &amp; Fun Fair details">
             <img src="images/gallery/sports-day.jpg" alt="Annual Sports Day &amp; Fun Fair">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Annual Sports Day &amp; Fun Fair</h3>
               <p>Cricket, tug-of-war, chaat stalls and a game zone.</p>
-              <a class="card-open-btn" href="event.html?id=sports-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social">
+          <article class="event-card reveal" data-cat="social" data-id="senior-citizens-day" tabindex="0" role="button" aria-label="View Senior Citizens&#39; Day details">
             <img src="images/gallery/senior-citizens-day.jpg" alt="Senior Citizens&#39; Day">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Senior Citizens&#39; Day</h3>
               <p>An evening honouring our elders, with music and dinner.</p>
-              <a class="card-open-btn" href="event.html?id=senior-citizens-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="social">
+          <article class="event-card reveal" data-cat="social" data-id="childrens-day" tabindex="0" role="button" aria-label="View Children&#39;s Day details">
             <img src="images/gallery/childrens-day.jpg" alt="Children&#39;s Day">
             <div class="event-body">
               <span class="tag social">Social &amp; Community</span>
               <h3>Children&#39;s Day</h3>
               <p>Story-telling, games and a talent show for every child.</p>
-              <a class="card-open-btn" href="event.html?id=childrens-day">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings">
+          <article class="event-card reveal" data-cat="meetings" data-id="agm-event" tabindex="0" role="button" aria-label="View Annual General Body Meeting details">
             <img src="images/gallery/agm.jpg" alt="Annual General Body Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Annual General Body Meeting</h3>
               <p>Accounts, budget approval and committee elections.</p>
-              <a class="card-open-btn" href="event.html?id=agm-event">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings">
+          <article class="event-card reveal" data-cat="meetings" data-id="sgbm-event" tabindex="0" role="button" aria-label="View Special General Body Meeting details">
             <img src="images/gallery/sgbm.jpg" alt="Special General Body Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Special General Body Meeting</h3>
               <p>Called for urgent matters that can't wait for the AGM.</p>
-              <a class="card-open-btn" href="event.html?id=sgbm-event">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings">
+          <article class="event-card reveal" data-cat="meetings" data-id="committee-meeting" tabindex="0" role="button" aria-label="View Managing Committee Meeting details">
             <img src="images/gallery/committee-meeting.jpg" alt="Managing Committee Meeting">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Managing Committee Meeting</h3>
               <p>Vendor payments, staff and grievances — monthly.</p>
-              <a class="card-open-btn" href="event.html?id=committee-meeting">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
 
-          <article class="event-card reveal" data-cat="meetings">
+          <article class="event-card reveal" data-cat="meetings" data-id="safety-workshop" tabindex="0" role="button" aria-label="View Safety &amp; Awareness Workshop details">
             <img src="images/gallery/safety-workshop.jpg" alt="Safety &amp; Awareness Workshop">
             <div class="event-body">
               <span class="tag meetings">Governance</span>
               <h3>Safety &amp; Awareness Workshop</h3>
               <p>Fire drills, waste segregation and security refreshers.</p>
-              <a class="card-open-btn" href="event.html?id=safety-workshop">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="card-open-btn">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
             </div>
           </article>
           </div>
           <button class="carousel-arrow next" id="eventsNextBtn" aria-label="Next event">&#8250;</button>
+        </div>
+        <div class="event-detail-panel" id="eventDetailPanel"></div>
         </div>
       </section>
 
@@ -2327,8 +2380,180 @@ body.site-edit-mode{padding-bottom:64px;}
             const match = filter === 'all' || card.getAttribute('data-cat') === filter;
             card.classList.toggle('hidden', !match);
           });
+          closeEventDetail();
           eventsGridEl.scrollTo({ left: 0, behavior: 'smooth' });
         });
+      });
+
+      /* ---------- events detail panel ---------- */
+      // Same shape/content as the full event.html detail pages, kept local so
+      // clicking a card can show the detail right here on the dashboard
+      // instead of navigating away. "View full page" still deep-links out
+      // via event.html?id=<slug> for anyone who wants a shareable URL.
+      const EVENTS_DETAIL = {
+        'diwali': { tag: 'Cultural & Festive', title: 'Diwali', img: 'images/gallery/diwali.jpg',
+          detail: 'Diyas are lit around the courtyard fountain, a hand-drawn rangoli forms the centrepiece near the main gate, and sparklers light up every balcony across all three wings. The evening usually wraps with a shared sweets table organised by volunteers.',
+          when: 'Late October / early November (as per the lunar calendar)', venue: 'Courtyard fountain & Wing A–C balconies',
+          highlights: ['Community rangoli competition', 'Diya lighting around the fountain', 'Sweets table for all residents', 'Kids\' sparkler zone (supervised)'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'ganesh-chaturthi': { tag: 'Cultural & Festive', title: 'Ganesh Chaturthi', img: 'images/gallery/ganesh-chaturthi.jpg',
+          detail: 'A decorated pandal goes up in the central courtyard, with daily aarti performed by rotating wings and a dhol troupe on the first and last day. Visarjan is organised as a group procession with society transport arranged in advance.',
+          when: '10–11 days, typically late August / early September', venue: 'Central courtyard pandal',
+          highlights: ['Daily aarti (rotating by wing)', 'Dhol troupe on day 1 and final day', 'Group visarjan procession', 'Prasad distribution every evening'],
+          contact: 'Ganesh Utsav Committee — sign-up sheet at the gate office' },
+        'eid': { tag: 'Cultural & Festive', title: 'Eid', img: 'images/gallery/eid.jpg',
+          detail: 'Balconies are strung with crescent-moon lighting in the run-up to Eid, and on the day itself a shared feast is laid out courtyard-wide, with every household welcome to bring a dish and join.',
+          when: 'Date varies with the Islamic lunar calendar', venue: 'Courtyard, all wings',
+          highlights: ['Community feast (potluck-style)', 'Balcony lighting from one week prior', 'Eid Mubarak greetings board at the gate'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'christmas': { tag: 'Cultural & Festive', title: 'Christmas', img: 'images/gallery/christmas.jpg',
+          detail: 'A decorated tree goes up in the courtyard through December, resident carollers perform on the evening of the 24th, and a small nativity display is set up near Wing C for children.',
+          when: '24th December evening', venue: 'Courtyard, near Wing C',
+          highlights: ['Tree lighting ceremony', 'Resident carolling group', 'Nativity display for children', 'Hot chocolate stall'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'navratri': { tag: 'Cultural & Festive', title: 'Navratri', img: 'images/gallery/navratri.jpg',
+          detail: 'Nine consecutive evenings of garba and dandiya around the deity mandap, with a rotating buffet stall run by volunteer households and a small prize for the best-dressed each night.',
+          when: 'Nine nights, September / October', venue: 'Central courtyard mandap',
+          highlights: ['Garba & dandiya, all 9 nights', 'Nightly buffet stall (volunteer-run)', 'Best-dressed recognition', 'Dandiya sticks available at the gate desk'],
+          contact: 'Navratri Committee — sign-up sheet at the gate office' },
+        'holi': { tag: 'Cultural & Festive', title: 'Holi', img: 'images/gallery/holi.jpg',
+          detail: 'The courtyard is handed over to colour and water games for the morning, with music through the society speakers and a designated "dry zone" near the entrance for anyone who\'d rather watch.',
+          when: 'Morning of Holi (as per the lunar calendar)', venue: 'Courtyard (dry zone kept near the main gate)',
+          highlights: ['Organic colours only (society-provided)', 'Water point set up near the fountain', 'Dry zone for non-participants', 'Post-Holi hosepipe clean-up by the maintenance team'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'makar-sankranti': { tag: 'Cultural & Festive', title: 'Makar Sankranti', img: 'images/gallery/makar-sankranti.jpg',
+          detail: 'A small bonfire is lit at dusk in the open ground, kites go up from balconies through the afternoon, and an intricate rangoli is drawn near the main entrance for the day.',
+          when: '14th January', venue: 'Open ground + all balconies',
+          highlights: ['Evening bonfire (fire-safety supervised)', 'Kite flying from balconies', 'Til-gul distribution', 'Courtyard rangoli'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'new-year': { tag: 'Cultural & Festive', title: "New Year's Eve", img: 'images/gallery/new-year.jpg',
+          detail: 'Balconies are fairy-lit through the last week of December, and on the 31st a live band performs on a courtyard stage followed by a sit-down dinner open to every household.',
+          when: '31st December evening', venue: 'Courtyard stage',
+          highlights: ['Live band performance', 'Society-wide sit-down dinner', 'Countdown & fireworks-free celebration', 'RSVP required for catering count'],
+          contact: 'Events Committee — RSVP via the gate office' },
+        'independence-day': { tag: 'National Day', title: 'Independence Day', img: 'images/gallery/independence-day.jpg',
+          detail: 'Flag hoisting takes place at 8 AM sharp in the courtyard, followed by the national anthem sung together and a set of tricolour-themed activities and a short cultural programme for children.',
+          when: '15th August, 8:00 AM', venue: 'Courtyard flagpole',
+          highlights: ['Flag hoisting at 8 AM', 'National anthem, all residents', "Children's tricolour activities", 'Light refreshments after'],
+          contact: 'Managing Committee' },
+        'republic-day': { tag: 'National Day', title: 'Republic Day', img: 'images/gallery/republic-day.jpg',
+          detail: "Flag hoisting at 8 AM with a children's guard of honour, followed by patriotic songs performed on the courtyard stage by residents and a brief address by the Secretary.",
+          when: '26th January, 8:00 AM', venue: 'Courtyard flagpole & stage',
+          highlights: ['Flag hoisting at 8 AM', "Children's guard of honour", 'Patriotic songs on stage', "Secretary's address"],
+          contact: 'Managing Committee' },
+        'sports-day': { tag: 'Social & Community', title: 'Annual Sports Day & Fun Fair', img: 'images/gallery/sports-day.jpg',
+          detail: 'A full-day event combining a cricket and badminton tournament, a tug-of-war between wings, and a fun fair with chaat stalls, ice-cream carts and a small game zone for all ages.',
+          when: 'One Sunday in winter (date announced in advance)', venue: 'Open ground & courtyard',
+          highlights: ['Cricket & badminton tournament', 'Inter-wing tug-of-war', 'Chaat stalls & ice-cream carts', 'Game zone for all ages'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'senior-citizens-day': { tag: 'Social & Community', title: "Senior Citizens' Day", img: 'images/gallery/senior-citizens-day.jpg',
+          detail: 'An evening set aside to honour the society\'s senior residents, with music, felicitations and a shared dinner in the courtyard.',
+          when: 'One evening in winter (date announced in advance)', venue: 'Courtyard',
+          highlights: ['Felicitation of senior residents', 'Live music', 'Community dinner'],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'childrens-day': { tag: 'Social & Community', title: "Children's Day", img: 'images/gallery/childrens-day.jpg',
+          detail: 'An afternoon of story-telling, games and a talent show, organised for every child in the society.',
+          when: '14th November', venue: 'Courtyard / Community Hall',
+          highlights: ['Story-telling session', 'Games & activities', "Children's talent show"],
+          contact: 'Events Committee — via the Secretary\'s office' },
+        'agm-event': { tag: 'Governance', title: 'Annual General Body Meeting', img: 'images/gallery/agm.jpg',
+          detail: 'Held once a year, the AGM is where the society\'s audited financial statements are presented for member approval, next year\'s maintenance budget is set, and — in election years — the managing committee is elected by member vote.',
+          when: 'Once a year (21 days\' written notice)', venue: 'Community Hall',
+          highlights: ['Presentation of audited accounts', 'Approval of annual budget', 'Committee elections (as applicable)'],
+          contact: 'Managing Committee' },
+        'sgbm-event': { tag: 'Governance', title: 'Special General Body Meeting', img: 'images/gallery/sgbm.jpg',
+          detail: 'An SGBM can be called at any time, either by the managing committee or by a requisition signed by the required number of members, to decide on a matter too urgent or significant to leave until the next AGM.',
+          when: 'As required (advance notice circulated per bye-laws)', venue: 'Community Hall',
+          highlights: ['Called only for urgent/major matters', 'Requisitioned per society bye-laws', 'Minutes shared with all members'],
+          contact: 'Managing Committee' },
+        'committee-meeting': { tag: 'Governance', title: 'Managing Committee Meeting', img: 'images/gallery/committee-meeting.jpg',
+          detail: 'The committee meets monthly (or quarterly, depending on the season) to handle day-to-day operations: vendor payments, staff management, maintenance planning, and resident grievances raised through the office.',
+          when: 'Monthly / quarterly', venue: 'Committee room, gate office',
+          highlights: ['Vendor payments & contracts', 'Staff management', 'Maintenance planning', 'Resident grievance redressal'],
+          contact: 'Managing Committee' },
+        'safety-workshop': { tag: 'Governance', title: 'Safety & Awareness Workshop', img: 'images/gallery/safety-workshop.jpg',
+          detail: 'A practical workshop covering fire evacuation drills, correct waste segregation, basic disaster-management steps, and a refresher on the society\'s visitor and security protocols — open to every resident.',
+          when: 'Twice a year', venue: 'Community Hall & open ground (for drills)',
+          highlights: ['Fire evacuation drill', 'Waste segregation training', 'Disaster-management basics', 'Security protocol refresher'],
+          contact: 'Safety Committee — via the Secretary\'s office' }
+      };
+
+      const eventsLayoutEl = document.getElementById('eventsLayout');
+      const eventDetailPanel = document.getElementById('eventDetailPanel');
+      let activeEventId = null;
+
+      function eventTagClass(tag) {
+        if (tag === 'National Day') return 'national';
+        if (tag === 'Social & Community') return 'social';
+        if (tag === 'Governance') return 'meetings';
+        return 'cultural';
+      }
+
+      function renderEventDetail(id) {
+        const item = EVENTS_DETAIL[id];
+        if (!item) return '';
+        return `
+          <div class="event-detail-card">
+            <div class="event-detail-img-wrap">
+              <img src="${item.img}" alt="${escapeHtml(item.title)}">
+              <button class="event-detail-close" id="eventDetailCloseBtn" aria-label="Close event details">${icon('close', 16)}</button>
+            </div>
+            <div class="event-detail-body">
+              <span class="tag ${eventTagClass(item.tag)}">${escapeHtml(item.tag)}</span>
+              <h3>${escapeHtml(item.title)}</h3>
+              <div class="event-detail-meta">
+                <span>${icon('clock', 15)} ${escapeHtml(item.when)}</span>
+                <span>${icon('building', 15)} ${escapeHtml(item.venue)}</span>
+              </div>
+              <p class="event-detail-text">${escapeHtml(item.detail)}</p>
+              <ul class="event-detail-highlights">
+                ${item.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
+              </ul>
+              <p class="event-detail-contact">Contact: ${escapeHtml(item.contact)}</p>
+              <a class="event-detail-fullpage" href="event.html?id=${encodeURIComponent(id)}">View full page ${icon('external', 14)}</a>
+            </div>
+          </div>`;
+      }
+
+      function openEventDetail(id) {
+        if (!EVENTS_DETAIL[id]) return;
+        activeEventId = id;
+        eventDetailPanel.innerHTML = renderEventDetail(id);
+        eventsLayoutEl.classList.add('has-detail');
+        eventCards.forEach(card => card.classList.toggle('is-active', card.getAttribute('data-id') === id));
+        const closeBtn = document.getElementById('eventDetailCloseBtn');
+        if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeEventDetail(); });
+        // scroll the picked card into view on the left so it's visible next to its detail
+        const pickedCard = eventsGridEl.querySelector(`.event-card[data-id="${id}"]`);
+        if (pickedCard) pickedCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+
+      function closeEventDetail() {
+        activeEventId = null;
+        eventsLayoutEl.classList.remove('has-detail');
+        eventCards.forEach(card => card.classList.remove('is-active'));
+        // clear panel content after the collapse transition finishes
+        setTimeout(() => { if (!activeEventId) eventDetailPanel.innerHTML = ''; }, 450);
+      }
+
+      eventCards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        if (!id) return;
+        card.addEventListener('click', () => {
+          if (activeEventId === id) { closeEventDetail(); return; }
+          openEventDetail(id);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (activeEventId === id) { closeEventDetail(); return; }
+            openEventDetail(id);
+          }
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && activeEventId) closeEventDetail();
       });
 
     });
