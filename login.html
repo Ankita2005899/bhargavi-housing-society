@@ -734,8 +734,11 @@ body.site-edit-mode{padding-bottom:64px;}
             rememberMe: document.getElementById('loginRemember').checked
           }
         });
-        const fallback = data.user.role === 'secretary' ? 'secretary.html' : 'index.html';
-        window.location.href = safeNextUrl() || fallback;
+        // Always land back on the homepage after login — including the
+        // Secretary account. index.html itself shows a "Secretary Section"
+        // entry point once it detects the Secretary session, and that's
+        // the only way into secretary.html from here on.
+        window.location.href = safeNextUrl() || 'index.html';
       } catch (err) {
         showError(err.message || 'Could not log in. Please try again.');
         submitBtn.disabled = false;
