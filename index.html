@@ -1041,24 +1041,7 @@ body.site-edit-mode{padding-bottom:64px;}
   <div class="modal-card meeting-popup">
     <button class="modal-close" id="meetingPopupClose">&times;</button>
     <span class="eyebrow-mono">CURRENTLY SCHEDULING</span>
-    <h3>Annual General Body Meeting</h3>
-    <div class="meeting-detail-row"><span>🗓</span> Saturday, 30 August 2026</div>
-    <div class="meeting-detail-row"><span>🕕</span> 6:00 PM – 8:00 PM</div>
-    <div class="meeting-detail-row"><span>📍</span> Community Hall, Ground Floor</div>
-    <div class="meeting-agenda">
-      <p class="mini-label-mono">Agenda</p>
-      <ol>
-        <li>Confirmation of minutes of previous AGM</li>
-        <li>Presentation of annual audit report</li>
-        <li>Approval of budget for the financial year</li>
-        <li>Election of managing committee</li>
-        <li>Maintenance &amp; upgrade proposals</li>
-      </ol>
-    </div>
-    <div class="meeting-actions">
-      <button class="btn btn-primary btn-sm">RSVP — Attending</button>
-      <button class="btn btn-outline btn-sm" id="meetingPopupClose2">Remind me later</button>
-    </div>
+    <div id="meetingPopupContent"></div>
   </div>
 </div>
 
@@ -2303,35 +2286,58 @@ body.site-edit-mode{padding-bottom:64px;}
         showToast('Editing mode off');
       });
 
-      /* ---------- meeting popup ---------- */
+      /* ---------- meeting popup — live from the database, and reappears on
+         every page load until the meeting's end time passes (same rule as
+         the Secretary dashboard's own reminder) ---------- */
       const meetingPopupOverlay = document.getElementById('meetingPopupOverlay');
       const meetingPopupClose = document.getElementById('meetingPopupClose');
-      const meetingPopupClose2 = document.getElementById('meetingPopupClose2');
+      const meetingPopupContent = document.getElementById('meetingPopupContent');
+      let activeMeetings = [];
+
+      function formatMeetingWhen(m) {
+        const d = m.meeting_date ? new Date(m.meeting_date + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        const t = [m.start_time, m.end_time].filter(Boolean).join(' – ');
+        return { d, t };
+      }
+
+      function renderMeetingPopup() {
+        meetingPopupContent.innerHTML = activeMeetings.map(m => {
+          const { d, t } = formatMeetingWhen(m);
+          return `
+            <h3>${escapeHtml(m.title || 'Committee meeting')}</h3>
+            ${d ? `<div class="meeting-detail-row"><span>🗓</span> ${escapeHtml(d)}</div>` : ''}
+            ${t ? `<div class="meeting-detail-row"><span>🕕</span> ${escapeHtml(t)}</div>` : ''}
+            ${m.location ? `<div class="meeting-detail-row"><span>📍</span> ${escapeHtml(m.location)}</div>` : ''}
+            ${m.description ? `<div class="meeting-agenda"><p class="mini-label-mono">Agenda</p><p>${escapeHtml(m.description)}</p></div>` : ''}
+            <div class="meeting-actions">
+              ${m.meeting_link ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join meeting</a>` : ''}
+              <button class="btn btn-outline btn-sm meeting-dismiss-btn">Remind me later</button>
+            </div>`;
+        }).join('<hr style="margin:1.4rem 0;border:none;border-top:1px solid var(--line);">');
+        meetingPopupContent.querySelectorAll('.meeting-dismiss-btn').forEach(btn => btn.addEventListener('click', closeMeetingPopup));
+      }
 
       function openMeetingPopup() { meetingPopupOverlay.classList.add('show'); }
       function closeMeetingPopup() { meetingPopupOverlay.classList.remove('show'); }
 
       ['openMeetingPopupBtn', 'openMeetingPopupBtn2'].forEach(id => {
         const btn = document.getElementById(id);
-        if (btn) btn.addEventListener('click', openMeetingPopup);
+        if (btn) btn.addEventListener('click', () => { if (activeMeetings.length) openMeetingPopup(); });
       });
       meetingPopupClose.addEventListener('click', closeMeetingPopup);
-      meetingPopupClose2.addEventListener('click', closeMeetingPopup);
       meetingPopupOverlay.addEventListener('click', (e) => { if (e.target === meetingPopupOverlay) closeMeetingPopup(); });
 
-      // Auto-show the scheduled meeting popup shortly after arriving at the dashboard
-      let meetingShown = false;
-      const dashboardSection = document.getElementById('dashboard');
-      const dashIO = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !meetingShown) {
-            meetingShown = true;
-            setTimeout(openMeetingPopup, 900);
-            dashIO.disconnect();
-          }
-        });
-      }, { threshold: 0.5 });
-      if (dashboardSection) dashIO.observe(dashboardSection);
+      async function checkMeetingPopup() {
+        try {
+          activeMeetings = await api('/api/public/meetings/active');
+        } catch (err) {
+          activeMeetings = [];
+        }
+        if (!activeMeetings.length) return;
+        renderMeetingPopup();
+        setTimeout(openMeetingPopup, 900);
+      }
+      checkMeetingPopup();
 
       /* close any modal with Escape */
       document.addEventListener('keydown', (e) => {
