@@ -446,18 +446,41 @@ body.site-edit-mode{padding-bottom:64px;}
 .filter-chip:hover{border-color:var(--diya-600);color:var(--diya-600);}
 .filter-chip.active{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
 
-.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.events-carousel-hint{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--ink-400);
+  text-transform:uppercase;margin:-1.6rem 0 1.6rem;
+}
+.events-carousel-wrap{position:relative;margin:0 -1.5rem;padding:0 1.5rem;}
+.events-grid{
+  display:flex;gap:1.8rem;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding:1rem 3vw 2.4rem;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:var(--diya-600) transparent;
+}
+.events-grid::-webkit-scrollbar{height:6px;}
+.events-grid::-webkit-scrollbar-thumb{background:var(--diya-600);border-radius:99px;}
+.events-grid::-webkit-scrollbar-track{background:transparent;}
 .event-card{
+  flex:0 0 auto;width:min(78vw,400px);scroll-snap-align:center;
   background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
 .event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
-.event-card img{height:190px;width:100%;object-fit:cover;transition:transform .5s ease;}
+.event-card img{height:260px;width:100%;object-fit:cover;transition:transform .5s ease;}
 .event-card:hover img{transform:scale(1.06);}
-.event-body{padding:1.2rem 1.3rem 1.4rem;}
-.event-body h3{font-size:1.12rem;margin:.5rem 0 .4rem;}
-.event-body p{font-size:.88rem;margin:0;}
+.event-body{padding:1.4rem 1.5rem 1.6rem;}
+.event-body h3{font-size:1.2rem;margin:.5rem 0 .5rem;}
+.event-body p{font-size:.92rem;margin:0;}
 .event-card.hidden{display:none;}
+.carousel-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
+  background:var(--paper-2);border:1px solid var(--line);box-shadow:var(--shadow-soft);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--navy-950);
+  transition:background .2s var(--ease), transform .2s var(--ease);
+}
+.carousel-arrow:hover{background:var(--diya-600);color:#fff;transform:translateY(-50%) scale(1.06);}
+.carousel-arrow.prev{left:-4px;}
+.carousel-arrow.next{right:-4px;}
+@media (max-width: 760px){.carousel-arrow{display:none;}}
 
 /* ---------- governance ---------- */
 .gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
@@ -1120,7 +1143,10 @@ body.site-edit-mode{padding-bottom:64px;}
           <button class="filter-chip" data-filter="meetings">Meetings &amp; Governance</button>
         </div>
 
-        <div class="events-grid" id="eventsGrid">
+        <p class="events-carousel-hint">&larr; scroll or drag to explore &rarr;</p>
+        <div class="events-carousel-wrap">
+          <button class="carousel-arrow prev" id="eventsPrevBtn" aria-label="Previous event">&#8249;</button>
+          <div class="events-grid" id="eventsGrid">
 
           <article class="event-card reveal" data-cat="cultural">
             <img src="images/gallery/diwali.jpg" alt="Diwali">
@@ -1291,6 +1317,8 @@ body.site-edit-mode{padding-bottom:64px;}
               <a class="card-open-btn" href="event.html?id=safety-workshop">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
             </div>
           </article>
+          </div>
+          <button class="carousel-arrow next" id="eventsNextBtn" aria-label="Next event">&#8250;</button>
         </div>
       </section>
 
@@ -2272,6 +2300,21 @@ body.site-edit-mode{padding-bottom:64px;}
         btn.addEventListener('click', () => showToast(btn.getAttribute('data-toast')));
       });
 
+      /* ---------- events carousel arrows ---------- */
+      const eventsGridEl = document.getElementById('eventsGrid');
+      const eventsPrevBtn = document.getElementById('eventsPrevBtn');
+      const eventsNextBtn = document.getElementById('eventsNextBtn');
+      function eventsScrollStep() {
+        const firstCard = eventsGridEl.querySelector('.event-card:not(.hidden)');
+        if (!firstCard) return 360;
+        const style = getComputedStyle(eventsGridEl);
+        return firstCard.getBoundingClientRect().width + parseFloat(style.gap || 28);
+      }
+      if (eventsPrevBtn && eventsNextBtn && eventsGridEl) {
+        eventsPrevBtn.addEventListener('click', () => eventsGridEl.scrollBy({ left: -eventsScrollStep(), behavior: 'smooth' }));
+        eventsNextBtn.addEventListener('click', () => eventsGridEl.scrollBy({ left: eventsScrollStep(), behavior: 'smooth' }));
+      }
+
       /* ---------- events filter ---------- */
       const chips = document.querySelectorAll('.filter-chip');
       const eventCards = document.querySelectorAll('.event-card');
@@ -2284,6 +2327,7 @@ body.site-edit-mode{padding-bottom:64px;}
             const match = filter === 'all' || card.getAttribute('data-cat') === filter;
             card.classList.toggle('hidden', !match);
           });
+          eventsGridEl.scrollTo({ left: 0, behavior: 'smooth' });
         });
       });
 
