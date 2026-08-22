@@ -927,6 +927,128 @@ const maintenanceController = {
   }
 };
 
+const eventModel = {
+  async findAllWithStats() {
+    const { rows } = await pool.query(`
+      SELECT e.*,
+        COALESCE(x.total_expense, 0)::numeric AS total_expense,
+        COALESCE(p.total_paid, 0)::numeric AS total_collected,
+        COALESCE(p.total_pending, 0)::numeric AS total_pending,
+        COALESCE(x.expense_count, 0)::int AS expense_count,
+        COALESCE(p.payment_count, 0)::int AS payment_count
+      FROM events e
+      LEFT JOIN (
+        SELECT event_id, SUM(amount) total_expense, COUNT(*) expense_count
+        FROM event_expenses GROUP BY event_id
+      ) x ON x.event_id = e.id
+      LEFT JOIN (
+        SELECT event_id,
+          SUM(amount) FILTER (WHERE status = 'Paid') total_paid,
+          SUM(amount) FILTER (WHERE status = 'Pending') total_pending,
+          COUNT(*) payment_count
+        FROM event_payments GROUP BY event_id
+      ) p ON p.event_id = e.id
+      ORDER BY e.start_date DESC NULLS LAST, e.created_at DESC
+    `);
+    return rows;
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
+    return rows[0] || null;
+  },
+  async create(b) {
+    const { rows } = await pool.query(
+      `INSERT INTO events (title, description, category, start_date, end_date, location, image, status, budget_total)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [b.title.trim(), (b.description || '').trim(), b.category || 'General', b.start_date || null,
+       b.end_date || null, (b.location || '').trim(), b.image || null, b.status || 'Upcoming', Number(b.budget_total) || 0]
+    );
+    return rows[0];
+  },
+  async update(id, b) {
+    const { rows } = await pool.query(
+      `UPDATE events SET title=$1, description=$2, category=$3, start_date=$4, end_date=$5,
+        location=$6, image=$7, status=$8, budget_total=$9, updated_at=now()
+       WHERE id=$10 RETURNING *`,
+      [b.title.trim(), (b.description || '').trim(), b.category || 'General', b.start_date || null,
+       b.end_date || null, (b.location || '').trim(), b.image || null, b.status || 'Upcoming', Number(b.budget_total) || 0, id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM events WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  },
+  // Full detail view: the event plus its expense breakdown, payment/dues
+  // ledger, and any free-form custom fields the Secretary has added.
+  async findFullById(id) {
+    const event = await this.findById(id);
+    if (!event) return null;
+    const { rows: expenses } = await pool.query('SELECT * FROM event_expenses WHERE event_id=$1 ORDER BY created_at ASC', [id]);
+    const { rows: payments } = await pool.query('SELECT * FROM event_payments WHERE event_id=$1 ORDER BY created_at ASC', [id]);
+    const { rows: fields } = await pool.query('SELECT * FROM event_fields WHERE event_id=$1 ORDER BY created_at ASC', [id]);
+    return { ...event, expenses, payments, fields };
+  }
+};
+
+const eventExpenseModel = {
+  async create({ event_id, part_name, category, amount, day_label, notes }) {
+    const { rows } = await pool.query(
+      `INSERT INTO event_expenses (event_id, part_name, category, amount, day_label, notes)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [event_id, part_name.trim(), category || 'Other', Number(amount) || 0, (day_label || '').trim(), (notes || '').trim()]
+    );
+    return rows[0];
+  },
+  async update(id, { part_name, category, amount, day_label, notes }) {
+    const { rows } = await pool.query(
+      `UPDATE event_expenses SET part_name=$1, category=$2, amount=$3, day_label=$4, notes=$5 WHERE id=$6 RETURNING *`,
+      [part_name.trim(), category || 'Other', Number(amount) || 0, (day_label || '').trim(), (notes || '').trim(), id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM event_expenses WHERE id=$1 RETURNING id, event_id', [id]);
+    return rows[0] || null;
+  }
+};
+
+const eventPaymentModel = {
+  async create({ event_id, payer_name, amount, status, due_date, notes }) {
+    const { rows } = await pool.query(
+      `INSERT INTO event_payments (event_id, payer_name, amount, status, due_date, notes)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [event_id, payer_name.trim(), Number(amount) || 0, status === 'Paid' ? 'Paid' : 'Pending', due_date || null, (notes || '').trim()]
+    );
+    return rows[0];
+  },
+  async update(id, { payer_name, amount, status, due_date, notes }) {
+    const { rows } = await pool.query(
+      `UPDATE event_payments SET payer_name=$1, amount=$2, status=$3, due_date=$4, notes=$5 WHERE id=$6 RETURNING *`,
+      [payer_name.trim(), Number(amount) || 0, status === 'Paid' ? 'Paid' : 'Pending', due_date || null, (notes || '').trim(), id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM event_payments WHERE id=$1 RETURNING id, event_id', [id]);
+    return rows[0] || null;
+  }
+};
+
+const eventFieldModel = {
+  async create({ event_id, field_key, field_value }) {
+    const { rows } = await pool.query(
+      `INSERT INTO event_fields (event_id, field_key, field_value) VALUES ($1,$2,$3) RETURNING *`,
+      [event_id, field_key.trim(), (field_value || '').trim()]
+    );
+    return rows[0];
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM event_fields WHERE id=$1 RETURNING id, event_id', [id]);
+    return rows[0] || null;
+  }
+};
+
 const noticesController = {
   // GET /api/notices — Secretary only: every notice + counts.
   async list(req, res) { try { res.json(await noticeModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
@@ -1029,6 +1151,107 @@ const noticesController = {
       }
       await noticeCommentModel.remove(req.params.id);
       res.json({ success: true, id: comment.id });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const eventsController = {
+  async list(req, res) { try { res.json(await eventModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
+  async full(req, res) {
+    try {
+      const event = await eventModel.findFullById(req.params.id);
+      if (!event) return res.status(404).json({ error: 'Event not found' });
+      res.json(event);
+    } catch (err) { dbError(res, err); }
+  },
+  async create(req, res) {
+    try {
+      const { title } = req.body || {};
+      if (!title || !String(title).trim()) return res.status(400).json({ error: 'Event title is required.' });
+      res.status(201).json(await eventModel.create(req.body));
+    } catch (err) { dbError(res, err); }
+  },
+  async update(req, res) {
+    try {
+      const { title } = req.body || {};
+      if (!title || !String(title).trim()) return res.status(400).json({ error: 'Event title is required.' });
+      const updated = await eventModel.update(req.params.id, req.body);
+      if (!updated) return res.status(404).json({ error: 'Event not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const deleted = await eventModel.remove(req.params.id);
+      if (!deleted) return res.status(404).json({ error: 'Event not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  },
+
+  async addExpense(req, res) {
+    try {
+      const { part_name, amount } = req.body || {};
+      if (!part_name || !String(part_name).trim()) return res.status(400).json({ error: 'Part / item name is required.' });
+      if (amount == null || isNaN(Number(amount))) return res.status(400).json({ error: 'A valid amount is required.' });
+      const event = await eventModel.findById(req.params.id);
+      if (!event) return res.status(404).json({ error: 'Event not found' });
+      res.status(201).json(await eventExpenseModel.create({ ...req.body, event_id: req.params.id }));
+    } catch (err) { dbError(res, err); }
+  },
+  async updateExpense(req, res) {
+    try {
+      const updated = await eventExpenseModel.update(req.params.expenseId, req.body || {});
+      if (!updated) return res.status(404).json({ error: 'Expense item not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async removeExpense(req, res) {
+    try {
+      const deleted = await eventExpenseModel.remove(req.params.expenseId);
+      if (!deleted) return res.status(404).json({ error: 'Expense item not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  },
+
+  async addPayment(req, res) {
+    try {
+      const { payer_name, amount } = req.body || {};
+      if (!payer_name || !String(payer_name).trim()) return res.status(400).json({ error: 'Payer / contributor name is required.' });
+      if (amount == null || isNaN(Number(amount))) return res.status(400).json({ error: 'A valid amount is required.' });
+      const event = await eventModel.findById(req.params.id);
+      if (!event) return res.status(404).json({ error: 'Event not found' });
+      res.status(201).json(await eventPaymentModel.create({ ...req.body, event_id: req.params.id }));
+    } catch (err) { dbError(res, err); }
+  },
+  async updatePayment(req, res) {
+    try {
+      const updated = await eventPaymentModel.update(req.params.paymentId, req.body || {});
+      if (!updated) return res.status(404).json({ error: 'Payment entry not found' });
+      res.json(updated);
+    } catch (err) { dbError(res, err); }
+  },
+  async removePayment(req, res) {
+    try {
+      const deleted = await eventPaymentModel.remove(req.params.paymentId);
+      if (!deleted) return res.status(404).json({ error: 'Payment entry not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  },
+
+  async addField(req, res) {
+    try {
+      const { field_key } = req.body || {};
+      if (!field_key || !String(field_key).trim()) return res.status(400).json({ error: 'Field name is required.' });
+      const event = await eventModel.findById(req.params.id);
+      if (!event) return res.status(404).json({ error: 'Event not found' });
+      res.status(201).json(await eventFieldModel.create({ ...req.body, event_id: req.params.id }));
+    } catch (err) { dbError(res, err); }
+  },
+  async removeField(req, res) {
+    try {
+      const deleted = await eventFieldModel.remove(req.params.fieldId);
+      if (!deleted) return res.status(404).json({ error: 'Field not found' });
+      res.json({ success: true, id: deleted.id });
     } catch (err) { dbError(res, err); }
   }
 };
@@ -1212,6 +1435,56 @@ async function migrate() {
       user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
       author_name TEXT NOT NULL,
       comment TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS events (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL DEFAULT 'General',
+      start_date DATE,
+      end_date DATE,
+      location TEXT,
+      image TEXT,
+      status TEXT NOT NULL DEFAULT 'Upcoming',
+      budget_total NUMERIC NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_expenses (
+      id SERIAL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      part_name TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Other',
+      amount NUMERIC NOT NULL DEFAULT 0,
+      day_label TEXT,
+      notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_payments (
+      id SERIAL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      payer_name TEXT NOT NULL,
+      amount NUMERIC NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'Pending',
+      due_date DATE,
+      notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_fields (
+      id SERIAL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      field_key TEXT NOT NULL,
+      field_value TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `);
@@ -1490,6 +1763,22 @@ noticesRouter.post('/:id/comments', requireAuth, noticesController.addComment);
 noticesRouter.put('/:id', requireSecretary, noticesController.update);
 noticesRouter.delete('/:id', requireSecretary, noticesController.remove);
 app.use('/api/notices', noticesRouter);
+
+const eventsRouter = express.Router();
+eventsRouter.get('/', requireSecretary, eventsController.list);
+eventsRouter.post('/', requireSecretary, eventsController.create);
+eventsRouter.get('/:id/full', requireSecretary, eventsController.full);
+eventsRouter.put('/:id', requireSecretary, eventsController.update);
+eventsRouter.delete('/:id', requireSecretary, eventsController.remove);
+eventsRouter.post('/:id/expenses', requireSecretary, eventsController.addExpense);
+eventsRouter.put('/expenses/:expenseId', requireSecretary, eventsController.updateExpense);
+eventsRouter.delete('/expenses/:expenseId', requireSecretary, eventsController.removeExpense);
+eventsRouter.post('/:id/payments', requireSecretary, eventsController.addPayment);
+eventsRouter.put('/payments/:paymentId', requireSecretary, eventsController.updatePayment);
+eventsRouter.delete('/payments/:paymentId', requireSecretary, eventsController.removePayment);
+eventsRouter.post('/:id/fields', requireSecretary, eventsController.addField);
+eventsRouter.delete('/fields/:fieldId', requireSecretary, eventsController.removeField);
+app.use('/api/events', eventsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', society: 'Bhargavi Housing Society' });
