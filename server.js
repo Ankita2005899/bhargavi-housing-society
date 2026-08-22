@@ -408,27 +408,53 @@ const staffModel = {
 };
 
 const maintenanceModel = {
+  // Billed per room (not per resident): one row per wing+flat, with the
+  // full resident list attached so the Secretary can pick who it's
+  // "shown as" — defaulting to the first resident recorded in that room.
   async findByMonth(month) {
-    const { rows } = await pool.query(
-      `SELECT m.id AS member_id, m.name, m.wing, m.flat, m.profile_image,
-              COALESCE(mp.amount, 0) AS amount,
-              COALESCE(mp.status, 'Unpaid') AS status,
-              mp.screenshot
-       FROM members m
-       LEFT JOIN maintenance_payments mp ON mp.member_id = m.id AND mp.month = $1
-       ORDER BY m.wing ASC, m.flat ASC, m.name ASC`,
+    const { rows: members } = await pool.query(
+      `SELECT id, name, wing, flat, profile_image
+       FROM members ORDER BY wing ASC, flat ASC, id ASC`
+    );
+    const { rows: payments } = await pool.query(
+      `SELECT wing, flat, amount, status, screenshot, representative_member_id
+       FROM maintenance_payments WHERE month = $1 AND wing IS NOT NULL AND flat IS NOT NULL`,
       [month]
     );
-    return rows;
+    const paymentByRoom = new Map();
+    payments.forEach(p => paymentByRoom.set(p.wing + '|' + p.flat, p));
+
+    const rooms = new Map(); // "wing|flat" -> { wing, flat, members: [] }
+    members.forEach(m => {
+      const key = m.wing + '|' + m.flat;
+      if (!rooms.has(key)) rooms.set(key, { wing: m.wing, flat: m.flat, members: [] });
+      rooms.get(key).members.push({ id: m.id, name: m.name, profile_image: m.profile_image });
+    });
+
+    return [...rooms.values()].map(r => {
+      const payment = paymentByRoom.get(r.wing + '|' + r.flat);
+      const repId = payment && payment.representative_member_id
+        ? payment.representative_member_id
+        : (r.members[0] ? r.members[0].id : null);
+      return {
+        wing: r.wing,
+        flat: r.flat,
+        members: r.members,
+        representative_member_id: repId,
+        amount: payment ? Number(payment.amount) || 0 : 0,
+        status: payment ? payment.status : 'Unpaid',
+        screenshot: payment ? payment.screenshot : null
+      };
+    }).sort((a, b) => (a.wing + a.flat).localeCompare(b.wing + b.flat));
   },
-  async upsert({ member_id, month, amount, status, screenshot }) {
+  async upsert({ wing, flat, month, amount, status, screenshot, representative_member_id }) {
     const { rows } = await pool.query(
-      `INSERT INTO maintenance_payments (member_id, month, amount, status, screenshot, updated_at)
-       VALUES ($1,$2,$3,$4,$5, now())
-       ON CONFLICT (member_id, month)
-       DO UPDATE SET amount=$3, status=$4, screenshot=$5, updated_at=now()
+      `INSERT INTO maintenance_payments (wing, flat, month, amount, status, screenshot, representative_member_id, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7, now())
+       ON CONFLICT (wing, flat, month)
+       DO UPDATE SET amount=$4, status=$5, screenshot=$6, representative_member_id=$7, updated_at=now()
        RETURNING *`,
-      [member_id, month, Number(amount) || 0, status === 'Paid' ? 'Paid' : 'Unpaid', screenshot || null]
+      [wing, flat, month, Number(amount) || 0, status === 'Paid' ? 'Paid' : 'Unpaid', screenshot || null, representative_member_id || null]
     );
     return rows[0];
   }
@@ -756,9 +782,9 @@ const maintenanceController = {
   },
   async save(req, res) {
     try {
-      const { member_id, month } = req.body || {};
-      if (!member_id || !/^\d{4}-\d{2}$/.test(String(month || ''))) {
-        return res.status(400).json({ error: 'member_id and month (YYYY-MM) are required' });
+      const { wing, flat, month } = req.body || {};
+      if (!wing || !flat || !/^\d{4}-\d{2}$/.test(String(month || ''))) {
+        return res.status(400).json({ error: 'wing, flat and month (YYYY-MM) are required' });
       }
       res.status(201).json(await maintenanceModel.upsert(req.body));
     } catch (err) { dbError(res, err); }
@@ -883,7 +909,7 @@ async function migrate() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS maintenance_payments (
       id SERIAL PRIMARY KEY,
-      member_id INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+      member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
       month TEXT NOT NULL,
       amount NUMERIC NOT NULL DEFAULT 0,
       status TEXT NOT NULL DEFAULT 'Unpaid',
@@ -891,6 +917,25 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       UNIQUE(member_id, month)
     );
+  `);
+  // Billing moved from per-member to per-room: add wing/flat + which
+  // resident the room is "shown as", and a room-level unique key.
+  // member_id is kept (now nullable) only for historical rows.
+  await pool.query(`ALTER TABLE maintenance_payments ALTER COLUMN member_id DROP NOT NULL;`);
+  await pool.query(`
+    ALTER TABLE maintenance_payments
+      ADD COLUMN IF NOT EXISTS wing TEXT,
+      ADD COLUMN IF NOT EXISTS flat TEXT,
+      ADD COLUMN IF NOT EXISTS representative_member_id INTEGER REFERENCES members(id) ON DELETE SET NULL;
+  `);
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'maintenance_payments_wing_flat_month_key'
+      ) THEN
+        ALTER TABLE maintenance_payments ADD CONSTRAINT maintenance_payments_wing_flat_month_key UNIQUE (wing, flat, month);
+      END IF;
+    END $$;
   `);
 
   console.log('✅ Database schema ready');
