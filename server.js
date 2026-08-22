@@ -956,6 +956,17 @@ const eventModel = {
     const { rows } = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
     return rows[0] || null;
   },
+  // Public/resident-facing view: no financial figures (budget, expenses,
+  // collections) — just what's needed to show the event on the site.
+  async findPublicAll() {
+    const { rows } = await pool.query(`
+      SELECT id, title, description, category, start_date, end_date, location, image, status, created_at
+      FROM events
+      WHERE status IS NULL OR status <> 'Cancelled'
+      ORDER BY start_date DESC NULLS LAST, created_at DESC
+    `);
+    return rows;
+  },
   async create(b) {
     const { rows } = await pool.query(
       `INSERT INTO events (title, description, category, start_date, end_date, location, image, status, budget_total)
@@ -1131,6 +1142,9 @@ const meetingModel = {
 
 const governanceController = {
   async list(req, res) { try { res.json(await governanceModel.findAll()); } catch (err) { dbError(res, err); } },
+  // GET /api/public/governance — anyone (no login needed): same fields,
+  // governance items have nothing sensitive in them.
+  async publicList(req, res) { try { res.json(await governanceModel.findAll()); } catch (err) { dbError(res, err); } },
   async create(req, res) {
     try { res.status(201).json(await governanceModel.create(req.body || {})); } catch (err) { dbError(res, err); }
   },
@@ -1194,6 +1208,14 @@ const noticesController = {
         wing = member ? member.wing : null;
       }
       res.json(await noticeModel.findActiveForUser({ wing, userId: req.session.userId }));
+    } catch (err) { dbError(res, err); }
+  },
+
+  // GET /api/public/notices — anyone (no login needed): active, unscoped
+  // notices with no wing filter and no "my reaction" (there's no user).
+  async publicActive(req, res) {
+    try {
+      res.json(await noticeModel.findActiveForUser({ wing: null, userId: null }));
     } catch (err) { dbError(res, err); }
   },
 
@@ -1288,6 +1310,8 @@ const noticesController = {
 
 const eventsController = {
   async list(req, res) { try { res.json(await eventModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
+  // GET /api/public/events — anyone (no login needed): safe fields only.
+  async publicList(req, res) { try { res.json(await eventModel.findPublicAll()); } catch (err) { dbError(res, err); } },
   async full(req, res) {
     try {
       const event = await eventModel.findFullById(req.params.id);
@@ -1866,6 +1890,9 @@ const publicRouter = express.Router();
 publicRouter.get('/members', membersController.publicSafeList);
 publicRouter.get('/hospitals', hospitalsController.publicList);
 publicRouter.get('/ambulances', ambulancesController.publicList);
+publicRouter.get('/notices', noticesController.publicActive);
+publicRouter.get('/events', eventsController.publicList);
+publicRouter.get('/governance', governanceController.publicList);
 app.use('/api/public', publicRouter);
 
 const maintenanceRouter = express.Router();

@@ -846,6 +846,38 @@ body.site-edit-mode{padding-bottom:64px;}
 .card-open-btn svg{width:13px;height:13px;}
 .event-card:hover, .gov-card:hover, .pin-note:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
 
+/* ---------- inline detail panel: shared by Notices & Governance docs
+   (shows detail right on the page instead of navigating to a separate
+   page — expands directly below the list it belongs to) ---------- */
+.inline-detail-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease);margin-top:0;}
+.inline-detail-panel.show{grid-template-rows:1fr;margin-top:1.6rem;}
+.inline-detail-panel > div{overflow:hidden;}
+.inline-detail-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);
+  padding:1.5rem 1.7rem 1.7rem;position:relative;animation:eventDetailFadeIn .35s var(--ease);
+}
+.inline-detail-close{
+  position:absolute;top:1rem;right:1rem;width:34px;height:34px;border-radius:50%;
+  background:var(--paper);border:1px solid var(--line);color:var(--ink-600);
+  display:flex;align-items:center;justify-content:center;transition:background .2s ease;
+}
+.inline-detail-close:hover{background:var(--diya-600);color:#fff;}
+.inline-detail-card img{width:100%;max-height:280px;object-fit:cover;border-radius:var(--radius-md);margin-bottom:1.1rem;}
+.inline-detail-card h3{font-size:1.3rem;margin:0 0 .6rem;padding-right:2.4rem;}
+.inline-detail-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;font-size:.84rem;color:var(--ink-400);margin-bottom:1rem;}
+.inline-detail-card p.inline-detail-text{font-size:.95rem;line-height:1.65;color:var(--ink-700);margin:0 0 1rem;white-space:pre-wrap;}
+.inline-detail-card a.inline-detail-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:600;color:var(--diya-600);}
+.inline-detail-card a.inline-detail-link:hover{text-decoration:underline;}
+
+.gov-docs-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem;}
+.gov-doc-card{
+  background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.1rem 1.2rem;cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.gov-doc-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+.gov-doc-card h4{font-size:.98rem;margin:0 0 .4rem;}
+.gov-doc-card p{font-size:.83rem;color:var(--ink-400);margin:0;}
+
 /* =====================================================
    DETAIL PAGES — event.html / governance.html / notice.html
    ===================================================== */
@@ -1373,6 +1405,12 @@ body.site-edit-mode{padding-bottom:64px;}
         </div>
         <div class="event-detail-panel" id="eventDetailPanel"></div>
         </div>
+
+        <div class="gov-docs-block reveal" id="secretaryEventsBlock" hidden>
+          <p class="mini-label-mono" style="margin:2rem 0 1rem;">Scheduled by the Secretary's office</p>
+          <div class="gov-docs-list" id="secretaryEventsList"></div>
+        </div>
+        <div class="inline-detail-panel" id="secretaryEventDetailPanel"></div>
       </section>
 
       <div class="fountain-divider small" aria-hidden="true">
@@ -1411,6 +1449,12 @@ body.site-edit-mode{padding-bottom:64px;}
             <a class="card-open-btn" href="governance.html?id=saw">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
         </div>
+
+        <div class="gov-docs-block reveal" id="governanceDocsBlock" hidden>
+          <p class="mini-label-mono" style="margin:2rem 0 1rem;">Scheme documents &amp; circulars, from the Secretary's office</p>
+          <div class="gov-docs-list" id="governanceDocsList"></div>
+        </div>
+        <div class="inline-detail-panel" id="governanceDetailPanel"></div>
       </section>
 
       <!-- ================= NOTICE BOARD ================= -->
@@ -1419,28 +1463,10 @@ body.site-edit-mode{padding-bottom:64px;}
           <span class="eyebrow-mono">05 · NOTICE BOARD</span>
           <h2>Pinned this week</h2>
         </div>
-        <div class="notice-board reveal">
-          <div class="pin-note">
-            <span class="pin-date-mono">17 AUG</span>
-            <p>Independence Day flag hoisting photos are up in the Wing B lobby gallery.</p>
-            <a class="card-open-btn" href="notice.html?id=independence-photos">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
-          <div class="pin-note">
-            <span class="pin-date-mono">22 AUG</span>
-            <p>Water tank cleaning across all wings, 10 AM – 1 PM. Please store water in advance.</p>
-            <a class="card-open-btn" href="notice.html?id=water-tank-cleaning">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
-          <div class="pin-note">
-            <span class="pin-date-mono">25 AUG</span>
-            <p>Ganesh Chaturthi decoration committee meeting — volunteers, please register at the gate office.</p>
-            <a class="card-open-btn" href="notice.html?id=ganesh-committee">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
-          <div class="pin-note">
-            <span class="pin-date-mono">30 AUG</span>
-            <p>Annual General Body Meeting, 6:00 PM, Community Hall. Attendance strongly encouraged.</p>
-            <a class="card-open-btn" href="notice.html?id=agm-notice">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
+        <div class="notice-board reveal" id="noticeBoardList">
+          <p class="sec-empty" id="noticeBoardEmpty" hidden>No notices posted yet — check back soon.</p>
         </div>
+        <div class="inline-detail-panel" id="noticeDetailPanel"></div>
       </section>
 
     </div><!-- /content-col -->
@@ -2555,6 +2581,151 @@ body.site-edit-mode{padding-bottom:64px;}
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && activeEventId) closeEventDetail();
       });
+
+      /* =====================================================
+         LIVE CONTENT — Notices, Governance documents, and
+         Secretary-scheduled events, pulled straight from the
+         database the Secretary edits. Detail always opens right
+         here on the page (never a separate navigation) — a
+         shared "inline detail panel" pattern reused by all three.
+         ===================================================== */
+
+      function formatDateLong(d) {
+        if (!d) return '';
+        try { return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+        catch (e) { return ''; }
+      }
+
+      function openInlinePanel(panelEl, html) {
+        panelEl.innerHTML = `<div><div class="inline-detail-card">
+          <button class="inline-detail-close" aria-label="Close">${icon('close', 16)}</button>
+          ${html}
+        </div></div>`;
+        panelEl.classList.add('show');
+        const closeBtn = panelEl.querySelector('.inline-detail-close');
+        if (closeBtn) closeBtn.addEventListener('click', () => closeInlinePanel(panelEl));
+        panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      function closeInlinePanel(panelEl) {
+        panelEl.classList.remove('show');
+        setTimeout(() => { if (!panelEl.classList.contains('show')) panelEl.innerHTML = ''; }, 420);
+      }
+
+      /* ---------- Notice Board (fully live — no curated content to preserve) ---------- */
+      const noticeBoardList = document.getElementById('noticeBoardList');
+      const noticeBoardEmpty = document.getElementById('noticeBoardEmpty');
+      const noticeDetailPanel = document.getElementById('noticeDetailPanel');
+      let liveNotices = [];
+
+      async function loadPublicNotices() {
+        try {
+          liveNotices = await api('/api/public/notices');
+        } catch (err) {
+          liveNotices = [];
+        }
+        noticeBoardEmpty.hidden = liveNotices.length > 0;
+        noticeBoardList.querySelectorAll('.pin-note').forEach(el => el.remove());
+        liveNotices.forEach(n => {
+          const el = document.createElement('div');
+          el.className = 'pin-note';
+          const dateLabel = n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }).toUpperCase() : '';
+          el.innerHTML = `
+            <span class="pin-date-mono">${escapeHtml(dateLabel)}</span>
+            <p>${escapeHtml(n.title || 'Notice')}${n.message ? ' — ' + escapeHtml(n.message) : ''}</p>
+            <span class="card-open-btn" data-notice-id="${n.id}">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>`;
+          el.querySelector('.card-open-btn').addEventListener('click', () => openNoticeDetail(n.id));
+          noticeBoardList.appendChild(el);
+        });
+      }
+
+      function openNoticeDetail(id) {
+        const n = liveNotices.find(x => String(x.id) === String(id));
+        if (!n) return;
+        openInlinePanel(noticeDetailPanel, `
+          <h3>${escapeHtml(n.title || 'Notice')}</h3>
+          <div class="inline-detail-meta">
+            ${n.category ? `<span>${escapeHtml(n.category)}</span>` : ''}
+            ${n.priority ? `<span>Priority: ${escapeHtml(n.priority)}</span>` : ''}
+            ${n.target_wing ? `<span>${escapeHtml(n.target_wing)}</span>` : ''}
+          </div>
+          <p class="inline-detail-text">${escapeHtml(n.message || '')}</p>`);
+      }
+
+      /* ---------- Governance documents (Secretary uploads, shown below the explainer cards) ---------- */
+      const governanceDocsBlock = document.getElementById('governanceDocsBlock');
+      const governanceDocsList = document.getElementById('governanceDocsList');
+      const governanceDetailPanel = document.getElementById('governanceDetailPanel');
+      let liveGovernance = [];
+
+      async function loadPublicGovernance() {
+        try {
+          liveGovernance = await api('/api/public/governance');
+        } catch (err) {
+          liveGovernance = [];
+        }
+        governanceDocsBlock.hidden = liveGovernance.length === 0;
+        governanceDocsList.innerHTML = '';
+        liveGovernance.forEach(g => {
+          const card = document.createElement('div');
+          card.className = 'gov-doc-card';
+          card.innerHTML = `<h4>${escapeHtml(g.title || 'Untitled document')}</h4>${g.description ? `<p>${escapeHtml(g.description.slice(0, 90))}${g.description.length > 90 ? '…' : ''}</p>` : ''}`;
+          card.addEventListener('click', () => openGovernanceDetail(g.id));
+          governanceDocsList.appendChild(card);
+        });
+      }
+
+      function openGovernanceDetail(id) {
+        const g = liveGovernance.find(x => String(x.id) === String(id));
+        if (!g) return;
+        openInlinePanel(governanceDetailPanel, `
+          ${g.image ? `<img src="${g.image}" alt="">` : ''}
+          <h3>${escapeHtml(g.title || 'Untitled document')}</h3>
+          ${g.description ? `<p class="inline-detail-text">${escapeHtml(g.description)}</p>` : ''}
+          ${g.link ? `<a class="inline-detail-link" href="${escapeHtml(g.link)}" target="_blank" rel="noopener">${icon('external', 14)} Open link</a>` : ''}`);
+      }
+
+      /* ---------- Events scheduled by the Secretary (shown below the curated calendar) ---------- */
+      const secretaryEventsBlock = document.getElementById('secretaryEventsBlock');
+      const secretaryEventsList = document.getElementById('secretaryEventsList');
+      const secretaryEventDetailPanel = document.getElementById('secretaryEventDetailPanel');
+      let liveEvents = [];
+
+      async function loadPublicEvents() {
+        try {
+          liveEvents = await api('/api/public/events');
+        } catch (err) {
+          liveEvents = [];
+        }
+        secretaryEventsBlock.hidden = liveEvents.length === 0;
+        secretaryEventsList.innerHTML = '';
+        liveEvents.forEach(ev => {
+          const card = document.createElement('div');
+          card.className = 'gov-doc-card';
+          card.innerHTML = `<h4>${escapeHtml(ev.title || 'Untitled event')}</h4><p>${escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • '))}</p>`;
+          card.addEventListener('click', () => openSecretaryEventDetail(ev.id));
+          secretaryEventsList.appendChild(card);
+        });
+      }
+
+      function openSecretaryEventDetail(id) {
+        const ev = liveEvents.find(x => String(x.id) === String(id));
+        if (!ev) return;
+        const when = [formatDateLong(ev.start_date), ev.end_date && ev.end_date !== ev.start_date ? '– ' + formatDateLong(ev.end_date) : ''].filter(Boolean).join(' ');
+        openInlinePanel(secretaryEventDetailPanel, `
+          ${ev.image ? `<img src="${ev.image}" alt="">` : ''}
+          <h3>${escapeHtml(ev.title || 'Untitled event')}</h3>
+          <div class="inline-detail-meta">
+            ${when ? `<span>${icon('clock', 14)} ${escapeHtml(when)}</span>` : ''}
+            ${ev.location ? `<span>${icon('building', 14)} ${escapeHtml(ev.location)}</span>` : ''}
+            ${ev.category ? `<span>${escapeHtml(ev.category)}</span>` : ''}
+            ${ev.status ? `<span>${escapeHtml(ev.status)}</span>` : ''}
+          </div>
+          ${ev.description ? `<p class="inline-detail-text">${escapeHtml(ev.description)}</p>` : ''}`);
+      }
+
+      loadPublicNotices();
+      loadPublicGovernance();
+      loadPublicEvents();
 
     });
 })();
