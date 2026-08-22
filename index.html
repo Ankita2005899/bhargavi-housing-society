@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhargavi Housing Society — Community &amp; Home</title>
+<link rel="icon" href="images/branding/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---- base/variables.css ---- */
+/* =====================================================
+   DESIGN TOKENS — shared colours, type, radius, shadow
+   Loaded before every other stylesheet.
+   ===================================================== */
+:root{
+  --navy-950: #0E1B32;
+  --navy-900: #142A4C;
+  --navy-800: #1B3A6B;
+  --navy-700: #234B85;
+  --sky-500:  #4E8FC7;
+  --sky-100:  #E7F0F9;
+  --gold-500: #D9A441;
+  --gold-600: #C08A2A;
+  --diya-600: #C1522C;
+  --diya-700: #A5411F;
+  --paper:    #F6F5F1;
+  --paper-2:  #FFFFFF;
+  --ink-900:  #1B2130;
+  --ink-600:  #4A5468;
+  --ink-400:  #7C8598;
+  --line:     #E2E1D9;
+
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 10px 30px rgba(14,27,50,0.08);
+  --shadow-card: 0 4px 18px rgba(14,27,50,0.10);
+  --ease: cubic-bezier(.22,.85,.32,1);
+}
+
+
+/* ---- pages/site.css ---- */
+/* =====================================================
+   BHARGAVI HOUSING SOCIETY — DESIGN TOKENS
+   Palette: courtyard navy + marigold gold + diya orange
+   Type: Sora (display) / Inter (body) / IBM Plex Mono (utility)
+   Signature: the courtyard fountain — a recurring wave divider
+   ===================================================== */
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink-900);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0 0 .4em;color:var(--navy-950);letter-spacing:-.01em;}
+p{margin:0 0 1em;color:var(--ink-600);}
+ul,ol{color:var(--ink-600);}
+button{font-family:var(--font-body);cursor:pointer;}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+
+/* ---------- utility ---------- */
+.eyebrow-mono{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.16em;
+  color:var(--diya-600);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+.mini-label-mono{
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.1em;
+  color:var(--ink-400);
+  text-transform:uppercase;
+  margin:0 0 .3em;
+}
+.section{padding:5.5rem 1.5rem;max-width:1240px;margin:0 auto;}
+.section-head{max-width:640px;margin-bottom:2.6rem;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.4rem);}
+.section-sub{font-size:1.02rem;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-family:var(--font-body);font-weight:600;font-size:.92rem;
+  padding:.85em 1.6em;border-radius:999px;border:1.5px solid transparent;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  white-space:nowrap;
+}
+.btn-primary{background:var(--diya-600);color:#fff;box-shadow:0 8px 20px rgba(193,82,44,.28);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(193,82,44,.36);background:var(--diya-700);}
+.btn-ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.55);color:#fff;backdrop-filter:blur(6px);}
+.btn-ghost:hover{background:rgba(255,255,255,.22);transform:translateY(-2px);}
+.btn-outline{background:transparent;border-color:var(--navy-800);color:var(--navy-800);}
+.btn-outline:hover{background:var(--navy-800);color:#fff;}
+.btn-sm{padding:.55em 1.1em;font-size:.8rem;}
+.btn-block{width:100%;}
+
+.tag{
+  display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;
+  padding:.3em .7em;border-radius:6px;font-weight:600;text-transform:uppercase;
+}
+.tag.cultural{background:#FBEAD9;color:var(--diya-700);}
+.tag.national{background:#E4F2E7;color:#2E6B44;}
+.tag.social{background:var(--sky-100);color:var(--navy-800);}
+.tag.meetings{background:#F1E9F7;color:#6C3F91;}
+.tag.pending{background:#FDF0DA;color:#9A6716;margin-left:.5em;}
+.tag.review{background:#E4F2E7;color:#2E6B44;margin-left:.5em;}
+
+/* ---------- reveal-on-scroll ---------- */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+
+/* ---------- preloader ---------- */
+#preloader{
+  position:fixed;inset:0;background:var(--navy-950);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#preloader.hide{opacity:0;visibility:hidden;}
+.loader-ring{width:52px;height:52px;border-radius:50%;border:3px solid rgba(217,164,65,.25);border-top-color:var(--gold-500);animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- ticker ---------- */
+.ticker-bar{background:var(--navy-950);color:var(--sky-100);overflow:hidden;padding:.5rem 0;position:relative;z-index:210;}
+.ticker-track{display:flex;gap:3rem;white-space:nowrap;width:max-content;animation:ticker 28s linear infinite;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.02em;padding-left:1rem;}
+.ticker-track span{opacity:.92;}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---------- header ---------- */
+.site-header{
+  position:sticky;top:0;z-index:200;background:rgba(20,42,76,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);
+  transition:background .3s ease;
+}
+.header-inner{max-width:1240px;margin:0 auto;padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
+.brand{display:flex;align-items:center;gap:.7rem;}
+.brand-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.2;}
+.brand-text strong{font-family:var(--font-display);color:#fff;font-size:1rem;}
+.brand-text em{font-style:normal;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--sky-100);opacity:.75;}
+
+.main-nav{display:flex;gap:1.9rem;}
+.main-nav a{color:#EDEFF3;font-size:.88rem;font-weight:500;position:relative;padding:.2rem 0;}
+.main-nav a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--gold-500);transition:width .3s var(--ease);}
+.main-nav a:hover::after{width:100%;}
+
+.hamburger{background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:10px;width:42px;height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.hamburger span{display:block;width:19px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
+
+/* ---------- header auth (login / signup, or account pill) ---------- */
+.header-auth{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.header-auth .account-pill{background:rgba(255,255,255,.14);color:#fff;}
+.header-auth .btn-outline{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;}
+.header-auth .btn-outline:hover{background:rgba(255,255,255,.16);color:#fff;}
+@media (max-width:560px){
+  .header-auth{gap:.4rem;}
+  .header-auth .btn{padding:.5em .8em;font-size:.74rem;}
+}
+@media (max-width:400px){
+  .header-auth .btn-sm.auth-signup-btn{display:none;} /* keep just "Log in" on very small screens */
+}
+
+/* ---------- slide-in menu ---------- */
+.menu-overlay{position:fixed;inset:0;background:rgba(14,27,50,.45);opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;z-index:300;}
+.menu-overlay.show{opacity:1;visibility:visible;}
+.slide-menu{
+  position:fixed;top:0;right:0;height:100%;width:320px;max-width:88vw;background:var(--paper-2);
+  z-index:301;transform:translateX(100%);transition:transform .4s var(--ease);
+  box-shadow:-20px 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column;padding:1.6rem;
+}
+.slide-menu.show{transform:translateX(0);}
+.slide-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem;}
+.slide-menu-logo{width:38px;height:38px;border-radius:9px;}
+.close-btn{background:none;border:none;font-size:1.8rem;line-height:1;color:var(--ink-600);}
+.slide-menu-links{display:flex;flex-direction:column;gap:.2rem;}
+.slide-menu-links a{padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);font-size:1rem;transition:padding-left .25s ease, color .25s ease;}
+.slide-menu-links a:hover{padding-left:.7rem;color:var(--diya-600);}
+
+.view-details-trigger{
+  display:flex;align-items:center;gap:.5rem;width:100%;text-align:left;background:none;border:none;
+  padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);
+  font-size:1rem;font-family:var(--font-body);cursor:pointer;transition:padding-left .25s ease, color .25s ease;
+}
+.view-details-trigger:hover{padding-left:.7rem;color:var(--diya-600);}
+.slide-menu-divider{height:1px;background:var(--line);margin:1.4rem 0;}
+.secretary-trigger{
+  display:flex;align-items:center;gap:.8rem;background:var(--navy-950);color:#fff;border:none;
+  padding:.9rem 1rem;border-radius:var(--radius-md);text-align:left;transition:transform .25s ease, background .25s ease;
+}
+.secretary-trigger:hover{transform:translateY(-2px);background:var(--navy-800);}
+.secretary-trigger .lock-ic{font-size:1.3rem;}
+.secretary-trigger strong{display:block;font-size:.92rem;}
+.secretary-trigger small{color:var(--sky-100);opacity:.75;font-size:.72rem;}
+.slide-menu-foot{margin-top:auto;font-family:var(--font-mono);font-size:.7rem;color:var(--ink-400);text-align:center;}
+
+/* ---------- modals ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(14,27,50,.55);z-index:400;
+  display:flex;align-items:center;justify-content:center;padding:1.2rem;
+  opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;
+}
+.modal-overlay.show{opacity:1;visibility:visible;}
+.modal-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);padding:2.2rem;max-width:420px;width:100%;
+  position:relative;box-shadow:0 30px 60px rgba(0,0,0,.25);
+  transform:scale(.92) translateY(10px);opacity:0;transition:transform .35s var(--ease), opacity .35s var(--ease);
+  max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.show .modal-card{transform:scale(1) translateY(0);opacity:1;}
+.modal-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;font-size:1.6rem;color:var(--ink-400);line-height:1;}
+.modal-icon{font-size:2rem;margin-bottom:.4rem;}
+.modal-card h3{font-size:1.35rem;}
+.modal-card input[type=password]{
+  width:100%;padding:.85em 1em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-mono);letter-spacing:.3em;font-size:1rem;margin:1rem 0 .4rem;text-align:center;
+}
+.modal-card input[type=password]:focus{outline:none;border-color:var(--diya-600);}
+.modal-error{color:#B3261E;font-size:.82rem;display:none;margin-bottom:.8rem;}
+.modal-error.show{display:block;}
+
+.secretary-panel{max-width:640px;}
+.sec-panel-head{display:flex;gap:.9rem;align-items:flex-start;margin-bottom:0;}
+.sec-panel-head .lock-ic{font-size:1.8rem;}
+.sec-panel-head p{margin:0;}
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.sec-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.1rem;}
+.sec-card h4{font-size:.95rem;margin-bottom:.6rem;}
+.sec-card ul{list-style:none;margin:0;padding:0;font-size:.82rem;}
+.sec-card li{padding:.35rem 0;border-bottom:1px dashed var(--line);}
+.sec-card li:last-child{border-bottom:none;}
+.sec-mini{font-size:.82rem;margin:.2rem 0 .6rem;}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:.4rem;}
+.progress-fill{height:100%;background:var(--gold-500);border-radius:99px;}
+.sec-note{margin-top:1.2rem;font-size:.76rem;color:var(--ink-400);}
+
+/* ---------- secretary full admin panel ---------- */
+.secretary-panel-full{max-width:960px;width:96vw;padding:1.8rem 1.8rem 2rem;}
+.sec-top-bar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding-right:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1.1rem;margin-bottom:1.1rem;}
+.sec-top-actions{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.sec-top-actions .modal-close{position:static;font-size:1.5rem;}
+#secGoWebsiteBtn{white-space:nowrap;}
+
+.sec-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.sec-tab{
+  background:var(--paper);border:1.5px solid var(--line);color:var(--ink-600);
+  font-weight:600;font-size:.86rem;padding:.55em 1.1em;border-radius:999px;
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.sec-tab:hover{border-color:var(--gold-500);}
+.sec-tab.active{background:var(--navy-950);color:#fff;border-color:var(--navy-950);}
+
+.sec-tab-panel{display:none;}
+.sec-tab-panel.active{display:block;animation:fadeInTab .3s ease;}
+@keyframes fadeInTab{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.1rem;}
+.sec-summary-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:.8rem 1rem;}
+.sec-summary-box span{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;color:var(--ink-400);text-transform:uppercase;margin-bottom:.3rem;}
+.sec-summary-box strong{font-family:var(--font-display);font-size:1.25rem;color:var(--navy-950);}
+.sec-summary-box.income strong{color:#2E6B44;}
+.sec-summary-box.expense strong{color:#B3261E;}
+.sec-summary-box.balance strong{color:var(--diya-600);}
+
+.sec-inline-form{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;background:var(--paper);border:1px dashed var(--line);border-radius:var(--radius-md);padding:.9rem;margin-bottom:1.1rem;}
+.sec-inline-form input, .sec-inline-form select{
+  flex:1 1 140px;min-width:110px;padding:.6em .8em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-body);font-size:.85rem;background:#fff;color:var(--ink-900);
+}
+.sec-inline-form input:focus, .sec-inline-form select:focus{outline:none;border-color:var(--diya-600);}
+.sec-inline-form button{flex:0 0 auto;}
+
+.sec-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-md);}
+.sec-table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:560px;}
+.sec-table th{text-align:left;background:var(--paper);color:var(--ink-400);font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;padding:.7rem .8rem;border-bottom:1px solid var(--line);}
+.sec-table td{padding:.65rem .8rem;border-bottom:1px solid var(--line);color:var(--ink-900);vertical-align:middle;}
+.sec-table tbody tr:last-child td{border-bottom:none;}
+.sec-table tbody tr:hover{background:var(--sky-100);}
+.sec-row-btn{background:none;border:none;font-size:.95rem;padding:.15rem .35rem;border-radius:6px;color:var(--ink-400);}
+.sec-row-btn:hover{background:var(--line);color:var(--navy-950);}
+.sec-row-btn.danger:hover{background:#FBE4E1;color:#B3261E;}
+.sec-empty{padding:1.4rem;text-align:center;color:var(--ink-400);font-size:.85rem;}
+.tag.active{background:#E4F2E7;color:#2E6B44;}
+.tag.inactive{background:#F1E1E1;color:#8A3B3B;}
+.tag.due{background:#FDF0DA;color:#9A6716;}
+.tag.paid{background:#E4F2E7;color:#2E6B44;}
+.tag.ongoing{background:#F1E9F7;color:#6C3F91;}
+.tag.planned{background:var(--sky-100);color:var(--navy-800);}
+.tag.completed{background:#E4F2E7;color:#2E6B44;}
+
+@media (max-width:640px){
+  .sec-summary-row{grid-template-columns:1fr;}
+  .secretary-panel-full{padding:1.4rem 1.1rem 1.6rem;}
+  .edit-toolbar{flex-direction:column;align-items:stretch;text-align:center;border-radius:var(--radius-lg);padding:.9rem;}
+  .edit-toolbar-actions{justify-content:center;}
+}
+
+/* ---------- live edit mode: persistent yellow highlight on editable content ---------- */
+body.site-edit-mode{padding-bottom:64px;}
+.site-edit-mode [data-edit-key]{
+  outline:2px dashed var(--gold-500);outline-offset:3px;border-radius:4px;
+  background:rgba(217,164,65,.10);transition:background .2s ease, outline-color .2s ease;
+}
+.site-edit-mode [data-edit-key^="text-"]{cursor:text;}
+.site-edit-mode [data-edit-key]:hover{background:rgba(217,164,65,.26);outline-color:var(--diya-600);}
+.site-edit-mode [data-edit-key^="text-"]:focus{outline:2px solid var(--diya-600);background:rgba(217,164,65,.18);}
+.site-edit-mode [data-edit-key^="img-"]{cursor:pointer;position:relative;display:block;}
+.site-edit-mode [data-edit-key^="img-"]::after{
+  content:"✏️ Click to change photo";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  background:var(--navy-950);color:#fff;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.03em;
+  padding:.35em .7em;border-radius:999px;opacity:0;transition:opacity .2s ease;white-space:nowrap;pointer-events:none;
+}
+.site-edit-mode [data-edit-key^="img-"]:hover::after{opacity:1;}
+
+.edit-toolbar{
+  position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%) translateY(140%);
+  z-index:500;background:var(--navy-950);color:#fff;border-radius:999px;
+  display:flex;align-items:center;gap:1rem;padding:.6rem .7rem .6rem 1.3rem;
+  box-shadow:0 16px 40px rgba(0,0,0,.3);border:1.5px solid var(--gold-500);
+  transition:transform .35s var(--ease);max-width:92vw;flex-wrap:wrap;
+}
+.edit-toolbar.show{transform:translateX(-50%) translateY(0);}
+.edit-toolbar-msg{font-size:.82rem;color:var(--sky-100);}
+.edit-toolbar-actions{display:flex;gap:.5rem;flex-shrink:0;}
+
+/* ---------- yellow "re-entering the website" flash ---------- */
+.reentry-flash{
+  position:fixed;inset:0;background:var(--gold-500);opacity:0;pointer-events:none;
+  z-index:9998;transition:opacity .28s ease;
+}
+.reentry-flash.show{opacity:.5;}
+.glow-pulse{animation:glowPulse .8s ease;position:relative;z-index:1;}
+@keyframes glowPulse{
+  0%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+  35%{box-shadow:0 0 0 5px rgba(217,164,65,.6), 0 0 46px 12px rgba(217,164,65,.4);}
+  100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+}
+
+.meeting-popup{max-width:440px;}
+.meeting-detail-row{display:flex;align-items:center;gap:.6em;font-size:.92rem;color:var(--ink-600);margin-bottom:.4em;}
+.meeting-agenda{background:var(--paper);border-radius:var(--radius-md);padding:1rem 1.2rem;margin:1rem 0;}
+.meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
+.meeting-agenda li{margin-bottom:.3rem;}
+.meeting-actions{display:flex;gap:.6rem;flex-wrap:wrap;}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;color:#fff;}
+.hero-media{position:absolute;inset:0;z-index:0;}
+.hero-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);animation:heroZoom 16s ease-in-out infinite alternate;}
+@keyframes heroZoom{from{transform:scale(1.06);}to{transform:scale(1);}}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(14,27,50,.55) 0%, rgba(14,27,50,.72) 55%, rgba(14,27,50,.92) 100%);}
+.hero-content{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:6rem 1.5rem 3rem;text-align:center;}
+.hero-content h1{font-size:clamp(2.4rem,6vw,4.2rem);color:#fff;line-height:1.03;}
+.hero-sub{font-size:1.08rem;color:#DDE3EE;max-width:560px;margin:1.1rem auto 1.8rem;}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.hero-stats{
+  position:relative;z-index:1;display:flex;justify-content:center;gap:clamp(1.4rem,5vw,4rem);
+  padding:1.6rem 1.5rem 2.4rem;flex-wrap:wrap;
+}
+.hero-stats div{text-align:center;}
+.hero-stats strong{display:block;font-family:var(--font-mono);font-size:1.9rem;color:var(--gold-500);}
+.hero-stats span{font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:#C7CEDB;}
+
+/* ---------- fountain divider (signature) ---------- */
+.fountain-divider{width:100%;overflow:hidden;line-height:0;color:var(--navy-800);background:var(--paper);}
+.fountain-divider svg{width:100%;height:40px;display:block;}
+.fountain-divider path{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.35;}
+.fountain-divider.small svg{height:26px;}
+
+/* ---------- layout w/ left rail ---------- */
+.with-rail{display:grid;grid-template-columns:280px 1fr;gap:0;max-width:1400px;margin:0 auto;align-items:start;}
+.content-col{min-width:0;}
+
+.left-rail{
+  position:sticky;top:110px;align-self:start;padding:2.4rem 1.2rem 2.4rem 1.5rem;
+  display:flex;flex-direction:column;gap:1.6rem;
+}
+.rail-slider{background:var(--navy-950);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-soft);}
+.rail-track{display:flex;transition:transform .6s var(--ease);}
+.rail-slide{min-width:100%;position:relative;}
+.rail-slide img{width:100%;height:210px;object-fit:cover;}
+.rail-slide p{
+  position:absolute;left:0;right:0;bottom:0;margin:0;padding:1rem;
+  background:linear-gradient(180deg, transparent, rgba(14,27,50,.92));color:#fff;font-size:.8rem;
+}
+.rail-slide p strong{display:block;font-family:var(--font-display);font-size:.92rem;margin-bottom:.2rem;color:var(--gold-500);}
+.rail-dots{display:flex;justify-content:center;gap:.4rem;padding:.8rem;}
+.rail-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .25s ease, transform .25s ease;}
+.rail-dots span.active{background:var(--gold-500);transform:scale(1.3);}
+
+.rail-actions{display:flex;flex-direction:column;gap:.55rem;}
+.rail-btn{
+  text-align:left;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:.75rem .9rem;font-size:.84rem;font-weight:500;color:var(--navy-950);
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.rail-btn:hover{transform:translateX(4px);border-color:var(--diya-600);box-shadow:var(--shadow-card);}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2.8rem;align-items:center;}
+.about-facts{display:flex;gap:1.8rem;margin-top:1.4rem;flex-wrap:wrap;}
+.about-facts div{display:flex;flex-direction:column;gap:.15rem;}
+.fact-num-mono{font-family:var(--font-mono);font-weight:600;color:var(--navy-800);font-size:1.05rem;}
+.about-facts span:last-child{font-size:.74rem;color:var(--ink-400);text-transform:uppercase;letter-spacing:.05em;}
+.about-photos{position:relative;height:380px;}
+.about-photos .photo-a{position:absolute;top:0;left:0;width:72%;height:260px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);}
+.about-photos .photo-b{position:absolute;bottom:0;right:0;width:60%;height:220px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);border:6px solid var(--paper);}
+
+/* ---------- dashboard mock ---------- */
+.dashboard-mock{background:var(--navy-950);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:var(--shadow-soft);}
+.dash-topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.4rem;}
+.dash-tabs{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.dash-tab{font-size:.84rem;color:#AEB8CC;font-weight:500;padding-bottom:.3rem;border-bottom:2px solid transparent;cursor:default;}
+.dash-tab.active{color:#fff;border-color:var(--gold-500);}
+.dash-body{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.dash-card{background:var(--navy-900);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-md);padding:1.1rem;}
+.dash-card h4{color:#fff;font-size:1.05rem;margin-bottom:.15rem;}
+.dash-card .mini-label-mono{color:var(--gold-500);opacity:.85;}
+.dash-note{font-size:.78rem;color:#9AA6BC;margin-bottom:.8rem;}
+.dash-card .btn-outline{border-color:rgba(255,255,255,.4);color:#fff;}
+.dash-card .btn-outline:hover{background:#fff;color:var(--navy-950);}
+
+/* ---------- events ---------- */
+.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:2.2rem;}
+.filter-chip{
+  padding:.55em 1.2em;border-radius:999px;border:1.5px solid var(--line);background:var(--paper-2);
+  font-size:.82rem;font-weight:600;color:var(--ink-600);transition:all .25s ease;
+}
+.filter-chip:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.filter-chip.active{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
+
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.event-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
+.event-card img{height:190px;width:100%;object-fit:cover;transition:transform .5s ease;}
+.event-card:hover img{transform:scale(1.06);}
+.event-body{padding:1.2rem 1.3rem 1.4rem;}
+.event-body h3{font-size:1.12rem;margin:.5rem 0 .4rem;}
+.event-body p{font-size:.88rem;margin:0;}
+.event-card.hidden{display:none;}
+
+/* ---------- governance ---------- */
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+.gov-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.5rem;transition:transform .3s ease, box-shadow .3s ease;}
+.gov-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card);}
+.gov-num-mono{font-family:var(--font-mono);font-weight:700;color:var(--gold-600);font-size:1.5rem;display:block;margin-bottom:.5rem;}
+.gov-card h4{font-size:1rem;}
+.gov-card p{font-size:.85rem;}
+
+/* ---------- notice board ---------- */
+.notices-section{background:var(--paper);}
+.notice-board{
+  background:#FBF9F2;border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:1.6rem;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;
+  background-image:radial-gradient(circle, rgba(0,0,0,.03) 1px, transparent 1px);
+  background-size:14px 14px;
+}
+.pin-note{
+  background:var(--paper-2);border-radius:var(--radius-sm);padding:1rem 1.1rem;position:relative;
+  box-shadow:0 3px 10px rgba(14,27,50,.08);border-left:3px solid var(--diya-600);
+}
+.pin-date-mono{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;color:var(--diya-600);font-weight:700;display:block;margin-bottom:.35rem;}
+.pin-note p{margin:0;font-size:.88rem;color:var(--ink-900);}
+
+/* ---------- contact ---------- */
+.contact-section{background:var(--navy-950);color:#fff;max-width:none;margin:0;padding:5.5rem 1.5rem;}
+.contact-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center;}
+.contact-copy h2{color:#fff;}
+.contact-copy p{color:#B9C2D4;}
+.contact-buttons{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem;}
+.contact-copy .btn-outline{border-color:rgba(255,255,255,.5);color:#fff;}
+.contact-copy .btn-outline:hover{background:#fff;color:var(--navy-950);}
+.contact-photo img{border-radius:var(--radius-lg);height:340px;object-fit:cover;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+
+/* ---------- footer ---------- */
+.site-footer{background:var(--navy-950);color:#C7CEDB;border-top:1px solid rgba(255,255,255,.08);}
+.footer-top{
+  max-width:1240px;margin:0 auto;padding:3.4rem 1.5rem 2.4rem;
+  display:grid;grid-template-columns:1.4fr .8fr .8fr 1fr 1.2fr;gap:2rem;
+}
+.footer-brand img{width:44px;height:44px;border-radius:10px;margin-bottom:.7rem;}
+.footer-brand p{color:#fff;font-family:var(--font-display);font-size:1rem;}
+.footer-brand span{font-family:var(--font-body);font-size:.78rem;color:#8B96AC;font-weight:400;}
+.footer-col h5{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-500);margin:0 0 .9rem;}
+.footer-col a{display:block;font-size:.86rem;color:#C7CEDB;padding:.3rem 0;transition:color .2s ease, padding-left .2s ease;}
+.footer-col a:hover{color:var(--gold-500);padding-left:.3rem;}
+.footer-note{font-size:.82rem;color:#8B96AC;margin-bottom:.7rem;}
+.footer-form{display:flex;gap:.4rem;}
+.footer-form input{flex:1;min-width:0;padding:.6em .8em;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:.82rem;}
+.footer-form input::placeholder{color:#7C87A0;}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);padding:1.2rem 1.5rem;max-width:1240px;margin:0 auto;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.76rem;color:#7C87A0;
+}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(20px);
+  background:var(--navy-950);color:#fff;padding:.85em 1.4em;border-radius:999px;font-size:.86rem;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:opacity .3s ease, transform .3s ease, visibility .3s ease;
+  z-index:500;max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+
+/* ---------- scroll top ---------- */
+.scroll-top{
+  position:fixed;right:1.4rem;bottom:1.6rem;width:44px;height:44px;border-radius:50%;
+  background:var(--diya-600);color:#fff;border:none;font-size:1.1rem;box-shadow:0 8px 20px rgba(193,82,44,.35);
+  opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s ease, transform .3s ease, visibility .3s ease;z-index:150;
+}
+.scroll-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1080px){
+  .with-rail{grid-template-columns:1fr;}
+  .left-rail{position:static;flex-direction:row;overflow-x:auto;padding:1.6rem;gap:1rem;}
+  .rail-slider{min-width:280px;}
+  .rail-actions{flex-direction:row;flex-wrap:wrap;min-width:280px;}
+  .rail-btn{flex:1 1 auto;}
+  .dash-body{grid-template-columns:repeat(2,1fr);}
+  .gov-grid{grid-template-columns:repeat(2,1fr);}
+  .events-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media (max-width: 760px){
+  .main-nav{display:none;}
+  .about-grid{grid-template-columns:1fr;}
+  .about-photos{height:300px;margin-top:1rem;}
+  .contact-grid{grid-template-columns:1fr;}
+  .contact-photo img{height:220px;}
+  .events-grid{grid-template-columns:1fr;}
+  .dash-body{grid-template-columns:1fr;}
+  .sec-grid{grid-template-columns:1fr;}
+  .notice-board{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .hero-content{padding-top:4rem;}
+}
+
+/* ---- components/popup.css ---- */
+/* =====================================================
+   VIEW DETAILS POPUP — professional directory dropdown
+   ===================================================== */
+.details-popup-overlay{
+  position:fixed;inset:0;background:rgba(14,27,50,.45);z-index:500;
+  opacity:0;visibility:hidden;transition:opacity .25s ease, visibility .25s ease;
+}
+.details-popup-overlay.show{opacity:1;visibility:visible;}
+.details-popup{
+  position:fixed;top:74px;left:50%;
+  background:var(--paper-2);border-radius:var(--radius-lg);width:100%;max-width:460px;
+  box-shadow:0 30px 70px rgba(14,27,50,.32);border:1px solid var(--line);
+  padding:1.4rem 1.5rem 1.6rem;
+  max-height:82vh;overflow-y:auto;
+  transform:translate(-50%,-14px);opacity:0;transition:transform .3s var(--ease), opacity .3s var(--ease), max-width .25s ease;
+}
+.details-popup-overlay.show .details-popup{transform:translate(-50%,0);opacity:1;}
+/* Wider layout for steps with richer content (Maintenance cards) */
+.details-popup-overlay.popup-wide .details-popup{max-width:640px;}
+.details-popup-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--line);}
+.details-popup-head h3{font-size:1.05rem;margin:0;letter-spacing:-.01em;}
+.details-popup-menu{display:flex;flex-direction:column;gap:.5rem;}
+.details-popup-menu[hidden]{display:none;}
+.details-popup-body[hidden]{display:none;}
+
+.details-popup-option{
+  display:flex;align-items:center;gap:.85rem;width:100%;text-align:left;
+  padding:.85rem .95rem;border-radius:var(--radius-md);border:1px solid var(--line);
+  background:var(--paper);font-family:var(--font-body);font-weight:600;font-size:.93rem;
+  color:var(--navy-950);cursor:pointer;transition:background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.details-popup-option:hover{background:var(--sky-100);border-color:var(--sky-500);transform:translateX(2px);}
+.details-popup-option-icon{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:38px;height:38px;border-radius:10px;background:var(--navy-950);color:#fff;
+}
+
+.details-popup-back{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:none;border:none;color:var(--diya-600);font-weight:600;font-size:.85rem;
+  padding:.2rem 0 .9rem;cursor:pointer;
+}
+.details-popup-content{display:flex;flex-direction:column;gap:.55rem;}
+
+.popup-status{color:var(--ink-400);font-size:.86rem;padding:.9rem 0;text-align:center;}
+.popup-status-error{color:#B3261E;}
+
+/* ---------- list tiles (wings / rooms / hospital & ambulance names) ---------- */
+.list-tile{
+  display:flex;align-items:center;gap:.75rem;width:100%;text-align:left;
+  padding:.75rem .9rem;border-radius:var(--radius-md);border:1px solid var(--line);
+  background:var(--paper);font-family:var(--font-body);font-weight:600;font-size:.9rem;
+  color:var(--navy-950);cursor:pointer;transition:background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.list-tile:hover{background:var(--sky-100);border-color:var(--sky-500);transform:translateX(2px);}
+.list-tile-icon{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:32px;height:32px;border-radius:9px;background:var(--sky-100);color:var(--navy-800);
+}
+.list-tile-label{flex:1;min-width:0;}
+.list-tile-arrow{color:var(--ink-400);transform:rotate(180deg);flex-shrink:0;}
+
+/* ---------- member row (inside a room) ---------- */
+.member-row{
+  display:flex;align-items:center;gap:.75rem;width:100%;text-align:left;
+  padding:.65rem .8rem;border-radius:var(--radius-md);border:1px solid var(--line);
+  background:var(--paper);cursor:pointer;transition:background .18s ease, border-color .18s ease;
+}
+.member-row:hover{background:var(--sky-100);border-color:var(--sky-500);}
+.member-row-body{display:flex;flex-direction:column;gap:.25rem;flex:1;min-width:0;}
+.member-row-name{font-weight:700;color:var(--navy-950);font-size:.9rem;}
+
+.member-avatar{
+  width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  background:var(--navy-100,#eef3f9);
+}
+.member-avatar-fallback{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--navy-950);color:#fff;font-family:var(--font-display);font-weight:700;font-size:.8rem;
+}
+.member-avatar-lg{width:56px;height:56px;font-size:1.05rem;}
+
+/* ---------- access note (not logged in / not your record) ---------- */
+.access-note{
+  text-align:center;padding:1.4rem 1rem;border:1px dashed var(--line);border-radius:var(--radius-md);background:var(--paper);
+}
+.access-note-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;background:var(--sky-100);color:var(--navy-800);margin-bottom:.7rem;
+}
+.access-note p{margin:0 0 .9rem;font-size:.88rem;color:var(--ink-600);}
+.access-note-actions{display:flex;gap:.6rem;justify-content:center;}
+
+/* ---------- full profile card ---------- */
+.profile-card{display:flex;gap:1rem;align-items:flex-start;}
+.profile-card + .profile-card{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--line);}
+.profile-card-body{flex:1;min-width:0;}
+.profile-card-body h4{margin:0 0 .35rem;font-size:1.05rem;}
+
+.member-row + .member-row{margin-top:.55rem;}
+.maint-popup-amount{font-family:var(--font-mono);font-weight:700;color:var(--navy-950);flex-shrink:0;}
+
+/* ---------- Maintenance: wing tiles (progress-style summary cards) ---------- */
+.maint-wing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.7rem;}
+.maint-wing-tile{
+  display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;width:100%;text-align:left;
+  padding:1rem 1.05rem;border-radius:var(--radius-md);border:1px solid var(--line);
+  background:var(--paper);cursor:pointer;transition:background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.maint-wing-tile:hover{background:var(--sky-100);border-color:var(--sky-500);transform:translateY(-2px);}
+.maint-wing-tile-icon{
+  display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;
+  background:var(--navy-950);color:#fff;
+}
+.maint-wing-tile-label{font-weight:700;font-size:1rem;color:var(--navy-950);}
+.maint-wing-tile-sub{font-size:.76rem;color:var(--ink-400);}
+.maint-wing-tile-progress{display:block;width:100%;height:5px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:.1rem;}
+.maint-wing-tile-progress span{display:block;height:100%;background:#2E6B44;border-radius:99px;}
+.maint-wing-tile-foot{display:flex;align-items:center;gap:.3em;font-size:.72rem;font-weight:600;color:var(--ink-400);}
+.maint-wing-tile-foot .icon{transform:rotate(180deg);}
+
+/* ---------- Maintenance: per-room card (with receipt screenshot) ---------- */
+.maint-card{
+  border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);
+  padding:.85rem .95rem;
+}
+.maint-card + .maint-card{margin-top:.6rem;}
+.maint-card-top{display:flex;align-items:center;gap:.75rem;}
+.maint-card-receipt{
+  display:flex;align-items:center;gap:.6rem;width:100%;margin-top:.7rem;padding:.5rem .6rem;
+  border:1px dashed var(--line);border-radius:var(--radius-sm);background:var(--paper-2);cursor:pointer;
+  font-size:.78rem;font-weight:600;color:var(--navy-800);text-align:left;
+}
+.maint-card-receipt:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.maint-card-receipt img{width:36px;height:36px;object-fit:cover;border-radius:6px;border:1px solid var(--line);flex-shrink:0;}
+.maint-card-no-receipt{font-size:.76rem;color:var(--ink-400);margin:.6rem 0 0;font-style:italic;}
+
+/* ---------- Payment receipt lightbox ---------- */
+.maint-lightbox{
+  position:fixed;inset:0;z-index:700;background:rgba(10,18,34,.86);
+  display:flex;align-items:center;justify-content:center;padding:2rem;
+  opacity:0;visibility:hidden;transition:opacity .2s ease, visibility .2s ease;
+}
+.maint-lightbox.show{opacity:1;visibility:visible;}
+.maint-lightbox img{max-width:100%;max-height:88vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.maint-lightbox-close{
+  position:absolute;top:1.2rem;right:1.4rem;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.maint-lightbox-close:hover{background:rgba(255,255,255,.22);}
+.profile-detail-list{display:flex;flex-direction:column;gap:.55rem;margin:.9rem 0 0;padding:0;}
+.profile-detail-list > div{display:flex;justify-content:space-between;gap:.8rem;padding-bottom:.55rem;border-bottom:1px dashed var(--line);}
+.profile-detail-list > div:last-child{border-bottom:none;padding-bottom:0;}
+.profile-detail-list dt{display:flex;align-items:center;gap:.4rem;margin:0;color:var(--ink-400);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.02em;}
+.profile-detail-list dd{margin:0;color:var(--ink-900);font-size:.86rem;font-weight:600;text-align:right;}
+
+@media (max-width:480px){
+  .details-popup{top:70px;max-width:94vw;padding:1.1rem 1.1rem 1.3rem;}
+  .details-popup-overlay.popup-wide .details-popup{max-width:94vw;}
+  .profile-detail-list > div{flex-direction:column;gap:.2rem;}
+  .profile-detail-list dd{text-align:left;}
+  .maint-wing-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* ---------- shared small icon sizing ---------- */
+.icon{display:inline-block;vertical-align:-3px;}
+.btn .icon{margin-right:.3em;vertical-align:-2px;}
+
+/* ---------- account slot (header) ---------- */
+.account-slot{display:flex;align-items:center;gap:.5rem;}
+.account-pill{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:var(--sky-100);color:var(--navy-800);border-radius:99px;
+  padding:.4rem .8rem;font-size:.8rem;font-weight:700;
+}
+.btn-sm{padding:.5em 1em;font-size:.82rem;}
+.btn-outline{background:transparent;border:1.5px solid var(--navy-950);color:var(--navy-950);}
+.btn-outline:hover{background:var(--navy-950);color:#fff;}
+
+@keyframes shake{
+  10%,90%{transform:translateX(-1px);} 20%,80%{transform:translateX(2px);}
+  30%,50%,70%{transform:translateX(-4px);} 40%,60%{transform:translateX(4px);}
+}
+.shake{animation:shake .5s;}
+</style><style>
+  /* Hide the homepage until we've confirmed the visitor is logged in —
+     avoids a flash of the site before the redirect to login.html. */
+  body.site-gate-pending{visibility:hidden;}
+</style>
+</head>
+<body class="site-gate-pending">
+
+<!-- ================= PRELOADER ================= -->
+<div id="preloader"><div class="loader-ring"></div></div>
+
+<!-- ================= TOP TICKER ================= -->
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+  </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#top" class="brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo" class="brand-logo">
+      <span class="brand-text">
+        <strong>Bhargavi Housing Society</strong>
+        <em>Community &amp; Home · Reg. No. 123/2026</em>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#about">About</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#events">Events</a>
+      <a href="#governance">Governance</a>
+      <a href="#notices">Notices</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="header-auth" id="headerAuthSlot"></div>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= SLIDE-IN MENU ================= -->
+<div class="menu-overlay" id="menuOverlay"></div>
+<aside class="slide-menu" id="slideMenu">
+  <div class="slide-menu-head">
+    <img src="images/branding/logo.jpg" alt="logo" class="slide-menu-logo">
+    <button class="close-btn" id="closeMenuBtn" aria-label="Close menu">&times;</button>
+  </div>
+  <nav class="slide-menu-links">
+    <a href="#about">About the Society</a>
+    <a href="#dashboard">Resident Dashboard</a>
+    <a href="#events">Events &amp; Celebrations</a>
+    <a href="#governance">Meetings &amp; Governance</a>
+    <a href="#notices">Notice Board</a>
+    <a href="#contact">Contact &amp; Location</a>
+    <button class="view-details-trigger" id="viewDetailsBtn">
+      <span>📋</span> View Details
+    </button>
+    <button class="view-details-trigger" id="viewMaintenanceBtn">
+      <span><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-2.5-1.5L13 21l-2.5-1.5L8 21l-2-1.5V3Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span> Maintenance
+    </button>
+  </nav>
+  <div class="slide-menu-divider"></div>
+  <button class="secretary-trigger" id="secretaryBtn">
+    <span class="lock-ic">🔒</span>
+    <span>
+      <strong>Secretary Section</strong>
+      <small>Committee access only</small>
+    </span>
+  </button>
+  <p class="slide-menu-foot">Wing A · Wing B · Wing C</p>
+</aside>
+
+<!-- ================= VIEW DETAILS POPUP (center-top dropdown) ================= -->
+<div class="details-popup-overlay" id="detailsPopupOverlay">
+  <div class="details-popup" id="detailsPopup">
+    <div class="details-popup-head">
+      <h3 id="detailsPopupTitle">View Details</h3>
+      <button class="modal-close" id="detailsPopupClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="details-popup-menu" id="detailsPopupMenu">
+      <button class="details-popup-option" data-view="members"><span class="details-popup-option-icon"></span> View Member</button>
+      <button class="details-popup-option" data-view="ambulance"><span class="details-popup-option-icon"></span> View Ambulance</button>
+      <button class="details-popup-option" data-view="hospital"><span class="details-popup-option-icon"></span> View Hospital</button>
+    </div>
+
+    <div class="details-popup-body" id="detailsPopupBody" hidden>
+      <button class="details-popup-back" id="detailsPopupBack">&larr; Back</button>
+      <div class="details-popup-content" id="detailsPopupContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= YELLOW RE-ENTRY FLASH ================= -->
+<div class="reentry-flash" id="reentryFlash"></div>
+
+<!-- ================= MEETING POPUP (dashboard) ================= -->
+<div class="modal-overlay" id="meetingPopupOverlay">
+  <div class="modal-card meeting-popup">
+    <button class="modal-close" id="meetingPopupClose">&times;</button>
+    <span class="eyebrow-mono">CURRENTLY SCHEDULING</span>
+    <h3>Annual General Body Meeting</h3>
+    <div class="meeting-detail-row"><span>🗓</span> Saturday, 30 August 2026</div>
+    <div class="meeting-detail-row"><span>🕕</span> 6:00 PM – 8:00 PM</div>
+    <div class="meeting-detail-row"><span>📍</span> Community Hall, Ground Floor</div>
+    <div class="meeting-agenda">
+      <p class="mini-label-mono">Agenda</p>
+      <ol>
+        <li>Confirmation of minutes of previous AGM</li>
+        <li>Presentation of annual audit report</li>
+        <li>Approval of budget for the financial year</li>
+        <li>Election of managing committee</li>
+        <li>Maintenance &amp; upgrade proposals</li>
+      </ol>
+    </div>
+    <div class="meeting-actions">
+      <button class="btn btn-primary btn-sm">RSVP — Attending</button>
+      <button class="btn btn-outline btn-sm" id="meetingPopupClose2">Remind me later</button>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="hero-media">
+      <img src="images/gallery/republic-day.jpg" alt="Flag hoisting ceremony at Bhargavi Housing Society courtyard">
+      <div class="hero-scrim"></div>
+    </div>
+    <div class="hero-content">
+      <span class="eyebrow-mono">WING A · WING B · WING C</span>
+      <h1>Bhargavi Housing<br>Society</h1>
+      <p class="hero-sub">One courtyard, three wings, a hundred reasons to step outside — from flag hoisting at dawn to diyas at dusk. This is where our community lives, meets, and celebrates.</p>
+      <div class="hero-cta">
+        <a href="#events" class="btn btn-primary">Explore Events</a>
+        <a href="#dashboard" class="btn btn-ghost">Open Resident Dashboard</a>
+      </div>
+    </div>
+    <div class="hero-stats reveal">
+      <div><strong data-count="3">0</strong><span>Wings</span></div>
+      <div><strong data-count="216">0</strong><span>Homes</span></div>
+      <div><strong data-count="17">0</strong><span>Annual events</span></div>
+      <div><strong data-count="12" id="committeeMemberCount">0</strong><span>Committee members</span></div>
+    </div>
+  </section>
+
+  <div class="fountain-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+  </div>
+
+  <!-- ================= LAYOUT WITH LEFT SLIDER ================= -->
+  <div class="with-rail">
+
+    <!-- LEFT SLIDER RAIL -->
+    <aside class="left-rail" id="leftRail">
+      <div class="rail-slider">
+        <div class="rail-track" id="railTrack">
+          <div class="rail-slide">
+            <img src="images/gallery/wing-b-fountain.jpg" alt="Residents gathered at the Wing B fountain">
+            <p><strong>Wing B Courtyard</strong>Our central fountain — the heart of every gathering.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/diwali.jpg" alt="Diwali celebration with rangoli and diyas">
+            <p><strong>Diwali Nights</strong>Rangoli, diyas and sparklers light up the courtyard.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/sports-day.jpg" alt="Annual sports day cricket match">
+            <p><strong>Sports Day</strong>Cricket, badminton and tug-of-war across all wings.</p>
+          </div>
+          <div class="rail-slide">
+            <img src="images/gallery/agm.jpg" alt="Annual general body meeting">
+            <p><strong>Your Voice Counts</strong>Every member has a say at our general body meetings.</p>
+          </div>
+        </div>
+        <div class="rail-dots" id="railDots"></div>
+      </div>
+
+      <div class="rail-actions">
+        <p class="mini-label-mono">Quick actions</p>
+        <button class="rail-btn" data-toast="Redirecting to maintenance payment portal…">💳 Pay Maintenance</button>
+        <button class="rail-btn" data-toast="Complaint form opened. Our facility team replies within 24 hrs.">🛠️ Raise a Complaint</button>
+        <button class="rail-btn" data-toast="Amenity booking calendar opened for the Community Hall.">🏛️ Book Community Hall</button>
+        <button class="rail-btn" data-toast="Visitor gate-pass request sent to Wing security desk.">🚪 Visitor Gate Pass</button>
+        <button class="rail-btn" data-toast="Opening resident directory (committee members only).">📇 Resident Directory</button>
+      </div>
+    </aside>
+
+    <div class="content-col">
+
+      <!-- ================= ABOUT ================= -->
+      <section id="about" class="section about-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">01 · ABOUT US</span>
+          <h2>Three wings, one community</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy reveal">
+            <p>Bhargavi Housing Society is home to families across <strong>Wing A, Wing B and Wing C</strong>, built around a shared courtyard that has hosted everything from flag hoistings to festival feasts. Our managing committee — President, Vice President, Secretary, Treasurer and Joint Secretary — works with resident volunteers to keep the society safe, well-maintained and genuinely social.</p>
+            <p>Whether it's a rangoli competition, a safety workshop, or the Annual General Body Meeting, our courtyard has a way of turning 216 households into one neighbourhood.</p>
+            <div class="about-facts">
+              <div><span class="fact-num-mono">Reg. 123/2026</span><span>Registration number</span></div>
+              <div><span class="fact-num-mono">G+3</span><span>Floors per wing</span></div>
+              <div><span class="fact-num-mono">24×7</span><span>Security &amp; CCTV</span></div>
+            </div>
+          </div>
+          <div class="about-photos reveal">
+            <img src="images/branding/gate-signboard.jpg" alt="Bhargavi Housing Society main gate signboard" class="photo-a">
+            <img src="images/gallery/wing-a.jpg" alt="Wing A building exterior" class="photo-b">
+          </div>
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboard" class="section dashboard-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">02 · RESIDENT DASHBOARD</span>
+          <h2>Everything a resident needs, in one place</h2>
+          <p class="section-sub">A preview of the members' dashboard — notices, dues, and meetings, always up to date.</p>
+        </div>
+
+        <div class="dashboard-mock reveal">
+          <div class="dash-topbar">
+            <div class="dash-tabs">
+              <span class="dash-tab active">Overview</span>
+              <span class="dash-tab">Payments</span>
+              <span class="dash-tab">Notices</span>
+              <span class="dash-tab">Meetings</span>
+              <span class="dash-tab">Directory</span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="openMeetingPopupBtn">🔔 Scheduled Meeting</button>
+          </div>
+          <div class="dash-body">
+            <div class="dash-card">
+              <p class="mini-label-mono">Maintenance</p>
+              <h4>₹3,200 due</h4>
+              <p class="dash-note">Due by 5 Sept 2026</p>
+              <button class="btn btn-outline btn-sm">Pay now</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Upcoming</p>
+              <h4>AGM · 30 Aug</h4>
+              <p class="dash-note">Community Hall, 6:00 PM</p>
+              <button class="btn btn-outline btn-sm" id="openMeetingPopupBtn2">View agenda</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Latest notice</p>
+              <h4>Water tank cleaning</h4>
+              <p class="dash-note">22 Aug, 10 AM – 1 PM, all wings</p>
+              <button class="btn btn-outline btn-sm">Read more</button>
+            </div>
+            <div class="dash-card">
+              <p class="mini-label-mono">Amenities</p>
+              <h4>Community Hall</h4>
+              <p class="dash-note">2 bookings this week</p>
+              <button class="btn btn-outline btn-sm">Book</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= EVENTS ================= -->
+      <section id="events" class="section events-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">03 · EVENTS &amp; CELEBRATIONS</span>
+          <h2>The courtyard calendar</h2>
+          <p class="section-sub">Cultural festivals, national days and community gatherings — captured wing by wing.</p>
+        </div>
+
+        <div class="filter-bar reveal">
+          <button class="filter-chip active" data-filter="all">All Events</button>
+          <button class="filter-chip" data-filter="cultural">Cultural &amp; Festive</button>
+          <button class="filter-chip" data-filter="national">National Days</button>
+          <button class="filter-chip" data-filter="social">Social &amp; Community</button>
+          <button class="filter-chip" data-filter="meetings">Meetings &amp; Governance</button>
+        </div>
+
+        <div class="events-grid" id="eventsGrid">
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/diwali.jpg" alt="Diwali celebration with rangoli, diyas and sparklers">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Diwali</h3>
+              <p>Diyas around the fountain, a hand-drawn rangoli centrepiece, and sparklers across every balcony.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/ganesh-chaturthi.jpg" alt="Ganesh Chaturthi pandal in the courtyard">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Ganesh Chaturthi</h3>
+              <p>A decorated pandal, dhol beats, rangoli at the gate, and aarti performed by all three wings together.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/eid.jpg" alt="Eid Mubarak celebration with lights and shared feast">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Eid</h3>
+              <p>Crescent-lit balconies, a shared feast laid out courtyard-wide, and Eid Mubarak wishes from every wing.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/christmas.jpg" alt="Christmas celebration with tree and carollers">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Christmas</h3>
+              <p>A courtyard Christmas tree, resident carollers on stage, and a nativity corner near Wing C.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/navratri.jpg" alt="Navratri garba dance around the deity mandap">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Navratri</h3>
+              <p>Nine nights of garba and dandiya around the mandap, with a buffet stall running late into the evening.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/holi.jpg" alt="Holi colour celebration in the courtyard">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Holi</h3>
+              <p>Colour, water and music take over the courtyard for a morning every wing looks forward to.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/makar-sankranti.jpg" alt="Makar Sankranti bonfire and rangoli">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>Makar Sankranti</h3>
+              <p>A traditional bonfire, kite flying from every balcony, and an intricate courtyard rangoli.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="cultural">
+            <img src="images/gallery/new-year.jpg" alt="New Year's Eve celebration with lights and stage performance">
+            <div class="event-body">
+              <span class="tag cultural">Cultural &amp; Festive</span>
+              <h3>New Year's Eve</h3>
+              <p>Fairy-lit balconies, a live band on the courtyard stage, and dinner for the whole society.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="national">
+            <img src="images/gallery/independence-day.jpg" alt="Independence Day flag hoisting ceremony">
+            <div class="event-body">
+              <span class="tag national">National Day</span>
+              <h3>Independence Day</h3>
+              <p>Morning flag hoisting, the national anthem sung together, and tricolour activities for children.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="national">
+            <img src="images/gallery/republic-day.jpg" alt="Republic Day flag hoisting ceremony">
+            <div class="event-body">
+              <span class="tag national">National Day</span>
+              <h3>Republic Day</h3>
+              <p>Flag hoisting with a children's guard of honour, followed by patriotic songs on the courtyard stage.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/sports-day.jpg" alt="Annual sports day and fun fair">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Annual Sports Day &amp; Fun Fair</h3>
+              <p>Cricket, badminton, tug-of-war and indoor games, plus a chaat, ice-cream and game-zone fair.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/senior-citizens-day.jpg" alt="Senior Citizens Day felicitation event">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Senior Citizens' Day</h3>
+              <p>A felicitation evening honouring our elders, with music, games and a shared dinner.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="social">
+            <img src="images/gallery/childrens-day.jpg" alt="Children's Day celebration with games and talent show">
+            <div class="event-body">
+              <span class="tag social">Social &amp; Community</span>
+              <h3>Children's Day</h3>
+              <p>Story-telling, games and a talent show — every child gets a turn on the courtyard stage.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/agm.jpg" alt="Annual General Body Meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Annual General Body Meeting</h3>
+              <p>Our most important meeting — audited accounts, budget approval, committee elections and maintenance plans.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/sgbm.jpg" alt="Special General Body Meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Special General Body Meeting</h3>
+              <p>Called as needed for urgent matters — structural repairs, policy changes, or unplanned expenditure.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/committee-meeting.jpg" alt="Monthly managing committee meeting">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Managing Committee Meeting</h3>
+              <p>Monthly / quarterly — day-to-day operations, vendor payments, staff management and resident grievances.</p>
+            </div>
+          </article>
+
+          <article class="event-card reveal" data-cat="meetings">
+            <img src="images/gallery/safety-workshop.jpg" alt="Safety and awareness workshop">
+            <div class="event-body">
+              <span class="tag meetings">Governance</span>
+              <h3>Safety &amp; Awareness Workshop</h3>
+              <p>Fire drills, waste segregation, disaster management and security protocols — for every resident.</p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <div class="fountain-divider small" aria-hidden="true">
+        <svg viewBox="0 0 200 40"><path d="M0 20 Q 50 0 100 20 T 200 20" /></svg>
+      </div>
+
+      <!-- ================= GOVERNANCE STRIP ================= -->
+      <section id="governance" class="section governance-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">04 · HOW THE SOCIETY IS RUN</span>
+          <h2>Governance, in plain terms</h2>
+        </div>
+        <div class="gov-grid reveal">
+          <div class="gov-card">
+            <span class="gov-num-mono">AGM</span>
+            <h4>Annual General Body Meeting</h4>
+            <p>Held once a year. Reviews audits, approves budgets, and elects the managing committee.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">SGBM</span>
+            <h4>Special General Body Meeting</h4>
+            <p>Called when urgent matters — repairs, amendments, expenditure — can't wait for the AGM.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">MC</span>
+            <h4>Managing Committee</h4>
+            <p>Meets monthly to run operations: vendors, staff, maintenance, and resident grievances.</p>
+          </div>
+          <div class="gov-card">
+            <span class="gov-num-mono">SAW</span>
+            <h4>Safety &amp; Awareness</h4>
+            <p>Workshops on fire safety, waste segregation, disaster management and security.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= NOTICE BOARD ================= -->
+      <section id="notices" class="section notices-section">
+        <div class="section-head reveal">
+          <span class="eyebrow-mono">05 · NOTICE BOARD</span>
+          <h2>Pinned this week</h2>
+        </div>
+        <div class="notice-board reveal">
+          <div class="pin-note">
+            <span class="pin-date-mono">17 AUG</span>
+            <p>Independence Day flag hoisting photos are up in the Wing B lobby gallery.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">22 AUG</span>
+            <p>Water tank cleaning across all wings, 10 AM – 1 PM. Please store water in advance.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">25 AUG</span>
+            <p>Ganesh Chaturthi decoration committee meeting — volunteers, please register at the gate office.</p>
+          </div>
+          <div class="pin-note">
+            <span class="pin-date-mono">30 AUG</span>
+            <p>Annual General Body Meeting, 6:00 PM, Community Hall. Attendance strongly encouraged.</p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content-col -->
+  </div><!-- /with-rail -->
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="section contact-section">
+    <div class="contact-grid reveal">
+      <div class="contact-copy">
+        <span class="eyebrow-mono">06 · VISIT US</span>
+        <h2>Find the courtyard</h2>
+        <p>Bhargavi Housing Society, Wing A · B · C<br>Mumbai, Maharashtra, India</p>
+        <p>Gate office: 9:00 AM – 9:00 PM · Security desk: 24×7</p>
+        <div class="contact-buttons">
+          <a class="btn btn-primary" href="mailto:office@bhargavihousingsociety.example">Email the office</a>
+          <a class="btn btn-outline" href="tel:+910000000000">Call gate office</a>
+        </div>
+      </div>
+      <div class="contact-photo">
+        <img src="images/gallery/wing-a.jpg" alt="Wing A entrance of Bhargavi Housing Society">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo">
+      <p>Bhargavi Housing Society<br><span>Community &amp; Home</span></p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Explore</h5>
+      <a href="#about">About</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#events">Events</a>
+      <a href="#governance">Governance</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Wings</h5>
+      <a href="#">Wing A</a>
+      <a href="#">Wing B</a>
+      <a href="#">Wing C</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Resident Services</h5>
+      <a href="#">Pay Maintenance</a>
+      <a href="#">Raise a Complaint</a>
+      <a href="#">Book Community Hall</a>
+      <a href="#" id="footerSecretaryBtn">Secretary Section</a>
+    </div>
+
+    <div class="footer-col">
+      <h5>Stay in touch</h5>
+      <p class="footer-note">Get notice-board updates by email.</p>
+      <form class="footer-form" onsubmit="return false;">
+        <input type="email" placeholder="you@example.com">
+        <button class="btn btn-primary btn-sm" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Bhargavi Housing Society. Reg. No. 123/2026. All rights reserved.</p>
+    <p>Built with 🧡 by the residents, for the residents.</p>
+  </div>
+</footer>
+
+<!-- ================= TOAST ================= -->
+<div class="toast" id="toast"></div>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
+
+<!-- ================= LIVE EDIT TOOLBAR (secretary editing the website) ================= -->
+<div class="edit-toolbar" id="editToolbar">
+  <span class="edit-toolbar-msg">🖊️ Editing website — click any highlighted text or photo to change it</span>
+  <div class="edit-toolbar-actions">
+    <button class="btn btn-primary btn-sm" id="saveEditsBtn">💾 Save &amp; show on website</button>
+    <button class="btn btn-outline btn-sm" id="exitEditBtn">✖ Exit editing</button>
+  </div>
+</div>
+<input type="file" id="editImageInput" accept="image/*" hidden>
+
+<script>
+(function () {
+'use strict';
+
+    // ---- utils/api.js ----
+    // Thin wrapper around fetch() for JSON APIs: sends/receives JSON, always
+    // includes the session cookie, and throws a normal Error with the
+    // server's message so callers can just try/catch.
+
+    async function api(path, options = {}) {
+      const res = await fetch(path, {
+        method: options.method || 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* no body */ }
+      if (!res.ok) {
+        throw new Error((data && data.error) || `Request failed (${res.status})`);
+      }
+      return data;
+    }
+
+    // ---- utils/icons.js ----
+    // A small set of inline SVG icons (stroke-based, single colour via
+    // currentColor) used across the site instead of emoji, so the UI reads
+    // as a proper product rather than a chat message. Import the ones you
+    // need: `import { icon } from '/js/utils/icons.js'`.
+
+    const paths = {
+      building: '<path d="M4 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"/><path d="M14 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12"/><path d="M9 7h.01M9 11h.01M9 15h.01M18 12h.01M18 16h.01"/>',
+      door: '<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M14 12h.01"/>',
+      user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+      hospital: '<rect x="3" y="8" width="18" height="13" rx="1.2"/><path d="M9 21V8"/><path d="M12 12v4M10 14h4"/><path d="M9 8V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3"/>',
+      ambulance: '<path d="M3 17V9a1 1 0 0 1 1-1h9v9"/><path d="M13 12h4l3 3v2h-2"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/><path d="M7 6v3M5.5 7.5h3"/>',
+      phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+      note: '<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+      lock: '<rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+      mail: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6 8.5 6.5L20.5 6"/>',
+      shield: '<path d="M12 3l7 3v6c0 4.6-3 8-7 9-4-1-7-4.4-7-9V6l7-3Z"/>',
+      chevronLeft: '<path d="m14.5 5-7 7 7 7"/>',
+      close: '<path d="m6 6 12 12M18 6 6 18"/>',
+      logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>',
+      users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6"/><path d="M15.5 6.5a3 3 0 0 1 0 5.6"/><path d="M17 14.2c2.3.5 4 2.6 4 5.3"/>',
+      wallet: '<path d="M20 7H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M4 9V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.1"/>',
+      folder: '<path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/>',
+      wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 4.6L3 17.2V21h3.8l6.3-6.3a4 4 0 0 0 4.6-5.4l-2.6 2.6-2-2 2.6-2.6Z"/>',
+      receipt: '<path d="M6 3h12v18l-2.5-1.5L13 21l-2.5-1.5L8 21l-2-1.5V3Z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+      key: '<circle cx="7.5" cy="15.5" r="3.5"/><path d="M10.6 12.4 19 4"/><path d="M16 7l2 2"/><path d="M13.5 9.5l2 2"/>',
+      camera: '<path d="M4 8a1 1 0 0 1 1-1h2.2l1-1.6A1 1 0 0 1 9 5h6a1 1 0 0 1 .8.4L16.8 7H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z"/><circle cx="12" cy="13" r="3.4"/>',
+      trash: '<path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/><path d="M10 11v6M14 11v6"/>',
+      edit: '<path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M14 6l3 3"/>',
+      external: '<path d="M9 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/><path d="M14 4h6v6"/><path d="M20 4 11 13"/>',
+      check: '<path d="M5 13l4 4L19 7"/>'
+    };
+
+    // Returns a ready-to-insert SVG string. size in px, defaults to 18.
+    function icon(name, size) {
+      const s = size || 18;
+      const body = paths[name] || paths.note;
+      return `<svg class="icon" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+    }
+
+    // ---- utils/dom.js ----
+    function escapeHtml(str) {
+      return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    // ---- components/accountMenu.js ----
+    // Renders the login state into the header/slide-menu account slot, and
+    // swaps the "Secretary Section" trigger for a straight link once we know
+    // whether the signed-in account actually is the Secretary.
+
+
+    let cachedSession = null;
+
+    // Shared by other components (detailsPopup) so everyone reads the same
+    // session instead of firing their own /api/auth/session request.
+    async function getSession(force) {
+      if (cachedSession && !force) return cachedSession;
+      try { cachedSession = await api('/api/auth/session'); }
+      catch (err) { cachedSession = { loggedIn: false }; }
+      return cachedSession;
+    }
+
+    async function initAccountMenu() {
+      // The header (front of the site, always visible) is now where login /
+      // signup / account state lives — it used to be tucked inside the
+      // hamburger slide-menu, but residents shouldn't have to open a menu
+      // just to sign in.
+      const slot = document.getElementById('headerAuthSlot');
+      const secretaryTrigger = document.getElementById('secretaryBtn');
+      if (!slot) return;
+
+      const s = await getSession(true);
+
+      if (!s.loggedIn) {
+        slot.innerHTML = `
+          <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+          <a href="signup.html" class="btn btn-primary btn-sm auth-signup-btn">Sign up</a>`;
+        if (secretaryTrigger) secretaryTrigger.style.display = 'none';
+        return;
+      }
+
+      const label = s.role === 'secretary' ? 'Secretary' : 'Resident';
+      slot.innerHTML = `
+        <span class="account-pill">${icon('user', 15)} ${label}</span>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">${icon('logout', 14)} Log out</button>`;
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await api('/api/auth/logout', { method: 'POST' });
+        cachedSession = null;
+        window.location.reload();
+      });
+
+      // The "Secretary Section" entry only appears at all for the account
+      // that's actually logged in as the Secretary — anyone else (logged
+      // out, or a resident account) never sees it in the menu.
+      if (secretaryTrigger) {
+        if (s.role === 'secretary') {
+          secretaryTrigger.style.display = '';
+          secretaryTrigger.querySelector('small').textContent = 'Open the dashboard';
+          secretaryTrigger.addEventListener('click', () => { window.location.href = 'secretary.html'; });
+        } else {
+          secretaryTrigger.style.display = 'none';
+        }
+      }
+    }
+
+    // ---- components/detailsPopup.js ----
+    // The "View Details" popup: a small step-based directory (menu -> wing ->
+    // room -> members, or list -> item) shared by the homepage. Member
+    // records are permission-gated — see loadMemberProfile() below, which is
+    // the piece that stops one resident from opening another resident's
+    // details.
+
+
+    function initDetailsPopup({ session }) {
+      const overlay = document.getElementById('detailsPopupOverlay');
+      const title = document.getElementById('detailsPopupTitle');
+      const menu = document.getElementById('detailsPopupMenu');
+      const body = document.getElementById('detailsPopupBody');
+      const content = document.getElementById('detailsPopupContent');
+      const back = document.getElementById('detailsPopupBack');
+      const closeBtn = document.getElementById('detailsPopupClose');
+      const triggerBtn = document.getElementById('viewDetailsBtn');
+      const maintenanceTriggerBtn = document.getElementById('viewMaintenanceBtn');
+      if (!overlay || !triggerBtn) return;
+
+      let stack = [];
+
+      function showMenuStep() {
+        title.textContent = 'Directory';
+        menu.hidden = false;
+        body.hidden = true;
+      }
+      function goToStep(fn) { stack.push(fn); fn(); }
+      function goBack() {
+        stack.pop();
+        const prev = stack[stack.length - 1];
+        if (prev) prev(); else showMenuStep();
+      }
+      function open() {
+        stack = [];
+        overlay.classList.remove('popup-wide');
+        showMenuStep();
+        overlay.classList.add('show');
+      }
+      function close() { overlay.classList.remove('show'); }
+
+      triggerBtn.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+      back.addEventListener('click', goBack);
+
+      // "Maintenance" in the hamburger menu jumps straight into the popup's
+      // maintenance step, skipping the top-level directory menu. That step
+      // shows richer cards (photo, amount, receipt screenshot) so the popup
+      // opens in a wider layout than the plain directory menu.
+      if (maintenanceTriggerBtn) {
+        maintenanceTriggerBtn.addEventListener('click', () => {
+          stack = [];
+          overlay.classList.add('show', 'popup-wide');
+          goToStep(stepMaintenanceWings);
+        });
+      }
+
+      /* ===== Lightbox: full-size payment screenshot viewer ===== */
+      let lightbox = null;
+      function openLightbox(src) {
+        if (!lightbox) {
+          lightbox = document.createElement('div');
+          lightbox.className = 'maint-lightbox';
+          lightbox.innerHTML = `<button class="maint-lightbox-close" aria-label="Close">${icon('close', 18)}</button><img alt="Payment screenshot">`;
+          lightbox.addEventListener('click', e => {
+            if (e.target === lightbox || e.target.closest('.maint-lightbox-close')) lightbox.classList.remove('show');
+          });
+          document.body.appendChild(lightbox);
+        }
+        lightbox.querySelector('img').src = src;
+        lightbox.classList.add('show');
+      }
+
+      function renderListButtons(items) {
+        content.innerHTML = items.map((it, i) =>
+          `<button class="list-tile" data-i="${i}">
+             <span class="list-tile-icon">${it.iconSvg}</span>
+             <span class="list-tile-label">${escapeHtml(it.label)}</span>
+             <span class="list-tile-arrow">${icon('chevronLeft', 16)}</span>
+           </button>`
+        ).join('');
+        content.querySelectorAll('.list-tile').forEach(btn => {
+          btn.addEventListener('click', () => items[Number(btn.dataset.i)].onClick());
+        });
+      }
+
+      /* ===== Members: wing -> room -> members in that room -> profile ===== */
+      let membersCache = null;
+
+      async function stepMembersWings() {
+        title.textContent = 'Members — select wing';
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = '<p class="popup-status">Loading…</p>';
+        try {
+          if (!membersCache) membersCache = await api('/api/public/members');
+          const wings = [...new Set(membersCache.map(m => m.wing))].sort();
+          if (!wings.length) return content.innerHTML = '<p class="popup-status">No members added yet.</p>';
+          renderListButtons(wings.map(w => ({
+            iconSvg: icon('building'), label: w, onClick: () => goToStep(() => stepMembersRooms(w))
+          })));
+        } catch (err) {
+          content.innerHTML = '<p class="popup-status popup-status-error">Could not load members. Please try again.</p>';
+        }
+      }
+
+      function stepMembersRooms(wing) {
+        title.textContent = wing + ' — select room';
+        menu.hidden = true; body.hidden = false;
+        const rooms = [...new Set(membersCache.filter(m => m.wing === wing).map(m => m.flat))].sort();
+        if (!rooms.length) return content.innerHTML = '<p class="popup-status">No rooms found in this wing.</p>';
+        renderListButtons(rooms.map(r => ({
+          iconSvg: icon('door'), label: 'Room ' + r, onClick: () => goToStep(() => stepMembersList(wing, r))
+        })));
+      }
+
+      function stepMembersList(wing, room) {
+        title.textContent = wing + ' · Room ' + room;
+        menu.hidden = true; body.hidden = false;
+        const list = membersCache.filter(m => m.wing === wing && m.flat === room);
+        if (!list.length) return content.innerHTML = '<p class="popup-status">No members in this room.</p>';
+        content.innerHTML = list.map(m => {
+          const photo = m.profile_image
+            ? `<img class="member-avatar" src="${escapeHtml(m.profile_image)}" alt="">`
+            : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(m.name))}</span>`;
+          return `<button class="member-row" data-id="${m.id}">
+            ${photo}
+            <span class="member-row-body">
+              <span class="member-row-name">${escapeHtml(m.name)}</span>
+              <span class="tag ${m.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(m.status)}</span>
+            </span>
+            <span class="list-tile-arrow">${icon('chevronLeft', 16)}</span>
+          </button>`;
+        }).join('');
+        content.querySelectorAll('.member-row').forEach(rowEl => {
+          rowEl.addEventListener('click', () => goToStep(() => stepMemberProfile(Number(rowEl.dataset.id))));
+        });
+      }
+
+      function initials(name) {
+        return String(name || '').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '—';
+      }
+
+      // This is the permission-gated step: what shows here depends entirely
+      // on who is logged in, never on what was clicked.
+      async function stepMemberProfile(memberId) {
+        title.textContent = 'Member profile';
+        menu.hidden = true; body.hidden = false;
+        const s = await session();
+
+        if (!s.loggedIn) {
+          content.innerHTML = `
+            <div class="access-note">
+              <span class="access-note-icon">${icon('lock', 22)}</span>
+              <p>Log in to view full contact details for society members.</p>
+              <div class="access-note-actions">
+                <a class="btn btn-primary btn-sm" href="login.html">Log in</a>
+                <a class="btn btn-outline btn-sm" href="signup.html">Sign up</a>
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (s.role !== 'secretary' && String(s.memberId) !== String(memberId)) {
+          content.innerHTML = `
+            <div class="access-note">
+              <span class="access-note-icon">${icon('shield', 22)}</span>
+              <p>You can only view your own member profile.</p>
+            </div>`;
+          return;
+        }
+
+        content.innerHTML = '<p class="popup-status">Loading…</p>';
+        try {
+          const m = await api(`/api/members/${memberId}/profile`);
+          const photo = m.profile_image
+            ? `<img class="member-avatar member-avatar-lg" src="${escapeHtml(m.profile_image)}" alt="">`
+            : `<span class="member-avatar member-avatar-lg member-avatar-fallback">${escapeHtml(initials(m.name))}</span>`;
+          content.innerHTML = `
+            <div class="profile-card">
+              ${photo}
+              <div class="profile-card-body">
+                <h4>${escapeHtml(m.name)}</h4>
+                <span class="tag ${m.status === 'Active' ? 'active' : 'inactive'}">${escapeHtml(m.status)}</span>
+                <dl class="profile-detail-list">
+                  <div><dt>${icon('building', 15)} Wing / Flat</dt><dd>${escapeHtml(m.wing)}, ${escapeHtml(m.flat)}</dd></div>
+                  <div><dt>${icon('phone', 15)} Phone</dt><dd>${escapeHtml(m.phone || '—')}</dd></div>
+                  <div><dt>${icon('phone', 15)} Alternate</dt><dd>${escapeHtml(m.phone_2 || '—')}</dd></div>
+                  <div><dt>${icon('mail', 15)} Email</dt><dd>${escapeHtml(m.email || '—')}</dd></div>
+                  <div><dt>${icon('note', 15)} Address</dt><dd>${escapeHtml(m.address_1 || '—')}</dd></div>
+                  <div><dt>${icon('note', 15)} Occupation</dt><dd>${escapeHtml(m.occupation || '—')}</dd></div>
+                  <div><dt>${icon('note', 15)} Maintenance dues</dt><dd>${escapeHtml(m.dues || '—')}</dd></div>
+                </dl>
+              </div>
+            </div>`;
+        } catch (err) {
+          content.innerHTML = '<p class="popup-status popup-status-error">Could not load this profile. Please try again.</p>';
+        }
+      }
+
+      /* ===== Hospitals: list -> full detail (public, no login required) ===== */
+      let hospitalsCache = null;
+
+      async function stepHospitalsList() {
+        title.textContent = 'Hospitals';
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = '<p class="popup-status">Loading…</p>';
+        try {
+          if (!hospitalsCache) hospitalsCache = await api('/api/public/hospitals');
+          if (!hospitalsCache.length) return content.innerHTML = '<p class="popup-status">No hospitals added yet.</p>';
+          renderListButtons(hospitalsCache.map(h => ({
+            iconSvg: icon('hospital'), label: h.name, onClick: () => goToStep(() => stepHospitalDetail(h.id))
+          })));
+        } catch (err) {
+          content.innerHTML = '<p class="popup-status popup-status-error">Could not load hospitals. Please try again.</p>';
+        }
+      }
+
+      function stepHospitalDetail(id) {
+        const h = hospitalsCache.find(x => String(x.id) === String(id));
+        if (!h) return;
+        title.textContent = h.name;
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = `
+          <div class="profile-card">
+            <span class="member-avatar member-avatar-lg member-avatar-fallback">${icon('hospital', 22)}</span>
+            <div class="profile-card-body">
+              <h4>${escapeHtml(h.name)}</h4>
+              <dl class="profile-detail-list">
+                <div><dt>${icon('note', 15)} Address</dt><dd>${escapeHtml(h.address || '—')}</dd></div>
+                <div><dt>${icon('phone', 15)} Main line</dt><dd>${escapeHtml(h.phone_main || '—')}</dd></div>
+                <div><dt>${icon('phone', 15)} Staff / on-call</dt><dd>${escapeHtml(h.phone_staff || '—')}</dd></div>
+                ${h.notes ? `<div><dt>${icon('note', 15)} Notes</dt><dd>${escapeHtml(h.notes)}</dd></div>` : ''}
+              </dl>
+            </div>
+          </div>`;
+      }
+
+      /* ===== Ambulance: list -> full detail (public, no login required) ===== */
+      let ambulancesCache = null;
+
+      async function stepAmbulancesList() {
+        title.textContent = 'Ambulance services';
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = '<p class="popup-status">Loading…</p>';
+        try {
+          if (!ambulancesCache) ambulancesCache = await api('/api/public/ambulances');
+          if (!ambulancesCache.length) return content.innerHTML = '<p class="popup-status">No ambulance services added yet.</p>';
+          renderListButtons(ambulancesCache.map(a => ({
+            iconSvg: icon('ambulance'), label: a.service_name, onClick: () => goToStep(() => stepAmbulanceDetail(a.id))
+          })));
+        } catch (err) {
+          content.innerHTML = '<p class="popup-status popup-status-error">Could not load ambulance services. Please try again.</p>';
+        }
+      }
+
+      function stepAmbulanceDetail(id) {
+        const a = ambulancesCache.find(x => String(x.id) === String(id));
+        if (!a) return;
+        title.textContent = a.service_name;
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = `
+          <div class="profile-card">
+            <span class="member-avatar member-avatar-lg member-avatar-fallback">${icon('ambulance', 22)}</span>
+            <div class="profile-card-body">
+              <h4>${escapeHtml(a.service_name)}</h4>
+              <dl class="profile-detail-list">
+                <div><dt>${icon('phone', 15)} Phone</dt><dd>${escapeHtml(a.phone || '—')}</dd></div>
+                <div><dt>${icon('clock', 15)} ETA</dt><dd>${escapeHtml(String(a.eta_minutes))} min</dd></div>
+                ${a.notes ? `<div><dt>${icon('note', 15)} Notes</dt><dd>${escapeHtml(a.notes)}</dd></div>` : ''}
+              </dl>
+            </div>
+          </div>`;
+      }
+
+      /* ===== Maintenance: members the Secretary chose to feature here =====
+         Bridged from the Secretary Dashboard via localStorage — that
+         dashboard already has the data client-side when the Secretary
+         selects rows, and this page has no Secretary session to query the
+         protected /api/maintenance endpoint directly.
+         One room = one featured member, enforced on the Secretary side, so
+         the Wing -> Room flow below always renders a single card per room. */
+      function getMaintenanceSelection() {
+        try { return JSON.parse(localStorage.getItem('secMaintenanceSelection') || '[]'); }
+        catch (e) { return []; }
+      }
+
+      function stepMaintenanceWings() {
+        title.textContent = 'Maintenance — select wing';
+        menu.hidden = true; body.hidden = false;
+
+        const selected = getMaintenanceSelection();
+        if (!selected.length) {
+          content.innerHTML = `
+            <div class="access-note">
+              <span class="access-note-icon">${icon('receipt', 22)}</span>
+              <p>No members are featured here yet. The Secretary can select members from the Maintenance tab and choose “Feature on public dashboard”.</p>
+            </div>`;
+          return;
+        }
+
+        const wings = [...new Set(selected.map(r => r.wing))].sort();
+        content.innerHTML = `<div class="maint-wing-grid"></div>`;
+        const grid = content.querySelector('.maint-wing-grid');
+        wings.forEach(w => {
+          const roomsInWing = selected.filter(r => r.wing === w);
+          const paidCount = roomsInWing.filter(r => r.status === 'Paid').length;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'maint-wing-tile';
+          btn.innerHTML = `
+            <span class="maint-wing-tile-icon">${icon('building', 20)}</span>
+            <span class="maint-wing-tile-label">${escapeHtml(w)}</span>
+            <span class="maint-wing-tile-sub">${roomsInWing.length} room${roomsInWing.length === 1 ? '' : 's'} featured</span>
+            <span class="maint-wing-tile-progress"><span style="width:${roomsInWing.length ? (paidCount / roomsInWing.length * 100) : 0}%"></span></span>
+            <span class="maint-wing-tile-foot">${paidCount}/${roomsInWing.length} paid ${icon('chevronLeft', 14)}</span>`;
+          btn.addEventListener('click', () => goToStep(() => stepMaintenanceWingRooms(w)));
+          grid.appendChild(btn);
+        });
+      }
+
+      function stepMaintenanceWingRooms(wing) {
+        title.textContent = wing + ' — Maintenance';
+        menu.hidden = true; body.hidden = false;
+
+        const selected = getMaintenanceSelection().filter(r => r.wing === wing)
+          .sort((a, b) => String(a.flat).localeCompare(String(b.flat)));
+        if (!selected.length) {
+          content.innerHTML = '<p class="popup-status">No featured members in this wing.</p>';
+          return;
+        }
+
+        content.innerHTML = selected.map((r, i) => {
+          const paid = r.status === 'Paid';
+          const photo = r.profile_image
+            ? `<img class="member-avatar" src="${escapeHtml(r.profile_image)}" alt="">`
+            : `<span class="member-avatar member-avatar-fallback">${escapeHtml(initials(r.name))}</span>`;
+          const screenshotHtml = paid && r.screenshot
+            ? `<button type="button" class="maint-card-receipt" data-i="${i}">
+                 <img src="${escapeHtml(r.screenshot)}" alt="Payment receipt">
+                 <span>${icon('camera', 13)} View receipt</span>
+               </button>`
+            : (paid ? `<p class="maint-card-no-receipt">No receipt uploaded yet.</p>` : '');
+          return `
+            <div class="maint-card">
+              <div class="maint-card-top">
+                ${photo}
+                <span class="member-row-body">
+                  <span class="member-row-name">Room ${escapeHtml(r.flat)} — ${escapeHtml(r.name)}</span>
+                  <span class="tag ${paid ? 'paid' : 'due'}">${paid ? 'Paid' : 'Unpaid'}${r.month ? ' · ' + escapeHtml(r.month) : ''}</span>
+                </span>
+                <span class="maint-popup-amount">₹${(Number(r.amount) || 0).toLocaleString('en-IN')}</span>
+              </div>
+              ${screenshotHtml}
+            </div>`;
+        }).join('');
+
+        content.querySelectorAll('.maint-card-receipt').forEach(btn => {
+          btn.addEventListener('click', () => openLightbox(selected[Number(btn.dataset.i)].screenshot));
+        });
+      }
+
+      const ENTRY_STEP = {
+        members: stepMembersWings,
+        ambulance: stepAmbulancesList,
+        hospital: stepHospitalsList
+      };
+      menu.querySelectorAll('.details-popup-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fn = ENTRY_STEP[btn.dataset.view];
+          if (fn) goToStep(fn);
+        });
+      });
+
+      // Icons for the top-level menu (replaces the old emoji spans).
+      menu.querySelectorAll('.details-popup-option').forEach(btn => {
+        const iconSlot = btn.querySelector('.details-popup-option-icon');
+        if (!iconSlot) return;
+        const map = { members: 'user', ambulance: 'ambulance', hospital: 'hospital' };
+        iconSlot.innerHTML = icon(map[btn.dataset.view] || 'note', 20);
+      });
+    }
+
+    // ---- pages/home.js ----
+    document.addEventListener('DOMContentLoaded', async () => {
+
+      /* ---------- require login before the homepage itself is shown ----------
+         Visitors must sign up / log in first; only once that's done does the
+         original site UI open. Anyone not logged in is sent to login.html
+         straight away (their intended page is remembered so they land back
+         here right after logging in). */
+      const session = await getSession(true);
+      if (!session.loggedIn) {
+        const next = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+        window.location.replace(`login.html?next=${next}`);
+        return;
+      }
+      document.body.classList.remove('site-gate-pending');
+
+      /* ---------- live site edits: assign stable keys + restore any saved edits ---------- */
+      const EDIT_STORAGE_KEY = 'bhsSiteEdits';
+
+      function assignEditKeys() {
+        document.querySelectorAll('main h1, main h2, main h3, main h4, main p, main li, footer p').forEach((el, i) => {
+          if (el.closest('.modal-overlay, form, .edit-toolbar')) return;
+          if (!el.textContent.trim()) return;
+          if (!el.dataset.editKey) el.dataset.editKey = 'text-' + i;
+        });
+        document.querySelectorAll('main img, footer img').forEach((el, i) => {
+          if (el.closest('.modal-overlay')) return;
+          if (!el.dataset.editKey) el.dataset.editKey = 'img-' + i;
+        });
+      }
+
+      function applySavedEdits() {
+        let edits = {};
+        try { edits = JSON.parse(localStorage.getItem(EDIT_STORAGE_KEY) || '{}'); } catch (e) { edits = {}; }
+        Object.keys(edits).forEach(key => {
+          const el = document.querySelector(`[data-edit-key="${key}"]`);
+          if (!el) return;
+          if (edits[key].type === 'text') el.innerHTML = edits[key].value;
+          else if (edits[key].type === 'img') el.src = edits[key].value;
+        });
+      }
+
+      assignEditKeys();
+      applySavedEdits();
+
+      /* ---------- preloader ---------- */
+      const preloader = document.getElementById('preloader');
+      window.addEventListener('load', () => {
+        setTimeout(() => preloader.classList.add('hide'), 350);
+      });
+      setTimeout(() => preloader && preloader.classList.add('hide'), 1800);
+
+      /* ---------- footer year ---------- */
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* ---------- header shrink on scroll + scroll-top button ---------- */
+      const header = document.getElementById('siteHeader');
+      const scrollTopBtn = document.getElementById('scrollTopBtn');
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        header.style.boxShadow = y > 10 ? '0 6px 20px rgba(0,0,0,.18)' : 'none';
+        if (scrollTopBtn) scrollTopBtn.classList.toggle('show', y > 600);
+      });
+      if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      }
+
+      /* ---------- reveal on scroll ---------- */
+      const revealEls = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      revealEls.forEach(el => io.observe(el));
+
+      /* ---------- animated stat counters ---------- */
+      const statEls = document.querySelectorAll('[data-count]');
+      const statIO = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            statIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      statEls.forEach(el => statIO.observe(el));
+
+      function animateCount(el) {
+        const target = parseInt(el.getAttribute('data-count'), 10);
+        const duration = 1400;
+        const start = performance.now();
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target);
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      /* ---------- hamburger slide menu ---------- */
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const slideMenu = document.getElementById('slideMenu');
+      const menuOverlay = document.getElementById('menuOverlay');
+      const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+      function openMenu() {
+        slideMenu.classList.add('show');
+        menuOverlay.classList.add('show');
+      }
+      function closeMenu() {
+        slideMenu.classList.remove('show');
+        menuOverlay.classList.remove('show');
+      }
+      hamburgerBtn.addEventListener('click', openMenu);
+      closeMenuBtn.addEventListener('click', closeMenu);
+      menuOverlay.addEventListener('click', closeMenu);
+      slideMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+      /* ---------- account state (login/signup vs. logged-in pill) ---------- */
+      initAccountMenu();
+
+      /* ---------- "View Details" popup (public directory + gated profiles) ---------- */
+      initDetailsPopup({ session: getSession });
+
+      // Keep the homepage "Committee members" stat in sync with the real
+      // member list stored in the database, instead of a hardcoded number.
+      const committeeMemberCountEl = document.getElementById('committeeMemberCount');
+      if (committeeMemberCountEl) {
+        fetch('/api/members/count')
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && typeof data.count === 'number') {
+              committeeMemberCountEl.setAttribute('data-count', data.count);
+            }
+          })
+          .catch(() => { /* fall back to the default data-count already on the element */ });
+      }
+
+      /* ---- top-right: "Website Dashboard" — re-enter the site in a live-editing mode ---- */
+      const reentryFlash = document.getElementById('reentryFlash');
+      const editToolbar = document.getElementById('editToolbar');
+      const editImageInput = document.getElementById('editImageInput');
+      let editModeOn = false;
+      let pendingImageEl = null;
+
+      const editableTextEls = () => document.querySelectorAll('[data-edit-key^="text-"]');
+      const editableImgEls = () => document.querySelectorAll('[data-edit-key^="img-"]');
+
+      function enterEditMode() {
+        editModeOn = true;
+        document.body.classList.add('site-edit-mode');
+        editableTextEls().forEach(el => el.setAttribute('contenteditable', 'true'));
+        editToolbar.classList.add('show');
+      }
+
+      function exitEditMode() {
+        editModeOn = false;
+        document.body.classList.remove('site-edit-mode');
+        editableTextEls().forEach(el => el.removeAttribute('contenteditable'));
+        editToolbar.classList.remove('show');
+      }
+
+      // Reached via the "Website (edit mode)" button on the Secretary Dashboard
+      // page (secretary.html?edit=1 -> index.html?edit=1).
+      if (new URLSearchParams(window.location.search).get('edit') === '1') {
+        history.replaceState(null, '', window.location.pathname + window.location.hash);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        reentryFlash.classList.add('show');
+        setTimeout(() => reentryFlash.classList.remove('show'), 280);
+
+        const glowTargets = document.querySelectorAll('.site-header, .ticker-bar, .hero, .section, .site-footer');
+        glowTargets.forEach((el, i) => {
+          setTimeout(() => {
+            el.classList.add('glow-pulse');
+            setTimeout(() => el.classList.remove('glow-pulse'), 800);
+          }, i * 70);
+        });
+
+        setTimeout(() => {
+          enterEditMode();
+          showToast('Editing mode on — click any highlighted text or photo to edit it');
+        }, 300);
+      }
+
+      /* click a highlighted photo (in edit mode) to replace it */
+      document.addEventListener('click', (e) => {
+        if (!editModeOn) return;
+        const img = e.target.closest('[data-edit-key^="img-"]');
+        if (img) {
+          e.preventDefault();
+          pendingImageEl = img;
+          editImageInput.click();
+        }
+      });
+
+      editImageInput.addEventListener('change', () => {
+        const file = editImageInput.files && editImageInput.files[0];
+        if (!file || !pendingImageEl) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          pendingImageEl.src = reader.result;
+          showToast('Photo updated — click "Save & show" to keep it');
+        };
+        reader.readAsDataURL(file);
+        editImageInput.value = '';
+      });
+
+      /* save all current text + photo edits so they show even after exiting edit mode */
+      document.getElementById('saveEditsBtn').addEventListener('click', () => {
+        const edits = {};
+        editableTextEls().forEach(el => { edits[el.dataset.editKey] = { type: 'text', value: el.innerHTML }; });
+        editableImgEls().forEach(el => { edits[el.dataset.editKey] = { type: 'img', value: el.src }; });
+        try {
+          localStorage.setItem(EDIT_STORAGE_KEY, JSON.stringify(edits));
+          showToast('Changes saved — now visible on the website');
+        } catch (err) {
+          showToast('Could not save — one of the new photos may be too large');
+        }
+      });
+
+      document.getElementById('exitEditBtn').addEventListener('click', () => {
+        exitEditMode();
+        showToast('Editing mode off');
+      });
+
+      /* ---------- meeting popup ---------- */
+      const meetingPopupOverlay = document.getElementById('meetingPopupOverlay');
+      const meetingPopupClose = document.getElementById('meetingPopupClose');
+      const meetingPopupClose2 = document.getElementById('meetingPopupClose2');
+
+      function openMeetingPopup() { meetingPopupOverlay.classList.add('show'); }
+      function closeMeetingPopup() { meetingPopupOverlay.classList.remove('show'); }
+
+      ['openMeetingPopupBtn', 'openMeetingPopupBtn2'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', openMeetingPopup);
+      });
+      meetingPopupClose.addEventListener('click', closeMeetingPopup);
+      meetingPopupClose2.addEventListener('click', closeMeetingPopup);
+      meetingPopupOverlay.addEventListener('click', (e) => { if (e.target === meetingPopupOverlay) closeMeetingPopup(); });
+
+      // Auto-show the scheduled meeting popup shortly after arriving at the dashboard
+      let meetingShown = false;
+      const dashboardSection = document.getElementById('dashboard');
+      const dashIO = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !meetingShown) {
+            meetingShown = true;
+            setTimeout(openMeetingPopup, 900);
+            dashIO.disconnect();
+          }
+        });
+      }, { threshold: 0.5 });
+      if (dashboardSection) dashIO.observe(dashboardSection);
+
+      /* close any modal with Escape */
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeMeetingPopup();
+          closeMenu();
+          const detailsOverlay = document.getElementById('detailsPopupOverlay');
+          if (detailsOverlay) detailsOverlay.classList.remove('show');
+        }
+      });
+
+      /* ---------- left rail slider ---------- */
+      const railTrack = document.getElementById('railTrack');
+      const railDotsWrap = document.getElementById('railDots');
+      if (railTrack) {
+        const slides = railTrack.querySelectorAll('.rail-slide');
+        slides.forEach((_, i) => {
+          const dot = document.createElement('span');
+          if (i === 0) dot.classList.add('active');
+          dot.addEventListener('click', () => goToSlide(i));
+          railDotsWrap.appendChild(dot);
+        });
+        let current = 0;
+        function goToSlide(i) {
+          current = i;
+          railTrack.style.transform = `translateX(-${i * 100}%)`;
+          railDotsWrap.querySelectorAll('span').forEach((d, idx) => d.classList.toggle('active', idx === i));
+        }
+        setInterval(() => {
+          current = (current + 1) % slides.length;
+          goToSlide(current);
+        }, 4200);
+      }
+
+      /* ---------- rail quick-action toasts ---------- */
+      const toast = document.getElementById('toast');
+      let toastTimer;
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+      }
+      document.querySelectorAll('.rail-btn[data-toast]').forEach(btn => {
+        btn.addEventListener('click', () => showToast(btn.getAttribute('data-toast')));
+      });
+
+      /* ---------- events filter ---------- */
+      const chips = document.querySelectorAll('.filter-chip');
+      const eventCards = document.querySelectorAll('.event-card');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const filter = chip.getAttribute('data-filter');
+          eventCards.forEach(card => {
+            const match = filter === 'all' || card.getAttribute('data-cat') === filter;
+            card.classList.toggle('hidden', !match);
+          });
+        });
+      });
+
+    });
+})();
+</script>
+</body>
+</html>
