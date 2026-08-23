@@ -457,6 +457,19 @@ const maintenanceModel = {
       [wing, flat, month, Number(amount) || 0, status === 'Paid' ? 'Paid' : 'Unpaid', screenshot || null, representative_member_id || null]
     );
     return rows[0];
+  },
+  // A resident's own room's recent dues — used by the resident dashboard,
+  // scoped to their wing/flat (no cross-room visibility).
+  async findForRoom(wing, flat, months = 6) {
+    const { rows } = await pool.query(
+      `SELECT month, amount, status, screenshot, updated_at
+       FROM maintenance_payments
+       WHERE wing = $1 AND flat = $2
+       ORDER BY month DESC
+       LIMIT $3`,
+      [wing, flat, months]
+    );
+    return rows;
   }
 };
 
@@ -923,6 +936,21 @@ const maintenanceController = {
         return res.status(400).json({ error: 'wing, flat and month (YYYY-MM) are required' });
       }
       res.status(201).json(await maintenanceModel.upsert(req.body));
+    } catch (err) { dbError(res, err); }
+  },
+  // GET /api/maintenance/mine — any logged-in resident: their own room's
+  // real dues history, resolved from their linked member record. A
+  // Secretary account with no linked member record gets a clear 404
+  // rather than someone else's data.
+  async mine(req, res) {
+    try {
+      if (!req.session.memberId) {
+        return res.status(404).json({ error: 'No member record is linked to this account' });
+      }
+      const member = await memberModel.findById(req.session.memberId);
+      if (!member) return res.status(404).json({ error: 'Member not found' });
+      const history = await maintenanceModel.findForRoom(member.wing, member.flat, 6);
+      res.json({ wing: member.wing, flat: member.flat, history });
     } catch (err) { dbError(res, err); }
   }
 };
@@ -1902,6 +1930,7 @@ app.use('/api/public', publicRouter);
 
 const maintenanceRouter = express.Router();
 maintenanceRouter.get('/', requireSecretary, maintenanceController.byMonth);
+maintenanceRouter.get('/mine', requireAuth, maintenanceController.mine);
 maintenanceRouter.post('/', requireSecretary, maintenanceController.save);
 app.use('/api/maintenance', maintenanceRouter);
 

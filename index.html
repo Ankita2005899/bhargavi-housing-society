@@ -1227,7 +1227,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <div class="section-head reveal">
           <span class="eyebrow-mono">02 · RESIDENT DASHBOARD</span>
           <h2>Everything a resident needs, in one place</h2>
-          <p class="section-sub">A preview of the members' dashboard — notices, dues, and meetings, always up to date.</p>
+          <p class="section-sub" id="dashboardSub">Notices, dues, and meetings — pulled live from your own account.</p>
         </div>
 
         <div class="dashboard-mock reveal">
@@ -1239,32 +1239,32 @@ body.site-edit-mode{padding-bottom:64px;}
               <span class="dash-tab">Meetings</span>
               <span class="dash-tab">Directory</span>
             </div>
-            <button class="btn btn-primary btn-sm" id="openMeetingPopupBtn">🔔 Scheduled Meeting</button>
+            <button class="btn btn-primary btn-sm" id="openMeetingPopupBtn">Scheduled Meeting</button>
           </div>
           <div class="dash-body">
-            <div class="dash-card">
+            <div class="dash-card" id="dashCardMaintenance">
               <p class="mini-label-mono">Maintenance</p>
-              <h4>₹3,200 due</h4>
-              <p class="dash-note">Due by 5 Sept 2026</p>
-              <button class="btn btn-outline btn-sm">Pay now</button>
+              <h4>Loading…</h4>
+              <p class="dash-note">&nbsp;</p>
+              <button class="btn btn-outline btn-sm" id="myMaintenanceBtn" disabled>View details</button>
             </div>
-            <div class="dash-card">
+            <div class="dash-card" id="dashCardMeeting">
               <p class="mini-label-mono">Upcoming</p>
-              <h4>AGM · 30 Aug</h4>
-              <p class="dash-note">Community Hall, 6:00 PM</p>
-              <button class="btn btn-outline btn-sm" id="openMeetingPopupBtn2">View agenda</button>
+              <h4>Loading…</h4>
+              <p class="dash-note">&nbsp;</p>
+              <button class="btn btn-outline btn-sm" id="openMeetingPopupBtn2" disabled>View agenda</button>
             </div>
-            <div class="dash-card">
+            <div class="dash-card" id="dashCardNotice">
               <p class="mini-label-mono">Latest notice</p>
-              <h4>Water tank cleaning</h4>
-              <p class="dash-note">22 Aug, 10 AM – 1 PM, all wings</p>
-              <button class="btn btn-outline btn-sm">Read more</button>
+              <h4>Loading…</h4>
+              <p class="dash-note">&nbsp;</p>
+              <button class="btn btn-outline btn-sm" id="dashNoticeBtn" disabled>Read more</button>
             </div>
             <div class="dash-card">
               <p class="mini-label-mono">Amenities</p>
               <h4>Community Hall</h4>
-              <p class="dash-note">2 bookings this week</p>
-              <button class="btn btn-outline btn-sm">Book</button>
+              <p class="dash-note">Online booking is coming soon</p>
+              <button class="btn btn-outline btn-sm" disabled>Coming soon</button>
             </div>
           </div>
         </div>
@@ -1832,6 +1832,18 @@ body.site-edit-mode{padding-bottom:64px;}
         });
       }
 
+      // The dashboard's "View details" button jumps straight to the
+      // logged-in resident's own room history — no wing/room picking,
+      // since we already know who they are from their session.
+      const myMaintenanceBtn = document.getElementById('myMaintenanceBtn');
+      if (myMaintenanceBtn) {
+        myMaintenanceBtn.addEventListener('click', () => {
+          stack = [];
+          overlay.classList.add('show', 'popup-wide');
+          goToStep(stepMyMaintenanceHistory);
+        });
+      }
+
       /* ===== Lightbox: full-size payment screenshot viewer ===== */
       let lightbox = null;
       function openLightbox(src) {
@@ -2133,6 +2145,56 @@ body.site-edit-mode{padding-bottom:64px;}
 
         content.querySelectorAll('.maint-card-receipt').forEach(btn => {
           btn.addEventListener('click', () => openLightbox(selected[Number(btn.dataset.i)].screenshot));
+        });
+      }
+
+      /* ===== My Maintenance: the logged-in resident's own room, last 6 months ===== */
+      async function stepMyMaintenanceHistory() {
+        title.textContent = 'My Maintenance';
+        menu.hidden = true; body.hidden = false;
+        content.innerHTML = '<p class="popup-status">Loading…</p>';
+
+        let data;
+        try { data = await api('/api/maintenance/mine'); }
+        catch (err) {
+          content.innerHTML = `<div class="access-note">
+            <span class="access-note-icon">${icon('receipt', 22)}</span>
+            <p>${escapeHtml(err.message || 'Could not load your maintenance history.')}</p>
+          </div>`;
+          return;
+        }
+
+        if (!data.history || !data.history.length) {
+          content.innerHTML = `<div class="access-note">
+            <span class="access-note-icon">${icon('receipt', 22)}</span>
+            <p>No dues have been recorded for Room ${escapeHtml(data.flat || '')}, ${escapeHtml(data.wing || '')} yet.</p>
+          </div>`;
+          return;
+        }
+
+        content.innerHTML = data.history.map((r, i) => {
+          const paid = r.status === 'Paid';
+          const screenshotHtml = paid && r.screenshot
+            ? `<button type="button" class="maint-card-receipt" data-i="${i}">
+                 <img src="${escapeHtml(r.screenshot)}" alt="Payment receipt">
+                 <span>${icon('camera', 13)} View receipt</span>
+               </button>`
+            : (paid ? `<p class="maint-card-no-receipt">No receipt uploaded yet.</p>` : '');
+          return `
+            <div class="maint-card">
+              <div class="maint-card-top">
+                <span class="member-row-body">
+                  <span class="member-row-name">${escapeHtml(r.month)}</span>
+                  <span class="tag ${paid ? 'paid' : 'due'}">${paid ? 'Paid' : 'Unpaid'}</span>
+                </span>
+                <span class="maint-popup-amount">₹${(Number(r.amount) || 0).toLocaleString('en-IN')}</span>
+              </div>
+              ${screenshotHtml}
+            </div>`;
+        }).join('');
+
+        content.querySelectorAll('.maint-card-receipt').forEach(btn => {
+          btn.addEventListener('click', () => openLightbox(data.history[Number(btn.dataset.i)].screenshot));
         });
       }
 
@@ -2884,6 +2946,79 @@ body.site-edit-mode{padding-bottom:64px;}
           </div>
           ${ev.description ? `<p class="inline-detail-text">${escapeHtml(ev.description)}</p>` : ''}`);
       }
+
+      /* ---------- Resident dashboard (section 02): real data, not a mockup ----------
+         Maintenance comes from the new /api/maintenance/mine (scoped to the
+         logged-in resident's own room); the meeting and notice cards reuse
+         the same live endpoints already powering the meeting popup and the
+         Notice Board section below, so there's exactly one source of truth
+         for each. */
+      async function renderDashboardCards() {
+        const maintCard = document.getElementById('dashCardMaintenance');
+        const meetingCard = document.getElementById('dashCardMeeting');
+        const noticeCard = document.getElementById('dashCardNotice');
+        const myMaintBtn = document.getElementById('myMaintenanceBtn');
+        const meetingBtn2 = document.getElementById('openMeetingPopupBtn2');
+        const noticeBtn = document.getElementById('dashNoticeBtn');
+
+        try {
+          const data = await api('/api/maintenance/mine');
+          const thisMonth = new Date().toISOString().slice(0, 7);
+          const current = (data.history || []).find(r => r.month === thisMonth) || (data.history || [])[0];
+          if (current) {
+            const paid = current.status === 'Paid';
+            maintCard.querySelector('h4').textContent = `₹${(Number(current.amount) || 0).toLocaleString('en-IN')} ${paid ? 'paid' : 'due'}`;
+            maintCard.querySelector('.dash-note').textContent = `${current.month}${paid ? ' · settled' : ' · pending'}`;
+          } else {
+            maintCard.querySelector('h4').textContent = 'No dues yet';
+            maintCard.querySelector('.dash-note').textContent = `Room ${data.flat || '—'}, ${data.wing || '—'}`;
+          }
+          myMaintBtn.disabled = false;
+          myMaintBtn.textContent = 'View history';
+        } catch (err) {
+          maintCard.querySelector('h4').textContent = 'Not linked';
+          maintCard.querySelector('.dash-note').textContent = err.message === 'No member record is linked to this account'
+            ? 'No room linked to this account'
+            : 'Could not load your dues';
+        }
+
+        try {
+          const meetings = await api('/api/public/meetings/active');
+          if (meetings.length) {
+            const { d } = formatMeetingWhen(meetings[0]);
+            meetingCard.querySelector('h4').textContent = meetings[0].title || 'Committee meeting';
+            meetingCard.querySelector('.dash-note').textContent = [d, meetings[0].location].filter(Boolean).join(' · ') || 'Tap for details';
+            meetingBtn2.disabled = false;
+          } else {
+            meetingCard.querySelector('h4').textContent = 'No meeting scheduled';
+            meetingCard.querySelector('.dash-note').textContent = 'Check back closer to the AGM';
+          }
+        } catch (err) {
+          meetingCard.querySelector('h4').textContent = 'Not available';
+          meetingCard.querySelector('.dash-note').textContent = 'Could not load meetings';
+        }
+
+        try {
+          const notices = await api('/api/notices/active');
+          if (notices.length) {
+            const n = notices[0];
+            const preview = (n.message || '').slice(0, 60) + ((n.message || '').length > 60 ? '…' : '');
+            noticeCard.querySelector('h4').textContent = n.title || 'Notice';
+            noticeCard.querySelector('.dash-note').textContent = preview;
+            noticeBtn.disabled = false;
+            noticeBtn.addEventListener('click', () => {
+              document.getElementById('notices').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          } else {
+            noticeCard.querySelector('h4').textContent = 'No notices yet';
+            noticeCard.querySelector('.dash-note').textContent = 'Nothing posted recently';
+          }
+        } catch (err) {
+          noticeCard.querySelector('h4').textContent = 'Not available';
+          noticeCard.querySelector('.dash-note').textContent = 'Could not load notices';
+        }
+      }
+      renderDashboardCards();
 
       loadPublicNotices();
       loadPublicGovernance();
