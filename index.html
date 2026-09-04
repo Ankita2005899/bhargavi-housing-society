@@ -490,30 +490,41 @@ body.site-edit-mode{padding-bottom:64px;}
 }
 .events-layout{display:flex;align-items:flex-start;gap:0;transition:gap .45s var(--ease);}
 .events-layout.has-detail{gap:1.8rem;}
-.events-carousel-wrap{position:relative;margin:0 -1.5rem;padding:0 1.5rem;flex:1 1 100%;min-width:0;transition:flex-basis .45s var(--ease);}
-.events-layout.has-detail .events-carousel-wrap{flex:1 1 44%;}
-.events-grid{
-  display:flex;gap:1.8rem;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding:1rem 3vw 2.4rem;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;scrollbar-color:var(--diya-600) transparent;
+.events-carousel-wrap{
+  position:relative;flex:1 1 100%;min-width:0;max-width:460px;margin:0 auto;
+  transition:flex-basis .45s var(--ease), max-width .45s var(--ease);
 }
-.events-grid::-webkit-scrollbar{height:6px;}
-.events-grid::-webkit-scrollbar-thumb{background:var(--diya-600);border-radius:99px;}
-.events-grid::-webkit-scrollbar-track{background:transparent;}
+.events-layout.has-detail .events-carousel-wrap{flex:1 1 44%;max-width:none;margin:0;}
+.events-grid{position:relative;height:520px;touch-action:pan-y;}
 .event-card{
-  flex:0 0 auto;width:min(78vw,400px);scroll-snap-align:center;cursor:pointer;
+  position:absolute;top:0;left:50%;width:100%;height:520px;cursor:pointer;
   background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease), outline-color .25s ease;
+  transition:transform .45s var(--ease), opacity .45s var(--ease), box-shadow .35s var(--ease), outline-color .25s ease;
   outline:2px solid transparent;outline-offset:3px;
 }
-.event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
-.event-card img{height:260px;width:100%;object-fit:cover;transition:transform .5s ease;}
+.event-card img{height:300px;width:100%;object-fit:cover;transition:transform .5s ease;flex:0 0 auto;}
 .event-card:hover img{transform:scale(1.06);}
 .event-body{padding:1.4rem 1.5rem 1.6rem;}
 .event-body h3{font-size:1.2rem;margin:.5rem 0 .5rem;}
 .event-body p{font-size:.92rem;margin:0;}
 .event-card.hidden{display:none;}
-.event-card.is-active{outline-color:var(--diya-600);transform:translateY(-6px) scale(.97);box-shadow:0 20px 40px rgba(14,27,50,.16);opacity:.72;}
+.event-card.is-active{outline-color:var(--diya-600);}
+
+/* stack depth — set by JS via data-depth (0 = front card, 1/2 = peeking
+   behind it, "prev" = already-viewed cards parked off to the left,
+   "hidden" = further back in the deck, not shown yet) */
+.event-card[data-depth="0"]{transform:translateX(-50%) translateY(0) scale(1) rotate(0deg);z-index:30;box-shadow:0 20px 44px rgba(14,27,50,.18);}
+.event-card[data-depth="1"]{transform:translateX(-42%) translateY(16px) scale(.94) rotate(2deg);z-index:20;opacity:.9;}
+.event-card[data-depth="2"]{transform:translateX(-58%) translateY(30px) scale(.88) rotate(-2.5deg);z-index:10;opacity:.6;}
+.event-card[data-depth="prev"]{transform:translateX(-150%) translateY(0) scale(.9) rotate(-6deg);z-index:5;opacity:0;pointer-events:none;}
+.event-card[data-depth="hidden"]{transform:translateX(-50%) translateY(50px) scale(.82);z-index:0;opacity:0;pointer-events:none;}
+.event-card[data-depth="0"]:hover{transform:translateX(-50%) translateY(-4px) scale(1.01);box-shadow:0 24px 48px rgba(14,27,50,.22);}
+.event-card[data-depth="1"]:hover,
+.event-card[data-depth="2"]:hover{box-shadow:0 16px 34px rgba(14,27,50,.2);}
+.events-deck-counter{
+  text-align:center;font-family:var(--font-mono);font-size:.76rem;color:var(--ink-400);
+  margin-top:1.4rem;letter-spacing:.04em;
+}
 
 /* ---------- event detail panel (slides in from the right on card click) ---------- */
 .event-detail-panel{
@@ -1467,6 +1478,7 @@ body.site-edit-mode{padding-bottom:64px;}
           </article>
           </div>
           <button class="carousel-arrow next" id="eventsNextBtn" aria-label="Next event">&#8250;</button>
+          <p class="events-deck-counter" id="eventsDeckCounter"></p>
         </div>
         <div class="event-detail-panel" id="eventDetailPanel"></div>
         </div>
@@ -2582,19 +2594,58 @@ body.site-edit-mode{padding-bottom:64px;}
         btn.addEventListener('click', () => showToast(btn.getAttribute('data-toast')));
       });
 
-      /* ---------- events carousel arrows ---------- */
+      /* ---------- events stacked deck ---------- */
       const eventsGridEl = document.getElementById('eventsGrid');
       const eventsPrevBtn = document.getElementById('eventsPrevBtn');
       const eventsNextBtn = document.getElementById('eventsNextBtn');
-      function eventsScrollStep() {
-        const firstCard = eventsGridEl.querySelector('.event-card:not(.hidden)');
-        if (!firstCard) return 360;
-        const style = getComputedStyle(eventsGridEl);
-        return firstCard.getBoundingClientRect().width + parseFloat(style.gap || 28);
+      let visibleEventCards = Array.from(document.querySelectorAll('.event-card'));
+      let deckIndex = 0;
+
+      function renderDeck() {
+        visibleEventCards.forEach((card, i) => {
+          const offset = i - deckIndex;
+          let depth;
+          if (offset < 0) depth = 'prev';
+          else if (offset === 0) depth = '0';
+          else if (offset === 1) depth = '1';
+          else if (offset === 2) depth = '2';
+          else depth = 'hidden';
+          card.setAttribute('data-depth', depth);
+        });
+        let counterEl = document.getElementById('eventsDeckCounter');
+        if (counterEl) {
+          counterEl.textContent = visibleEventCards.length ? `${deckIndex + 1} / ${visibleEventCards.length}` : '';
+        }
       }
-      if (eventsPrevBtn && eventsNextBtn && eventsGridEl) {
-        eventsPrevBtn.addEventListener('click', () => eventsGridEl.scrollBy({ left: -eventsScrollStep(), behavior: 'smooth' }));
-        eventsNextBtn.addEventListener('click', () => eventsGridEl.scrollBy({ left: eventsScrollStep(), behavior: 'smooth' }));
+      function goToDeckIndex(i) {
+        if (!visibleEventCards.length) return;
+        deckIndex = ((i % visibleEventCards.length) + visibleEventCards.length) % visibleEventCards.length;
+        renderDeck();
+      }
+      function deckNext() { goToDeckIndex(deckIndex + 1); }
+      function deckPrev() { goToDeckIndex(deckIndex - 1); }
+
+      if (eventsPrevBtn) eventsPrevBtn.addEventListener('click', deckPrev);
+      if (eventsNextBtn) eventsNextBtn.addEventListener('click', deckNext);
+
+      // swipe / drag
+      let eventsTouchStartX = null;
+      if (eventsGridEl) {
+        eventsGridEl.addEventListener('touchstart', (e) => { eventsTouchStartX = e.touches[0].clientX; }, { passive: true });
+        eventsGridEl.addEventListener('touchend', (e) => {
+          if (eventsTouchStartX == null) return;
+          const dx = e.changedTouches[0].clientX - eventsTouchStartX;
+          if (Math.abs(dx) > 40) { dx < 0 ? deckNext() : deckPrev(); }
+          eventsTouchStartX = null;
+        }, { passive: true });
+        let eventsWheelLocked = false;
+        eventsGridEl.addEventListener('wheel', (e) => {
+          if (eventsWheelLocked || Math.abs(e.deltaY) < 12) return;
+          e.preventDefault();
+          eventsWheelLocked = true;
+          e.deltaY > 0 ? deckNext() : deckPrev();
+          setTimeout(() => { eventsWheelLocked = false; }, 420);
+        }, { passive: false });
       }
 
       /* ---------- events filter ---------- */
@@ -2610,9 +2661,13 @@ body.site-edit-mode{padding-bottom:64px;}
             card.classList.toggle('hidden', !match);
           });
           closeEventDetail();
-          eventsGridEl.scrollTo({ left: 0, behavior: 'smooth' });
+          visibleEventCards = Array.from(eventCards).filter(c => !c.classList.contains('hidden'));
+          deckIndex = 0;
+          renderDeck();
         });
       });
+
+      renderDeck();
 
       /* ---------- events detail panel ---------- */
       // Same shape/content as the full event.html detail pages, kept local so
@@ -2769,6 +2824,13 @@ body.site-edit-mode{padding-bottom:64px;}
         const id = card.getAttribute('data-id');
         if (!id) return;
         card.addEventListener('click', () => {
+          // a peeking (non-front) card just comes to the front of the deck first —
+          // its detail only opens once it's the front-most card
+          const depth = card.getAttribute('data-depth');
+          if (depth === '1' || depth === '2') {
+            goToDeckIndex(visibleEventCards.indexOf(card));
+            return;
+          }
           if (activeEventId === id) { closeEventDetail(); return; }
           openEventDetail(id);
         });
