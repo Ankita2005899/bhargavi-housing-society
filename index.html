@@ -1001,6 +1001,32 @@ body.site-edit-mode{padding-bottom:64px;}
 .gov-doc-card h4{font-size:1rem;margin:0 0 .35rem;}
 .gov-doc-card p{font-size:.83rem;color:var(--ink-400);margin:0;}
 
+/* a single scheduled event gets a wide "spotlight" banner instead of
+   sitting in a grid built for many — avoids one small card floating in
+   a lot of unused row width */
+.gov-docs-list.single{max-width:640px;}
+.gov-doc-spotlight{
+  flex:1 1 100%;display:flex;align-items:center;gap:1.2rem;
+  padding:1.3rem 1.5rem;
+}
+.gov-doc-spotlight .gov-doc-icon{margin-bottom:0;flex:0 0 auto;width:48px;height:48px;}
+.gov-doc-spotlight .gov-doc-icon svg{width:22px;height:22px;}
+.gov-doc-spotlight-body{flex:1 1 auto;min-width:0;}
+.gov-doc-spotlight-body .gov-doc-badges{margin-bottom:.45rem;}
+.gov-doc-spotlight-body h4{font-size:1.05rem;margin:0 0 .3rem;}
+.gov-doc-spotlight-body p{font-size:.85rem;}
+.gov-doc-spotlight-arrow{
+  flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--cat-soft,#F4EEE2);color:var(--cat-dark,var(--diya-600));
+  transition:transform .25s var(--ease), background .25s var(--ease);
+}
+.gov-doc-spotlight-arrow svg{width:16px;height:16px;}
+.gov-doc-spotlight:hover .gov-doc-spotlight-arrow{transform:translateX(3px);background:var(--cat-a,var(--diya-600));color:#fff;}
+@media (max-width: 560px){
+  .gov-doc-spotlight{flex-wrap:wrap;}
+  .gov-doc-spotlight-arrow{display:none;}
+}
+
 /* ---------- colourful detail banner (event detail panel) ---------- */
 .inline-detail-banner{
   position:relative;overflow:hidden;margin:-1.5rem -1.7rem 1.3rem;padding:1.7rem 1.7rem 2.1rem;color:#fff;
@@ -1735,6 +1761,7 @@ body.site-edit-mode{padding-bottom:64px;}
       mail: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6 8.5 6.5L20.5 6"/>',
       shield: '<path d="M12 3l7 3v6c0 4.6-3 8-7 9-4-1-7-4.4-7-9V6l7-3Z"/>',
       chevronLeft: '<path d="m14.5 5-7 7 7 7"/>',
+      chevronRight: '<path d="m9.5 5 7 7-7 7"/>',
       close: '<path d="m6 6 12 12M18 6 6 18"/>',
       logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>',
       users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6"/><path d="M15.5 6.5a3 3 0 0 1 0 5.6"/><path d="M17 14.2c2.3.5 4 2.6 4 5.3"/>',
@@ -3017,9 +3044,10 @@ body.site-edit-mode{padding-bottom:64px;}
         }
         secretaryEventsBlock.hidden = liveEvents.length === 0;
         secretaryEventsList.innerHTML = '';
+        secretaryEventsList.classList.toggle('single', liveEvents.length === 1);
         liveEvents.forEach(ev => {
           const card = document.createElement('div');
-          card.className = 'gov-doc-card';
+          card.className = liveEvents.length === 1 ? 'gov-doc-card gov-doc-spotlight' : 'gov-doc-card';
           const theme = categoryTheme(ev.category);
           card.style.setProperty('--cat-a', theme.a);
           card.style.setProperty('--cat-b', theme.b);
@@ -3027,14 +3055,29 @@ body.site-edit-mode{padding-bottom:64px;}
           card.style.setProperty('--cat-soft', theme.soft);
           card.style.setProperty('--cat-dark', theme.b);
           const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
-          card.innerHTML = `
-            <div class="gov-doc-icon">${icon(theme.icon, 18)}</div>
-            <div class="gov-doc-badges">
-              ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
-              ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
-            </div>
-            <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
-            <p>${escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • ')) || 'Date to be announced'}</p>`;
+          const dateLine = escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • ')) || 'Date to be announced';
+          if (liveEvents.length === 1) {
+            card.innerHTML = `
+              <div class="gov-doc-icon">${icon(theme.icon, 22)}</div>
+              <div class="gov-doc-spotlight-body">
+                <div class="gov-doc-badges">
+                  ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
+                  ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
+                </div>
+                <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
+                <p>${dateLine}</p>
+              </div>
+              <span class="gov-doc-spotlight-arrow">${icon('chevronRight', 18)}</span>`;
+          } else {
+            card.innerHTML = `
+              <div class="gov-doc-icon">${icon(theme.icon, 18)}</div>
+              <div class="gov-doc-badges">
+                ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
+                ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
+              </div>
+              <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
+              <p>${dateLine}</p>`;
+          }
           card.addEventListener('click', () => openSecretaryEventDetail(ev.id));
           secretaryEventsList.appendChild(card);
         });
