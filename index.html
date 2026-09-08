@@ -1004,16 +1004,17 @@ body.site-edit-mode{padding-bottom:64px;}
 /* a single scheduled event gets a wide "spotlight" banner instead of
    sitting in a grid built for many — avoids one small card floating in
    a lot of unused row width */
-.gov-docs-list.single{max-width:640px;}
+.gov-docs-list.single{max-width:100%;}
 .gov-doc-spotlight{
-  flex:1 1 100%;display:flex;align-items:center;gap:1.2rem;
-  padding:1.3rem 1.5rem;
+  flex:0 1 auto;display:inline-flex;align-items:center;gap:1.15rem;
+  width:auto;max-width:100%;
+  padding:1.1rem 1.6rem 1.1rem 1.25rem;
 }
-.gov-doc-spotlight .gov-doc-icon{margin-bottom:0;flex:0 0 auto;width:48px;height:48px;}
-.gov-doc-spotlight .gov-doc-icon svg{width:22px;height:22px;}
-.gov-doc-spotlight-body{flex:1 1 auto;min-width:0;}
-.gov-doc-spotlight-body .gov-doc-badges{margin-bottom:.45rem;}
-.gov-doc-spotlight-body h4{font-size:1.05rem;margin:0 0 .3rem;}
+.gov-doc-spotlight .gov-doc-icon{margin-bottom:0;flex:0 0 auto;width:46px;height:46px;}
+.gov-doc-spotlight .gov-doc-icon svg{width:21px;height:21px;}
+.gov-doc-spotlight-body{flex:0 1 auto;min-width:0;}
+.gov-doc-spotlight-body .gov-doc-badges{margin-bottom:.4rem;}
+.gov-doc-spotlight-body h4{font-size:1.05rem;margin:0 0 .25rem;}
 .gov-doc-spotlight-body p{font-size:.85rem;}
 .gov-doc-spotlight-arrow{
   flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -1023,7 +1024,7 @@ body.site-edit-mode{padding-bottom:64px;}
 .gov-doc-spotlight-arrow svg{width:16px;height:16px;}
 .gov-doc-spotlight:hover .gov-doc-spotlight-arrow{transform:translateX(3px);background:var(--cat-a,var(--diya-600));color:#fff;}
 @media (max-width: 560px){
-  .gov-doc-spotlight{flex-wrap:wrap;}
+  .gov-doc-spotlight{flex-wrap:wrap;width:100%;}
   .gov-doc-spotlight-arrow{display:none;}
 }
 
@@ -1793,12 +1794,12 @@ body.site-edit-mode{padding-bottom:64px;}
 
     // ---- theming: colourful per-category accent used on event cards & their detail banner ----
     const CATEGORY_THEME = {
-      festival:    { a: '#F0A93C', b: '#C9821E', soft: '#FDF1DE', icon: 'star' },
-      meeting:     { a: '#3E76C4', b: '#1F4C86', soft: '#E7F0FB', icon: 'calendar' },
-      celebration: { a: '#E8608F', b: '#C13D6C', soft: '#FCE7EE', icon: 'gift' },
-      sports:      { a: '#33A66B', b: '#1E7A4B', soft: '#E4F5EC', icon: 'trophy' },
-      religious:   { a: '#9B6BE0', b: '#6C3F91', soft: '#F1E9F7', icon: 'flame' },
-      'maintenance drive': { a: '#17A6A0', b: '#0C7873', soft: '#E1F5F4', icon: 'wrench' },
+      festival:    { a: '#D9A441', b: '#C1522C', soft: '#FBF1DE', icon: 'star' },
+      meeting:     { a: '#4E8FC7', b: '#1B3A6B', soft: '#E7F0F9', icon: 'calendar' },
+      celebration: { a: '#D9838F', b: '#A5411F', soft: '#F7E7E3', icon: 'gift' },
+      sports:      { a: '#5FA377', b: '#2F7D46', soft: '#E7F2EB', icon: 'trophy' },
+      religious:   { a: '#9A82B0', b: '#5C4677', soft: '#EFE8F5', icon: 'flame' },
+      'maintenance drive': { a: '#4C9C97', b: '#2F726E', soft: '#E4F3F2', icon: 'wrench' },
       general:     { a: '#6B7690', b: '#454E63', soft: '#EDEEF2', icon: 'note' },
       other:       { a: '#B08D5B', b: '#8A6B3D', soft: '#F3ECE0', icon: 'note' }
     };
