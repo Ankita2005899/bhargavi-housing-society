@@ -1006,26 +1006,40 @@ body.site-edit-mode{padding-bottom:64px;}
    a lot of unused row width */
 .gov-docs-list.single{max-width:100%;}
 .gov-doc-spotlight{
-  flex:0 1 auto;display:inline-flex;align-items:center;gap:1.15rem;
-  width:auto;max-width:100%;
-  padding:1.1rem 1.6rem 1.1rem 1.25rem;
+  position:relative;overflow:hidden;
+  flex:1 1 100%;display:flex;align-items:center;gap:1.75rem;
+  width:100%;max-width:820px;
+  padding:2rem 2.25rem;
+  border-radius:20px;
 }
-.gov-doc-spotlight .gov-doc-icon{margin-bottom:0;flex:0 0 auto;width:46px;height:46px;}
-.gov-doc-spotlight .gov-doc-icon svg{width:21px;height:21px;}
-.gov-doc-spotlight-body{flex:0 1 auto;min-width:0;}
-.gov-doc-spotlight-body .gov-doc-badges{margin-bottom:.4rem;}
-.gov-doc-spotlight-body h4{font-size:1.05rem;margin:0 0 .25rem;}
-.gov-doc-spotlight-body p{font-size:.85rem;}
+.gov-doc-spotlight::after{
+  content:'';position:absolute;top:-40%;right:-8%;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle, var(--cat-glow,rgba(193,82,44,.16)) 0%, transparent 70%);
+  pointer-events:none;
+}
+.gov-doc-spotlight .gov-doc-icon{
+  margin-bottom:0;flex:0 0 auto;width:72px;height:72px;position:relative;z-index:1;
+  box-shadow:0 10px 24px -8px var(--cat-glow,rgba(193,82,44,.4));
+}
+.gov-doc-spotlight .gov-doc-icon svg{width:32px;height:32px;}
+.gov-doc-spotlight-body{flex:1 1 auto;min-width:0;position:relative;z-index:1;}
+.gov-doc-spotlight-body .gov-doc-badges{margin-bottom:.6rem;}
+.gov-doc-spotlight-body .category-pill,.gov-doc-spotlight-body .status-pill{font-size:.72rem;padding:.32rem .75rem;}
+.gov-doc-spotlight-body h4{font-size:1.55rem;line-height:1.25;margin:0 0 .4rem;}
+.gov-doc-spotlight-body p{font-size:.95rem;}
 .gov-doc-spotlight-arrow{
-  flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;display:flex;align-items:center;gap:.5rem;position:relative;z-index:1;
+  padding:.75rem 1.3rem;border-radius:999px;font:600 .85rem/1 var(--font-body);letter-spacing:.01em;white-space:nowrap;
   background:var(--cat-soft,#F4EEE2);color:var(--cat-dark,var(--diya-600));
-  transition:transform .25s var(--ease), background .25s var(--ease);
+  transition:transform .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
 }
-.gov-doc-spotlight-arrow svg{width:16px;height:16px;}
-.gov-doc-spotlight:hover .gov-doc-spotlight-arrow{transform:translateX(3px);background:var(--cat-a,var(--diya-600));color:#fff;}
-@media (max-width: 560px){
-  .gov-doc-spotlight{flex-wrap:wrap;width:100%;}
-  .gov-doc-spotlight-arrow{display:none;}
+.gov-doc-spotlight-arrow svg{width:16px;height:16px;transition:transform .25s var(--ease);}
+.gov-doc-spotlight:hover .gov-doc-spotlight-arrow{background:var(--cat-a,var(--diya-600));color:#fff;}
+.gov-doc-spotlight:hover .gov-doc-spotlight-arrow svg{transform:translateX(3px);}
+@media (max-width: 640px){
+  .gov-doc-spotlight{flex-wrap:wrap;padding:1.5rem;gap:1.1rem;}
+  .gov-doc-spotlight-body h4{font-size:1.25rem;}
+  .gov-doc-spotlight-arrow{margin-left:calc(72px + 1.1rem);}
 }
 
 /* ---------- colourful detail banner (event detail panel) ---------- */
@@ -3068,7 +3082,7 @@ body.site-edit-mode{padding-bottom:64px;}
                 <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
                 <p>${dateLine}</p>
               </div>
-              <span class="gov-doc-spotlight-arrow">${icon('chevronRight', 18)}</span>`;
+              <span class="gov-doc-spotlight-arrow">View details ${icon('chevronRight', 16)}</span>`;
           } else {
             card.innerHTML = `
               <div class="gov-doc-icon">${icon(theme.icon, 18)}</div>
