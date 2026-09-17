@@ -924,6 +924,72 @@ body.site-edit-mode{padding-bottom:64px;}
 .main-nav a.active{background:rgba(217,164,65,.16);color:var(--gold-500);font-weight:600;}
 
 /* =====================================================
+   EVENTS NAV DROPDOWN — hover or click "Events" in the header
+   to see every event, grouped by category, each linking
+   straight to its own event.html?id=... page.
+   ===================================================== */
+.nav-item-dropdown{position:relative;}
+.nav-dropdown-trigger{display:inline-flex;align-items:center;gap:.3rem;}
+.nav-dropdown-caret{width:9px;height:9px;transition:transform .25s var(--ease);}
+.nav-item-dropdown.open .nav-dropdown-caret,
+.nav-item-dropdown:hover .nav-dropdown-caret{transform:rotate(180deg);}
+.nav-dropdown-panel{
+  position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
+  min-width:560px;max-width:640px;background:var(--paper-2);border-radius:var(--radius-md);
+  box-shadow:0 22px 46px -14px rgba(14,27,50,.34);padding:1.3rem 1.4rem 1.1rem;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
+  z-index:80;
+}
+.nav-item-dropdown:hover .nav-dropdown-panel,
+.nav-item-dropdown.open .nav-dropdown-panel{
+  opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);
+}
+.nav-dropdown-panel::before{
+  content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:12px;height:12px;background:var(--paper-2);border-radius:2px;
+}
+.nav-dropdown-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem 1.4rem;}
+.nav-dropdown-group h4{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-400);margin:0 0 .55em;font-weight:600;
+}
+.nav-dropdown-group ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.15rem;}
+.nav-dropdown-group a{
+  display:block;padding:.32rem .4rem;border-radius:8px;font-size:.85rem;color:var(--ink-900);font-weight:500;
+  transition:background .18s ease, color .18s ease, padding-left .18s ease;
+}
+.nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);padding-left:.6rem;}
+.nav-dropdown-viewall{
+  display:block;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
+  font-size:.8rem;font-weight:700;color:var(--diya-600);text-align:center;
+}
+.nav-dropdown-viewall:hover{text-decoration:underline;}
+@media (max-width:1180px){
+  .nav-dropdown-panel{min-width:440px;left:auto;right:-1rem;transform:translateY(6px);}
+  .nav-item-dropdown:hover .nav-dropdown-panel,
+  .nav-item-dropdown.open .nav-dropdown-panel{transform:translateY(0);}
+  .nav-dropdown-panel::before{left:auto;right:2.2rem;}
+  .nav-dropdown-groups{grid-template-columns:repeat(2,1fr);}
+}
+/* mobile slide-menu accordion for Events */
+.slide-menu-events{border-bottom:1px solid var(--line);}
+.slide-menu-events-trigger{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:.8rem .3rem;font-weight:600;color:var(--navy-950);font-size:1rem;
+  background:none;border:none;text-align:left;font-family:var(--font-body);
+}
+.slide-menu-events-trigger svg{width:11px;height:11px;transition:transform .25s var(--ease);flex:0 0 auto;}
+.slide-menu-events.open .slide-menu-events-trigger svg{transform:rotate(180deg);}
+.slide-menu-events-list{max-height:0;overflow:hidden;transition:max-height .3s var(--ease);}
+.slide-menu-events.open .slide-menu-events-list{max-height:520px;}
+.slide-menu-events-list a{
+  display:block;padding:.5rem .3rem .5rem 1rem;font-size:.88rem;font-weight:500;
+  color:var(--ink-600);border-bottom:none !important;
+}
+.slide-menu-events-list a:hover{color:var(--diya-600);}
+
+/* =====================================================
    TEASER CARDS — "read more" link that opens the full page
    ===================================================== */
 .event-body{display:flex;flex-direction:column;}
@@ -1146,7 +1212,16 @@ body.site-edit-mode{padding-bottom:64px;}
     <nav class="main-nav" id="mainNav">
       <a href="#about">About</a>
       <a href="#dashboard">Dashboard</a>
-      <a href="#events">Events</a>
+      <div class="nav-item-dropdown" id="eventsNavItem">
+        <a href="#events" class="nav-dropdown-trigger" id="eventsNavTrigger" aria-haspopup="true" aria-expanded="false">
+          Events
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="eventsNavPanel">
+          <div class="nav-dropdown-groups" id="eventsNavGroups"><!-- filled by JS from the event cards below --></div>
+          <a href="#events" class="nav-dropdown-viewall">View all events on this page →</a>
+        </div>
+      </div>
       <a href="#governance">Governance</a>
       <a href="#notices">Notices</a>
       <a href="#contact">Contact</a>
@@ -1170,7 +1245,13 @@ body.site-edit-mode{padding-bottom:64px;}
   <nav class="slide-menu-links">
     <a href="#about">About the Society</a>
     <a href="#dashboard">Resident Dashboard</a>
-    <a href="#events">Events &amp; Celebrations</a>
+    <div class="slide-menu-events" id="slideMenuEvents">
+      <button type="button" class="slide-menu-events-trigger" id="slideMenuEventsTrigger">
+        Events &amp; Celebrations
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="slide-menu-events-list" id="slideMenuEventsList"><!-- filled by JS from the event cards below --></div>
+    </div>
     <a href="#governance">Meetings &amp; Governance</a>
     <a href="#notices">Notice Board</a>
     <a href="#contact">Contact &amp; Location</a>
@@ -2450,6 +2531,77 @@ body.site-edit-mode{padding-bottom:64px;}
       closeMenuBtn.addEventListener('click', closeMenu);
       menuOverlay.addEventListener('click', closeMenu);
       slideMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+      /* ---------- Events nav dropdown (header) + slide-menu accordion ----------
+         Built straight from the .event-card elements already in the #events
+         section, so the dropdown and the mobile accordion always match the
+         cards on the page — no separate list to keep in sync. Each entry
+         links to its own event.html?id=<slug> page. */
+      (function initEventsNav() {
+        const cards = Array.from(document.querySelectorAll('.event-card'));
+        if (!cards.length) return;
+
+        const CAT_LABELS = { cultural: 'Cultural & Festive', national: 'National Day', social: 'Social & Community', meetings: 'Governance' };
+        const groups = {};
+        cards.forEach(card => {
+          const id = card.getAttribute('data-id');
+          const cat = card.getAttribute('data-cat') || 'other';
+          const title = card.querySelector('h3');
+          if (!id || !title) return;
+          (groups[cat] = groups[cat] || []).push({ id, title: title.textContent.trim() });
+        });
+
+        // -- header dropdown (desktop) --
+        const panelGroups = document.getElementById('eventsNavGroups');
+        if (panelGroups) {
+          panelGroups.innerHTML = Object.keys(groups).map(cat => `
+            <div class="nav-dropdown-group">
+              <h4>${CAT_LABELS[cat] || cat}</h4>
+              <ul>${groups[cat].map(e => `<li><a href="event.html?id=${e.id}">${e.title}</a></li>`).join('')}</ul>
+            </div>`).join('');
+        }
+
+        const navItem = document.getElementById('eventsNavItem');
+        const trigger = document.getElementById('eventsNavTrigger');
+        if (navItem && trigger) {
+          let hoverTimer = null;
+          const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+          const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+
+          navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+          navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+
+          trigger.addEventListener('click', (e) => {
+            // On touch/click devices there's no hover, so a tap toggles the
+            // dropdown instead of jumping straight to the #events anchor.
+            if (!navItem.classList.contains('open')) {
+              e.preventDefault();
+              openDropdown();
+            } else {
+              closeDropdown();
+            }
+          });
+          trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDropdown();
+          });
+          document.addEventListener('click', (e) => {
+            if (!navItem.contains(e.target)) closeDropdown();
+          });
+        }
+
+        // -- mobile slide-menu accordion --
+        const slideList = document.getElementById('slideMenuEventsList');
+        if (slideList) {
+          slideList.innerHTML = Object.keys(groups).map(cat => groups[cat]
+            .map(e => `<a href="event.html?id=${e.id}">${e.title}</a>`).join('')).join('');
+          slideList.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+        }
+        const slideEvents = document.getElementById('slideMenuEvents');
+        const slideTrigger = document.getElementById('slideMenuEventsTrigger');
+        if (slideEvents && slideTrigger) {
+          slideTrigger.addEventListener('click', () => slideEvents.classList.toggle('open'));
+        }
+      })();
 
       /* ---------- account state (login/signup vs. logged-in pill) ---------- */
       initAccountMenu();

@@ -570,6 +570,56 @@ body.site-edit-mode{padding-bottom:64px;}
 .main-nav a.active{background:rgba(217,164,65,.16);color:var(--gold-500);font-weight:600;}
 
 /* =====================================================
+   EVENTS NAV DROPDOWN — same behaviour as the homepage:
+   hover or click "Events" to see every event, grouped by
+   category, each linking to its own event.html?id=... page.
+   ===================================================== */
+.nav-item-dropdown{position:relative;}
+.nav-dropdown-trigger{display:inline-flex;align-items:center;gap:.3rem;}
+.nav-dropdown-caret{width:9px;height:9px;transition:transform .25s var(--ease);}
+.nav-item-dropdown.open .nav-dropdown-caret,
+.nav-item-dropdown:hover .nav-dropdown-caret{transform:rotate(180deg);}
+.nav-dropdown-panel{
+  position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
+  min-width:560px;max-width:640px;background:var(--paper-2);border-radius:var(--radius-md);
+  box-shadow:0 22px 46px -14px rgba(14,27,50,.34);padding:1.3rem 1.4rem 1.1rem;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
+  z-index:80;
+}
+.nav-item-dropdown:hover .nav-dropdown-panel,
+.nav-item-dropdown.open .nav-dropdown-panel{
+  opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);
+}
+.nav-dropdown-panel::before{
+  content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:12px;height:12px;background:var(--paper-2);border-radius:2px;
+}
+.nav-dropdown-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem 1.4rem;}
+.nav-dropdown-group h4{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-400);margin:0 0 .55em;font-weight:600;
+}
+.nav-dropdown-group ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.15rem;}
+.nav-dropdown-group a{
+  display:block;padding:.32rem .4rem;border-radius:8px;font-size:.85rem;color:var(--ink-900);font-weight:500;
+  transition:background .18s ease, color .18s ease, padding-left .18s ease;
+}
+.nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);padding-left:.6rem;}
+.nav-dropdown-viewall{
+  display:block;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
+  font-size:.8rem;font-weight:700;color:var(--diya-600);text-align:center;
+}
+.nav-dropdown-viewall:hover{text-decoration:underline;}
+@media (max-width:1180px){
+  .nav-dropdown-panel{min-width:440px;left:auto;right:-1rem;transform:translateY(6px);}
+  .nav-item-dropdown:hover .nav-dropdown-panel,
+  .nav-item-dropdown.open .nav-dropdown-panel{transform:translateY(0);}
+  .nav-dropdown-panel::before{left:auto;right:2.2rem;}
+  .nav-dropdown-groups{grid-template-columns:repeat(2,1fr);}
+}
+
+/* =====================================================
    TEASER CARDS — "read more" link that opens the full page
    ===================================================== */
 .card-readmore{
@@ -630,9 +680,88 @@ body.site-edit-mode{padding-bottom:64px;}
 .detail-back:hover{color:var(--diya-600);}
 .detail-notfound{padding:5rem 0;text-align:center;}
 .detail-page-main{max-width:900px;margin:0 auto;padding:3.2rem 1.5rem 5rem;}
+.detail-page-main.has-sidebar{max-width:1240px;}
 
 @media (max-width: 760px){
   .detail-meta-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* =====================================================
+   EVENT DETAIL — left info sidebar + top-center year slider
+   ===================================================== */
+.event-side-layout{display:flex;gap:2.2rem;align-items:flex-start;}
+.event-sidebar{
+  flex:0 0 250px;position:sticky;top:96px;background:var(--paper-2);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:.9rem;
+}
+.event-sidebar-title{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-400);padding:.5rem .6rem .7rem;
+}
+.event-sidebar nav{display:flex;flex-direction:column;gap:.15rem;}
+.event-sidebar button{
+  display:flex;align-items:center;gap:.65rem;width:100%;text-align:left;
+  background:none;border:none;border-radius:10px;padding:.62rem .7rem;
+  font-family:var(--font-body);font-size:.86rem;font-weight:600;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease;
+}
+.event-sidebar button svg{flex:0 0 auto;width:17px;height:17px;color:var(--ink-400);transition:color .2s ease;}
+.event-sidebar button:hover{background:var(--sky-100);color:var(--navy-950);}
+.event-sidebar button.is-active{background:var(--navy-950);color:#fff;}
+.event-sidebar button.is-active svg{color:var(--gold-500);}
+.event-main-col{flex:1 1 auto;min-width:0;}
+
+.year-slider-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
+  padding:1.3rem 1.5rem 1.5rem;margin-bottom:1.8rem;
+}
+.year-slider-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem;}
+.year-slider-head h4{margin:0;font-size:.98rem;}
+.year-slider-head .mini-label-mono{color:var(--ink-400);}
+.year-slider-track{display:flex;align-items:center;gap:.5rem;}
+.year-slider-arrow{
+  flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.year-slider-arrow:hover{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
+.year-slider-arrow:disabled{opacity:.3;pointer-events:none;}
+.year-slider-scroll{flex:1 1 auto;display:flex;gap:.5rem;overflow-x:auto;scroll-behavior:smooth;padding:.2rem;}
+.year-slider-scroll::-webkit-scrollbar{height:5px;}
+.year-slider-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;}
+.year-pill{
+  flex:0 0 auto;padding:.5rem 1.05rem;border-radius:999px;border:1.5px solid var(--line);
+  background:#fff;font-family:var(--font-mono);font-weight:600;font-size:.86rem;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.year-pill:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.year-pill.is-active{background:var(--diya-600);border-color:var(--diya-600);color:#fff;transform:translateY(-1px);}
+
+.event-panel{display:none;animation:eventDetailFadeIn .3s var(--ease);}
+.event-panel.is-active{display:block;}
+.event-panel h3{font-size:1.2rem;margin-bottom:.7rem;}
+.event-panel-intro{color:var(--ink-600);font-size:.94rem;margin-bottom:1.1rem;max-width:640px;}
+.event-fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.2rem;}
+.event-fact-card{
+  background:var(--paper-2);border-radius:var(--radius-md);box-shadow:var(--shadow-card);
+  padding:1rem 1.1rem;
+}
+.event-fact-card .mini-label-mono{color:var(--ink-400);margin-bottom:.3em;}
+.event-fact-card p{margin:0;color:var(--navy-950);font-weight:700;font-size:1.05rem;}
+.event-fact-card small{display:block;margin-top:.25em;color:var(--ink-400);font-weight:500;font-size:.76rem;}
+.event-timeline{list-style:none;margin:0 0 1rem;padding:0;display:flex;flex-wrap:wrap;gap:.5rem;}
+.event-timeline li{
+  font-family:var(--font-mono);font-size:.78rem;font-weight:600;color:var(--navy-800);
+  background:var(--sky-100);border-radius:999px;padding:.35rem .8rem;
+}
+.event-year-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-top:1rem;}
+.event-year-gallery img{width:100%;height:120px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-card);}
+.event-year-gallery figcaption{margin-top:.3em;font-size:.74rem;color:var(--ink-400);text-align:center;}
+@media (max-width:900px){
+  .event-side-layout{flex-direction:column;}
+  .event-sidebar{position:static;width:100%;flex:1 1 auto;}
+  .event-sidebar nav{flex-direction:row;flex-wrap:wrap;}
+  .event-sidebar button{width:auto;flex:1 1 140px;justify-content:center;}
 }
 
 </style>
@@ -661,7 +790,16 @@ body.site-edit-mode{padding-bottom:64px;}
     <nav class="main-nav">
       <a href="index.html#about">About</a>
       <a href="index.html#dashboard">Dashboard</a>
-      <a href="index.html#events" class="active">Events</a>
+      <div class="nav-item-dropdown" id="eventsNavItem">
+        <a href="index.html#events" class="nav-dropdown-trigger active" id="eventsNavTrigger" aria-haspopup="true" aria-expanded="false">
+          Events
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="eventsNavPanel">
+          <div class="nav-dropdown-groups" id="eventsNavGroups"><!-- filled by JS from SITE_CONTENT.events --></div>
+          <a href="index.html#events" class="nav-dropdown-viewall">View all events on the homepage →</a>
+        </div>
+      </div>
       <a href="index.html#governance">Governance</a>
       <a href="index.html#notices">Notices</a>
       <a href="index.html#contact">Contact</a>
@@ -898,6 +1036,46 @@ body.site-edit-mode{padding-bottom:64px;}
       ]
     };
 
+    // ---- event-detail-data.js ----
+    // Extra fields the event detail page's sidebar needs (who organises it,
+    // whether the society sets aside a special fund, and which year it
+    // first started) that the homepage teaser cards don't need. Kept as a
+    // per-category default so every event gets sensible values automatically;
+    // override any of them on an individual event object above once you have
+    // the real figures for that specific festival or meeting.
+    const EVENT_CATEGORY_DEFAULTS = {
+      cultural: { organizedBy: 'Events Committee',    fundProvided: true,  fundSource: 'Festival fund (society maintenance budget)',       startYear: 2019, budgetRange: [8000, 45000],  attendRange: [40, 140] },
+      national: { organizedBy: 'Managing Committee',  fundProvided: true,  fundSource: 'Society maintenance budget',                        startYear: 2018, budgetRange: [3000, 12000],  attendRange: [60, 160] },
+      social:   { organizedBy: 'Events Committee',    fundProvided: true,  fundSource: 'Festival fund + resident contributions',            startYear: 2020, budgetRange: [10000, 60000], attendRange: [80, 220] },
+      meetings: { organizedBy: 'Managing Committee',  fundProvided: false, fundSource: 'No special fund — administrative expense only',     startYear: 2018, budgetRange: [500, 4000],    attendRange: [20, 90]  }
+    };
+    const CURRENT_YEAR = new Date().getFullYear();
+    SITE_CONTENT.events.forEach(e => {
+      const d = EVENT_CATEGORY_DEFAULTS[e.cat] || EVENT_CATEGORY_DEFAULTS.cultural;
+      if (e.organizedBy === undefined)   e.organizedBy   = d.organizedBy;
+      if (e.fundProvided === undefined)  e.fundProvided  = d.fundProvided;
+      if (e.fundSource === undefined)    e.fundSource    = d.fundSource;
+      if (e.startYear === undefined)     e.startYear     = d.startYear;
+      e._budgetRange = e.budgetRange || d.budgetRange;
+      e._attendRange = e.attendRange || d.attendRange;
+    });
+
+    // Small deterministic "random" generator seeded from a string, so the
+    // per-year numbers below stay the same on every page load instead of
+    // reshuffling on refresh — swap this out once real yearly figures
+    // (actual budgets, actual head-counts) are available per event.
+    function seededInt(seedStr, min, max) {
+      let h = 0;
+      for (let i = 0; i < seedStr.length; i++) h = (h * 31 + seedStr.charCodeAt(i)) >>> 0;
+      return min + (h % (max - min + 1));
+    }
+    function yearStats(item, year) {
+      const budget = Math.round(seededInt(item.id + year + 'b', item._budgetRange[0], item._budgetRange[1]) / 100) * 100;
+      const attendance = seededInt(item.id + year + 'a', item._attendRange[0], item._attendRange[1]);
+      const fundAmount = item.fundProvided ? Math.round(budget * (seededInt(item.id + year + 'f', 55, 85) / 100) / 100) * 100 : 0;
+      return { budget, attendance, fundAmount };
+    }
+
 
     // ---- detail-shared.js ----
     async function gateAndInitHeader() {
@@ -943,6 +1121,38 @@ body.site-edit-mode{padding-bottom:64px;}
       const session = await gateAndInitHeader();
       if (!session) return;
 
+      /* ---------- header "Events" dropdown (built from SITE_CONTENT) ---------- */
+      (function initEventsNav() {
+        const CAT_LABELS = { cultural: 'Cultural & Festive', national: 'National Day', social: 'Social & Community', meetings: 'Governance' };
+        const groups = {};
+        SITE_CONTENT.events.forEach(e => (groups[e.cat] = groups[e.cat] || []).push(e));
+
+        const panelGroups = document.getElementById('eventsNavGroups');
+        if (panelGroups) {
+          panelGroups.innerHTML = Object.keys(groups).map(cat => `
+            <div class="nav-dropdown-group">
+              <h4>${CAT_LABELS[cat] || cat}</h4>
+              <ul>${groups[cat].map(e => `<li><a href="event.html?id=${e.id}">${escapeHtml(e.title)}</a></li>`).join('')}</ul>
+            </div>`).join('');
+        }
+
+        const navItem = document.getElementById('eventsNavItem');
+        const trigger = document.getElementById('eventsNavTrigger');
+        if (navItem && trigger) {
+          let hoverTimer = null;
+          const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+          const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+          navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+          navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+          trigger.addEventListener('click', (e) => {
+            if (!navItem.classList.contains('open')) { e.preventDefault(); openDropdown(); }
+            else { closeDropdown(); }
+          });
+          trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+          document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
+        }
+      })();
+
       const id = new URLSearchParams(window.location.search).get('id');
       const item = SITE_CONTENT.events.find(e => e.id === id);
       const main = document.getElementById('detailMain');
@@ -954,6 +1164,23 @@ body.site-edit-mode{padding-bottom:64px;}
 
       const related = SITE_CONTENT.events.filter(e => e.cat === item.cat && e.id !== item.id).slice(0, 3);
 
+      /* ---------- sidebar sections (8–9 info tabs, left of the main content) ---------- */
+      const SECTIONS = [
+        { key: 'overview',   label: 'Overview',            ic: 'note' },
+        { key: 'organizer',  label: 'Organised By',        ic: 'users' },
+        { key: 'fund',       label: 'Special Fund',        ic: 'wallet' },
+        { key: 'budget',     label: 'Budget Required',     ic: 'receipt' },
+        { key: 'history',    label: 'Times Organised',     ic: 'clock' },
+        { key: 'attendance', label: 'Participation',       ic: 'user' },
+        { key: 'venue',      label: 'Venue & Timing',      ic: 'door' },
+        { key: 'safety',     label: 'Volunteers & Safety', ic: 'shield' },
+        { key: 'contact',    label: 'Contact',             ic: 'phone' }
+      ];
+
+      const years = [];
+      for (let y = item.startYear; y <= CURRENT_YEAR; y++) years.push(y);
+
+      main.classList.add('has-sidebar');
       main.innerHTML = `
         <a class="detail-back" href="index.html#events">${icon('chevronLeft', 16)} Back to Events</a>
         <div class="detail-breadcrumb">
@@ -966,18 +1193,35 @@ body.site-edit-mode{padding-bottom:64px;}
         <h1>${escapeHtml(item.title)}</h1>
         <p class="detail-lede">${escapeHtml(item.teaser)}</p>
 
-        <div class="detail-meta-grid">
-          <div class="detail-meta-item"><p class="mini-label-mono">WHEN</p><p>${escapeHtml(item.when)}</p></div>
-          <div class="detail-meta-item"><p class="mini-label-mono">VENUE</p><p>${escapeHtml(item.venue)}</p></div>
-          <div class="detail-meta-item"><p class="mini-label-mono">CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
+        <div class="event-side-layout">
+          <aside class="event-sidebar">
+            <p class="event-sidebar-title">Event details</p>
+            <nav id="eventSideNav">
+              ${SECTIONS.map((s, i) => `
+                <button type="button" data-panel="${s.key}" class="${i === 0 ? 'is-active' : ''}">
+                  ${icon(s.ic, 17)} ${s.label}
+                </button>`).join('')}
+            </nav>
+          </aside>
+
+          <div class="event-main-col">
+            <div class="year-slider-card">
+              <div class="year-slider-head">
+                <h4>Choose a year</h4>
+                <span class="mini-label-mono" id="yearSliderCaption"></span>
+              </div>
+              <div class="year-slider-track">
+                <button class="year-slider-arrow" id="yearArrowLeft" aria-label="Earlier years">${icon('chevronLeft', 15)}</button>
+                <div class="year-slider-scroll" id="yearSliderScroll">
+                  ${years.map(y => `<button type="button" class="year-pill${y === CURRENT_YEAR ? ' is-active' : ''}" data-year="${y}">${y}</button>`).join('')}
+                </div>
+                <button class="year-slider-arrow" id="yearArrowRight" aria-label="Later years">${icon('chevronLeft', 15)}</button>
+              </div>
+            </div>
+
+            ${SECTIONS.map((s, i) => `<section class="event-panel${i === 0 ? ' is-active' : ''}" data-panel="${s.key}"></section>`).join('')}
+          </div>
         </div>
-
-        <div class="detail-body"><p>${escapeHtml(item.detail)}</p></div>
-
-        <p class="mini-label-mono">WHAT TO EXPECT</p>
-        <ul class="detail-highlights">
-          ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
-        </ul>
 
         ${related.length ? `
         <div class="detail-related">
@@ -991,6 +1235,128 @@ body.site-edit-mode{padding-bottom:64px;}
           </div>
         </div>` : ''}
       `;
+
+      // the right-hand arrow is a left-chevron rotated 180°, visually pointing forward
+      const rightArrow = document.getElementById('yearArrowRight');
+      if (rightArrow) rightArrow.style.transform = 'rotate(180deg)';
+
+      /* ---------- panel content, rebuilt whenever the selected year changes ---------- */
+      function moneyFmt(n) { return '₹' + n.toLocaleString('en-IN'); }
+
+      function panelHtml(key, year) {
+        const s = yearStats(item, year);
+        const timesOrganised = CURRENT_YEAR - item.startYear + 1;
+        switch (key) {
+          case 'overview': return `
+            <h3>About ${escapeHtml(item.title)}</h3>
+            <p class="event-panel-intro">${escapeHtml(item.detail)}</p>
+            <p class="mini-label-mono">WHAT TO EXPECT</p>
+            <ul class="detail-highlights">
+              ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
+            </ul>
+            <p class="mini-label-mono">GALLERY — ${year}</p>
+            <div class="event-year-gallery">
+              <figure><img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)} ${year}"><figcaption>${escapeHtml(item.title)}, ${year}</figcaption></figure>
+            </div>`;
+          case 'organizer': return `
+            <h3>Who organises it</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(item.organizedBy)}</p><small>For ${year}</small></div>
+              <div class="event-fact-card"><p class="mini-label-mono">POINT OF CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
+            </div>
+            <p class="event-panel-intro">${escapeHtml(item.organizedBy)} plans and runs this event each year, coordinating volunteers, vendors and the day-of schedule. Residents interested in helping out can register through the gate office ahead of the date.</p>`;
+          case 'fund': return `
+            <h3>Special fund</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">SPECIAL FUND PROVIDED?</p><p>${item.fundProvided ? 'Yes' : 'No'}</p></div>
+              ${item.fundProvided ? `<div class="event-fact-card"><p class="mini-label-mono">SANCTIONED FOR ${year}</p><p>${moneyFmt(s.fundAmount)}</p><small>Estimated figure</small></div>` : ''}
+            </div>
+            <p class="event-panel-intro">${item.fundProvided
+              ? `The society sets aside a special fund for this event, drawn from the ${escapeHtml(item.fundSource)}. The amount is reviewed each year based on scale and resident feedback.`
+              : `No special fund is set aside for this one — ${escapeHtml(item.fundSource)}.`}</p>`;
+          case 'budget': return `
+            <h3>Budget required — ${year}</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">TOTAL BUDGET</p><p>${moneyFmt(s.budget)}</p><small>Estimated figure</small></div>
+              <div class="event-fact-card"><p class="mini-label-mono">DECOR &amp; SETUP</p><p>${moneyFmt(Math.round(s.budget * 0.35 / 100) * 100)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">CATERING / PRASAD</p><p>${moneyFmt(Math.round(s.budget * 0.4 / 100) * 100)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">LOGISTICS &amp; MISC.</p><p>${moneyFmt(Math.round(s.budget * 0.25 / 100) * 100)}</p></div>
+            </div>
+            <p class="event-panel-intro">Figures above are indicative planning estimates for ${year} and can be replaced with the actual approved budget once finalised by the committee.</p>`;
+          case 'history': return `
+            <h3>How many times it's been organised</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">RUNNING SINCE</p><p>${item.startYear}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">TIMES ORGANISED</p><p>${timesOrganised}</p><small>Once a year</small></div>
+            </div>
+            <p class="mini-label-mono">YEARS CELEBRATED</p>
+            <ul class="event-timeline">${years.map(y => `<li>${y}</li>`).join('')}</ul>`;
+          case 'attendance': return `
+            <h3>Participation — ${year}</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">APPROX. ATTENDANCE</p><p>${s.attendance} residents</p><small>Estimated figure</small></div>
+            </div>
+            <p class="event-panel-intro">Turnout is estimated from volunteer headcounts on the day and varies with weather, timing and how far in advance the event is announced.</p>`;
+          case 'venue': return `
+            <h3>Venue &amp; timing</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">WHEN</p><p>${escapeHtml(item.when)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">VENUE</p><p>${escapeHtml(item.venue)}</p></div>
+            </div>`;
+          case 'safety': return `
+            <h3>Volunteers &amp; safety</h3>
+            <p class="mini-label-mono">CHECKLIST</p>
+            <ul class="detail-highlights">
+              ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
+            </ul>
+            <p class="event-panel-intro">Volunteers coordinate through ${escapeHtml(item.organizedBy)}; the security desk is informed in advance for any event that brings extra footfall or outside vendors.</p>`;
+          case 'contact': return `
+            <h3>Contact</h3>
+            <div class="event-fact-grid">
+              <div class="event-fact-card"><p class="mini-label-mono">CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(item.organizedBy)}</p></div>
+            </div>`;
+          default: return '';
+        }
+      }
+
+      function refreshPanels(year) {
+        SECTIONS.forEach(s => {
+          const el = main.querySelector(`.event-panel[data-panel="${s.key}"]`);
+          if (el) el.innerHTML = panelHtml(s.key, year);
+        });
+        const caption = document.getElementById('yearSliderCaption');
+        if (caption) caption.textContent = `Showing ${year}`;
+      }
+
+      let activeYear = CURRENT_YEAR;
+      refreshPanels(activeYear);
+
+      /* ---------- sidebar tab switching ---------- */
+      main.querySelectorAll('#eventSideNav button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          main.querySelectorAll('#eventSideNav button').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          main.querySelectorAll('.event-panel').forEach(p => p.classList.toggle('is-active', p.dataset.panel === btn.dataset.panel));
+        });
+      });
+
+      /* ---------- year slider interactions ---------- */
+      const yearScroll = document.getElementById('yearSliderScroll');
+      function selectYear(y) {
+        activeYear = y;
+        main.querySelectorAll('.year-pill').forEach(p => p.classList.toggle('is-active', Number(p.dataset.year) === y));
+        refreshPanels(y);
+      }
+      if (yearScroll) {
+        yearScroll.querySelectorAll('.year-pill').forEach(p => {
+          p.addEventListener('click', () => selectYear(Number(p.dataset.year)));
+        });
+        document.getElementById('yearArrowLeft').addEventListener('click', () => yearScroll.scrollBy({ left: -160, behavior: 'smooth' }));
+        document.getElementById('yearArrowRight').addEventListener('click', () => yearScroll.scrollBy({ left: 160, behavior: 'smooth' }));
+        const activePill = yearScroll.querySelector('.year-pill.is-active');
+        if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
+      }
     });
 
 })();
