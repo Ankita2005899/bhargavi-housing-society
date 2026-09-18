@@ -1121,6 +1121,54 @@ const governanceModel = {
   }
 };
 
+const eventYearModel = {
+  async findBySlug(slug) {
+    const { rows } = await pool.query(
+      'SELECT * FROM event_year_records WHERE event_slug=$1 ORDER BY year ASC',
+      [slug]
+    );
+    return rows;
+  },
+  // Create-or-update the one row for (event_slug, year) in a single query.
+  async upsert(slug, year, b) {
+    const { rows } = await pool.query(
+      `INSERT INTO event_year_records
+         (event_slug, year, organized_by, fund_provided, fund_source, fund_amount, budget_required, attendance, image, notes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       ON CONFLICT (event_slug, year) DO UPDATE SET
+         organized_by = EXCLUDED.organized_by,
+         fund_provided = EXCLUDED.fund_provided,
+         fund_source = EXCLUDED.fund_source,
+         fund_amount = EXCLUDED.fund_amount,
+         budget_required = EXCLUDED.budget_required,
+         attendance = EXCLUDED.attendance,
+         image = EXCLUDED.image,
+         notes = EXCLUDED.notes,
+         updated_at = now()
+       RETURNING *`,
+      [
+        slug, year,
+        (b.organized_by || '').trim() || null,
+        !!b.fund_provided,
+        (b.fund_source || '').trim() || null,
+        b.fund_amount === '' || b.fund_amount === undefined ? null : b.fund_amount,
+        b.budget_required === '' || b.budget_required === undefined ? null : b.budget_required,
+        b.attendance === '' || b.attendance === undefined ? null : b.attendance,
+        b.image || null,
+        (b.notes || '').trim() || null
+      ]
+    );
+    return rows[0];
+  },
+  async remove(slug, year) {
+    const { rows } = await pool.query(
+      'DELETE FROM event_year_records WHERE event_slug=$1 AND year=$2 RETURNING id',
+      [slug, year]
+    );
+    return rows[0] || null;
+  }
+};
+
 const meetingModel = {
   async findAll() {
     const { rows } = await pool.query('SELECT * FROM meetings ORDER BY meeting_date DESC NULLS LAST, start_time DESC NULLS LAST, created_at DESC');
@@ -1187,6 +1235,34 @@ const governanceController = {
     try {
       const deleted = await governanceModel.remove(req.params.id);
       if (!deleted) return res.status(404).json({ error: 'Governance item not found' });
+      res.json({ success: true, id: deleted.id });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const eventYearController = {
+  // GET /api/event-years/:slug — logged-in residents & Secretary: every
+  // recorded year for that festival/event, oldest first.
+  async list(req, res) {
+    try { res.json(await eventYearModel.findBySlug(String(req.params.slug))); }
+    catch (err) { dbError(res, err); }
+  },
+  // PUT /api/event-years/:slug/:year — Secretary only: add or update the
+  // record for that event+year (create-or-update in one call).
+  async upsert(req, res) {
+    try {
+      const year = parseInt(req.params.year, 10);
+      if (!req.params.slug || !Number.isInteger(year)) {
+        return res.status(400).json({ error: 'A valid event slug and year are required.' });
+      }
+      res.json(await eventYearModel.upsert(String(req.params.slug), year, req.body || {}));
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const year = parseInt(req.params.year, 10);
+      const deleted = await eventYearModel.remove(String(req.params.slug), year);
+      if (!deleted) return res.status(404).json({ error: 'No record for that event and year' });
       res.json({ success: true, id: deleted.id });
     } catch (err) { dbError(res, err); }
   }
@@ -1676,6 +1752,32 @@ async function migrate() {
     );
   `);
 
+  // Per-year record for the festival/celebration calendar shown on
+  // event.html (Navratri, Diwali, Republic Day, etc. — the static cards
+  // on the homepage). event_slug matches the "id" of that event in
+  // index.html/event.html's SITE_CONTENT.events list (e.g. 'navratri').
+  // One row per (event_slug, year); the year-picker on event.html reads
+  // these, and falls back to an estimated figure for any year that has
+  // no row here yet.
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_year_records (
+      id SERIAL PRIMARY KEY,
+      event_slug TEXT NOT NULL,
+      year INTEGER NOT NULL,
+      organized_by TEXT,
+      fund_provided BOOLEAN NOT NULL DEFAULT false,
+      fund_source TEXT,
+      fund_amount NUMERIC,
+      budget_required NUMERIC,
+      attendance INTEGER,
+      image TEXT,
+      notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE(event_slug, year)
+    );
+  `);
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS governance_items (
       id SERIAL PRIMARY KEY,
@@ -2006,6 +2108,12 @@ governanceRouter.post('/', requireSecretary, governanceController.create);
 governanceRouter.put('/:id', requireSecretary, governanceController.update);
 governanceRouter.delete('/:id', requireSecretary, governanceController.remove);
 app.use('/api/governance', governanceRouter);
+
+const eventYearsRouter = express.Router();
+eventYearsRouter.get('/:slug', requireAuth, eventYearController.list);
+eventYearsRouter.put('/:slug/:year', requireSecretary, eventYearController.upsert);
+eventYearsRouter.delete('/:slug/:year', requireSecretary, eventYearController.remove);
+app.use('/api/event-years', eventYearsRouter);
 
 const meetingsRouter = express.Router();
 meetingsRouter.get('/', requireSecretary, meetingsController.list);

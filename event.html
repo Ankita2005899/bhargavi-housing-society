@@ -1164,6 +1164,18 @@ body.site-edit-mode{padding-bottom:64px;}
 
       const related = SITE_CONTENT.events.filter(e => e.cat === item.cat && e.id !== item.id).slice(0, 3);
 
+      // Real per-year data recorded by the Secretary (organiser, fund,
+      // budget, attendance, photo) — falls back to an estimated figure
+      // for any year that has no row in the database yet.
+      let yearRecords = {};
+      try {
+        const rows = await fetch('/api/event-years/' + encodeURIComponent(item.id), { credentials: 'same-origin' })
+          .then(r => (r.ok ? r.json() : []));
+        rows.forEach(r => { yearRecords[r.year] = r; });
+      } catch (err) {
+        console.warn('Could not load recorded year data, showing estimates only.', err);
+      }
+
       /* ---------- sidebar sections (8–9 info tabs, left of the main content) ---------- */
       const SECTIONS = [
         { key: 'overview',   label: 'Overview',            ic: 'note' },
@@ -1179,6 +1191,8 @@ body.site-edit-mode{padding-bottom:64px;}
 
       const years = [];
       for (let y = item.startYear; y <= CURRENT_YEAR; y++) years.push(y);
+      Object.keys(yearRecords).map(Number).forEach(y => { if (!years.includes(y)) years.push(y); });
+      years.sort((a, b) => a - b);
 
       main.classList.add('has-sidebar');
       main.innerHTML = `
@@ -1241,10 +1255,34 @@ body.site-edit-mode{padding-bottom:64px;}
       if (rightArrow) rightArrow.style.transform = 'rotate(180deg)';
 
       /* ---------- panel content, rebuilt whenever the selected year changes ---------- */
-      function moneyFmt(n) { return '₹' + n.toLocaleString('en-IN'); }
+      function moneyFmt(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+      // Merges the real, Secretary-entered record for a year (if any) with
+      // the estimated fallback figures, so the page always has something
+      // to show but prefers real data the moment it's been recorded.
+      function mergedYearData(year) {
+        const real = yearRecords[year];
+        const est = yearStats(item, year);
+        return {
+          isRecorded: !!real,
+          organizedBy: (real && real.organized_by) || item.organizedBy,
+          fundProvided: real ? !!real.fund_provided : item.fundProvided,
+          fundSource: (real && real.fund_source) || item.fundSource,
+          fundAmount: real && real.fund_amount != null ? Number(real.fund_amount) : est.fundAmount,
+          budget: real && real.budget_required != null ? Number(real.budget_required) : est.budget,
+          attendance: real && real.attendance != null ? Number(real.attendance) : est.attendance,
+          image: (real && real.image) || item.img,
+          notes: real && real.notes ? real.notes : ''
+        };
+      }
+      function recordTag(isRecorded) {
+        return isRecorded
+          ? '<small style="color:var(--diya-600);">Recorded by the committee</small>'
+          : '<small>Estimated — not recorded yet</small>';
+      }
 
       function panelHtml(key, year) {
-        const s = yearStats(item, year);
+        const s = mergedYearData(year);
         const timesOrganised = CURRENT_YEAR - item.startYear + 1;
         switch (key) {
           case 'overview': return `
@@ -1256,33 +1294,36 @@ body.site-edit-mode{padding-bottom:64px;}
             </ul>
             <p class="mini-label-mono">GALLERY — ${year}</p>
             <div class="event-year-gallery">
-              <figure><img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)} ${year}"><figcaption>${escapeHtml(item.title)}, ${year}</figcaption></figure>
-            </div>`;
+              <figure><img src="${escapeHtml(s.image)}" alt="${escapeHtml(item.title)} ${year}"><figcaption>${escapeHtml(item.title)}, ${year}</figcaption></figure>
+            </div>
+            ${s.notes ? `<p class="mini-label-mono">NOTES FROM ${year}</p><p class="event-panel-intro">${escapeHtml(s.notes)}</p>` : ''}`;
           case 'organizer': return `
             <h3>Who organises it</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(item.organizedBy)}</p><small>For ${year}</small></div>
+              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(s.organizedBy)}</p>${recordTag(s.isRecorded)}</div>
               <div class="event-fact-card"><p class="mini-label-mono">POINT OF CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
             </div>
-            <p class="event-panel-intro">${escapeHtml(item.organizedBy)} plans and runs this event each year, coordinating volunteers, vendors and the day-of schedule. Residents interested in helping out can register through the gate office ahead of the date.</p>`;
+            <p class="event-panel-intro">${escapeHtml(s.organizedBy)} plans and runs this event each year, coordinating volunteers, vendors and the day-of schedule. Residents interested in helping out can register through the gate office ahead of the date.</p>`;
           case 'fund': return `
             <h3>Special fund</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">SPECIAL FUND PROVIDED?</p><p>${item.fundProvided ? 'Yes' : 'No'}</p></div>
-              ${item.fundProvided ? `<div class="event-fact-card"><p class="mini-label-mono">SANCTIONED FOR ${year}</p><p>${moneyFmt(s.fundAmount)}</p><small>Estimated figure</small></div>` : ''}
+              <div class="event-fact-card"><p class="mini-label-mono">SPECIAL FUND PROVIDED?</p><p>${s.fundProvided ? 'Yes' : 'No'}</p>${recordTag(s.isRecorded)}</div>
+              ${s.fundProvided ? `<div class="event-fact-card"><p class="mini-label-mono">SANCTIONED FOR ${year}</p><p>${moneyFmt(s.fundAmount)}</p>${recordTag(s.isRecorded)}</div>` : ''}
             </div>
-            <p class="event-panel-intro">${item.fundProvided
-              ? `The society sets aside a special fund for this event, drawn from the ${escapeHtml(item.fundSource)}. The amount is reviewed each year based on scale and resident feedback.`
-              : `No special fund is set aside for this one — ${escapeHtml(item.fundSource)}.`}</p>`;
+            <p class="event-panel-intro">${s.fundProvided
+              ? `The society sets aside a special fund for this event, drawn from the ${escapeHtml(s.fundSource)}. The amount is reviewed each year based on scale and resident feedback.`
+              : `No special fund is set aside for this one — ${escapeHtml(s.fundSource)}.`}</p>`;
           case 'budget': return `
             <h3>Budget required — ${year}</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">TOTAL BUDGET</p><p>${moneyFmt(s.budget)}</p><small>Estimated figure</small></div>
+              <div class="event-fact-card"><p class="mini-label-mono">TOTAL BUDGET</p><p>${moneyFmt(s.budget)}</p>${recordTag(s.isRecorded)}</div>
               <div class="event-fact-card"><p class="mini-label-mono">DECOR &amp; SETUP</p><p>${moneyFmt(Math.round(s.budget * 0.35 / 100) * 100)}</p></div>
               <div class="event-fact-card"><p class="mini-label-mono">CATERING / PRASAD</p><p>${moneyFmt(Math.round(s.budget * 0.4 / 100) * 100)}</p></div>
               <div class="event-fact-card"><p class="mini-label-mono">LOGISTICS &amp; MISC.</p><p>${moneyFmt(Math.round(s.budget * 0.25 / 100) * 100)}</p></div>
             </div>
-            <p class="event-panel-intro">Figures above are indicative planning estimates for ${year} and can be replaced with the actual approved budget once finalised by the committee.</p>`;
+            <p class="event-panel-intro">${s.isRecorded
+              ? `Total budget for ${year} as recorded by the committee. The decor / catering / logistics split above is still an indicative breakdown.`
+              : `Figures above are indicative planning estimates for ${year} — they'll be replaced automatically once the Secretary records the actual approved budget for this year.`}</p>`;
           case 'history': return `
             <h3>How many times it's been organised</h3>
             <div class="event-fact-grid">
@@ -1290,11 +1331,12 @@ body.site-edit-mode{padding-bottom:64px;}
               <div class="event-fact-card"><p class="mini-label-mono">TIMES ORGANISED</p><p>${timesOrganised}</p><small>Once a year</small></div>
             </div>
             <p class="mini-label-mono">YEARS CELEBRATED</p>
-            <ul class="event-timeline">${years.map(y => `<li>${y}</li>`).join('')}</ul>`;
+            <ul class="event-timeline">${years.map(y => `<li>${y}${yearRecords[y] ? ' ✓' : ''}</li>`).join('')}</ul>
+            <p class="event-panel-intro"><small>✓ = a year the committee has recorded real details for.</small></p>`;
           case 'attendance': return `
             <h3>Participation — ${year}</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">APPROX. ATTENDANCE</p><p>${s.attendance} residents</p><small>Estimated figure</small></div>
+              <div class="event-fact-card"><p class="mini-label-mono">APPROX. ATTENDANCE</p><p>${s.attendance} residents</p>${recordTag(s.isRecorded)}</div>
             </div>
             <p class="event-panel-intro">Turnout is estimated from volunteer headcounts on the day and varies with weather, timing and how far in advance the event is announced.</p>`;
           case 'venue': return `
@@ -1309,12 +1351,12 @@ body.site-edit-mode{padding-bottom:64px;}
             <ul class="detail-highlights">
               ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
             </ul>
-            <p class="event-panel-intro">Volunteers coordinate through ${escapeHtml(item.organizedBy)}; the security desk is informed in advance for any event that brings extra footfall or outside vendors.</p>`;
+            <p class="event-panel-intro">Volunteers coordinate through ${escapeHtml(s.organizedBy)}; the security desk is informed in advance for any event that brings extra footfall or outside vendors.</p>`;
           case 'contact': return `
             <h3>Contact</h3>
             <div class="event-fact-grid">
               <div class="event-fact-card"><p class="mini-label-mono">CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
-              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(item.organizedBy)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(s.organizedBy)}</p></div>
             </div>`;
           default: return '';
         }
