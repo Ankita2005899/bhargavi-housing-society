@@ -681,6 +681,11 @@ body.site-edit-mode{padding-bottom:64px;}
 .detail-notfound{padding:5rem 0;text-align:center;}
 .detail-page-main{max-width:900px;margin:0 auto;padding:3.2rem 1.5rem 5rem;}
 .detail-page-main.has-sidebar{max-width:1240px;}
+.edit-startyear-field{
+  display:inline-block;margin:0 0 1.2rem;padding:.4rem .8rem;border-radius:8px;
+  background:var(--sky-100);font-size:.82rem;font-weight:600;color:var(--navy-800);
+}
+.edit-startyear-field input{width:80px;margin-left:.4em;padding:.15rem .4rem;border-radius:6px;border:1px solid var(--line);font-family:var(--font-mono);}
 
 @media (max-width: 760px){
   .detail-meta-grid{grid-template-columns:1fr 1fr;}
@@ -818,6 +823,19 @@ body.site-edit-mode{padding-bottom:64px;}
     <p>Built with 🧡 by the residents, for the residents.</p>
   </div>
 </footer>
+
+<div class="toast" id="toast"></div>
+<div class="reentry-flash" id="reentryFlash"></div>
+
+<!-- ================= LIVE EDIT TOOLBAR (secretary editing this event page) ================= -->
+<div class="edit-toolbar" id="editToolbar">
+  <span class="edit-toolbar-msg">🖊️ Editing this event — click any highlighted text or photo to change it</span>
+  <div class="edit-toolbar-actions">
+    <button class="btn btn-primary btn-sm" id="saveEditsBtn">💾 Save &amp; show on website</button>
+    <button class="btn btn-outline btn-sm" id="exitEditBtn">✖ Exit editing</button>
+  </div>
+</div>
+<input type="file" id="editImageInput" accept="image/*" hidden>
 
 <script>
 (function () {
@@ -1162,6 +1180,17 @@ body.site-edit-mode{padding-bottom:64px;}
         return;
       }
 
+      // Secretary-only: a quick way into this page's own edit mode, without
+      // needing to type ?edit=1 by hand.
+      if (session.role === 'secretary' && new URLSearchParams(window.location.search).get('edit') !== '1') {
+        const editLink = document.createElement('a');
+        editLink.href = '?id=' + encodeURIComponent(item.id) + '&edit=1';
+        editLink.className = 'btn btn-outline btn-sm';
+        editLink.style.cssText = 'position:fixed;bottom:1.2rem;right:1.2rem;z-index:60;background:#fff;box-shadow:0 10px 26px -8px rgba(14,27,50,.3);';
+        editLink.innerHTML = '🖊️ Edit this page';
+        document.body.appendChild(editLink);
+      }
+
       const related = SITE_CONTENT.events.filter(e => e.cat === item.cat && e.id !== item.id).slice(0, 3);
 
       // Real per-year data recorded by the Secretary (organiser, fund,
@@ -1174,6 +1203,30 @@ body.site-edit-mode{padding-bottom:64px;}
         rows.forEach(r => { yearRecords[r.year] = r; });
       } catch (err) {
         console.warn('Could not load recorded year data, showing estimates only.', err);
+      }
+
+      // Base page content (title/description/highlights/venue/contact/photo)
+      // as saved by the Secretary via "Website (edit mode)" on this page —
+      // any field never edited stays null and the hardcoded default above
+      // keeps showing, so this only ever overrides what's actually been edited.
+      try {
+        const content = await fetch('/api/event-content/' + encodeURIComponent(item.id), { credentials: 'same-origin' })
+          .then(r => (r.ok ? r.json() : null));
+        if (content) {
+          if (content.title) item.title = content.title;
+          if (content.teaser) item.teaser = content.teaser;
+          if (content.detail) item.detail = content.detail;
+          if (content.highlights) item.highlights = content.highlights.split('\n').map(s => s.trim()).filter(Boolean);
+          if (content.organized_by) item.organizedBy = content.organized_by;
+          if (content.fund_source) item.fundSource = content.fund_source;
+          if (content.venue) item.venue = content.venue;
+          if (content.when_text) item.when = content.when_text;
+          if (content.contact) item.contact = content.contact;
+          if (content.image) item.img = content.image;
+          if (content.start_year) item.startYear = content.start_year;
+        }
+      } catch (err) {
+        console.warn('Could not load saved page edits, showing defaults only.', err);
       }
 
       /* ---------- sidebar sections (8–9 info tabs, left of the main content) ---------- */
@@ -1200,12 +1253,15 @@ body.site-edit-mode{padding-bottom:64px;}
         <div class="detail-breadcrumb">
           <a href="index.html">Home</a> <span>/</span> <a href="index.html#events">Events</a> <span>/</span> <span>${escapeHtml(item.title)}</span>
         </div>
-        <img class="detail-hero-img" src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}">
+        <img class="detail-hero-img" data-edit-key="img-event-hero" src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}">
         <div class="detail-title-row">
           <span class="tag ${item.cat}">${escapeHtml(item.tag)}</span>
         </div>
-        <h1>${escapeHtml(item.title)}</h1>
-        <p class="detail-lede">${escapeHtml(item.teaser)}</p>
+        <h1 data-edit-key="text-event-title">${escapeHtml(item.title)}</h1>
+        <p class="detail-lede" data-edit-key="text-event-teaser">${escapeHtml(item.teaser)}</p>
+        <div class="edit-startyear-field" id="editStartYearField" hidden>
+          Event first organised in: <input type="number" id="editStartYearInput" value="${item.startYear}" min="2000" max="2100">
+        </div>
 
         <div class="event-side-layout">
           <aside class="event-sidebar">
@@ -1287,9 +1343,9 @@ body.site-edit-mode{padding-bottom:64px;}
         switch (key) {
           case 'overview': return `
             <h3>About ${escapeHtml(item.title)}</h3>
-            <p class="event-panel-intro">${escapeHtml(item.detail)}</p>
+            <p class="event-panel-intro" data-edit-key="text-event-detail">${escapeHtml(item.detail)}</p>
             <p class="mini-label-mono">WHAT TO EXPECT</p>
-            <ul class="detail-highlights">
+            <ul class="detail-highlights" data-edit-key="text-event-highlights">
               ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
             </ul>
             <p class="mini-label-mono">GALLERY — ${year}</p>
@@ -1300,7 +1356,7 @@ body.site-edit-mode{padding-bottom:64px;}
           case 'organizer': return `
             <h3>Who organises it</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(s.organizedBy)}</p>${recordTag(s.isRecorded)}</div>
+              <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p data-edit-key="text-event-organizedby">${escapeHtml(s.organizedBy)}</p>${recordTag(s.isRecorded)}</div>
               <div class="event-fact-card"><p class="mini-label-mono">POINT OF CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
             </div>
             <p class="event-panel-intro">${escapeHtml(s.organizedBy)} plans and runs this event each year, coordinating volunteers, vendors and the day-of schedule. Residents interested in helping out can register through the gate office ahead of the date.</p>`;
@@ -1311,8 +1367,8 @@ body.site-edit-mode{padding-bottom:64px;}
               ${s.fundProvided ? `<div class="event-fact-card"><p class="mini-label-mono">SANCTIONED FOR ${year}</p><p>${moneyFmt(s.fundAmount)}</p>${recordTag(s.isRecorded)}</div>` : ''}
             </div>
             <p class="event-panel-intro">${s.fundProvided
-              ? `The society sets aside a special fund for this event, drawn from the ${escapeHtml(s.fundSource)}. The amount is reviewed each year based on scale and resident feedback.`
-              : `No special fund is set aside for this one — ${escapeHtml(s.fundSource)}.`}</p>`;
+              ? `The society sets aside a special fund for this event, drawn from the <span data-edit-key="text-event-fundsource">${escapeHtml(s.fundSource)}</span>. The amount is reviewed each year based on scale and resident feedback.`
+              : `No special fund is set aside for this one — <span data-edit-key="text-event-fundsource">${escapeHtml(s.fundSource)}</span>.`}</p>`;
           case 'budget': return `
             <h3>Budget required — ${year}</h3>
             <div class="event-fact-grid">
@@ -1342,8 +1398,8 @@ body.site-edit-mode{padding-bottom:64px;}
           case 'venue': return `
             <h3>Venue &amp; timing</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">WHEN</p><p>${escapeHtml(item.when)}</p></div>
-              <div class="event-fact-card"><p class="mini-label-mono">VENUE</p><p>${escapeHtml(item.venue)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">WHEN</p><p data-edit-key="text-event-when">${escapeHtml(item.when)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">VENUE</p><p data-edit-key="text-event-venue">${escapeHtml(item.venue)}</p></div>
             </div>`;
           case 'safety': return `
             <h3>Volunteers &amp; safety</h3>
@@ -1355,7 +1411,7 @@ body.site-edit-mode{padding-bottom:64px;}
           case 'contact': return `
             <h3>Contact</h3>
             <div class="event-fact-grid">
-              <div class="event-fact-card"><p class="mini-label-mono">CONTACT</p><p>${escapeHtml(item.contact)}</p></div>
+              <div class="event-fact-card"><p class="mini-label-mono">CONTACT</p><p data-edit-key="text-event-contact">${escapeHtml(item.contact)}</p></div>
               <div class="event-fact-card"><p class="mini-label-mono">ORGANISED BY</p><p>${escapeHtml(s.organizedBy)}</p></div>
             </div>`;
           default: return '';
@@ -1399,6 +1455,128 @@ body.site-edit-mode{padding-bottom:64px;}
         const activePill = yearScroll.querySelector('.year-pill.is-active');
         if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
       }
+
+      /* ---------- toast (this page didn't have one until now) ---------- */
+      const toast = document.getElementById('toast');
+      let toastTimer;
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+      }
+
+      /* ---------- live edit mode: reached via "Website (edit mode)" on the
+         Secretary Dashboard, or event.html?id=<slug>&edit=1 directly. Saves
+         for real to the database (event_content table) — unlike the rest
+         of the site's edit mode, this isn't just local-storage-only, so
+         every resident sees the change, not just the editing browser. ---------- */
+      const editToolbar = document.getElementById('editToolbar');
+      const editImageInput = document.getElementById('editImageInput');
+      const reentryFlash = document.getElementById('reentryFlash');
+      const editStartYearField = document.getElementById('editStartYearField');
+      let editModeOn = false;
+      let pendingImageEl = null;
+
+      const editableTextEls = () => main.querySelectorAll('[data-edit-key^="text-"]');
+      const editableImgEls = () => main.querySelectorAll('[data-edit-key^="img-"]');
+
+      function enterEditMode() {
+        editModeOn = true;
+        document.body.classList.add('site-edit-mode');
+        editableTextEls().forEach(el => el.setAttribute('contenteditable', 'true'));
+        editToolbar.classList.add('show');
+        if (editStartYearField) editStartYearField.hidden = false;
+        // Base content doesn't vary by year, so lock the year slider while
+        // editing to avoid a year-switch wiping an in-progress, unsaved edit.
+        if (yearScroll) yearScroll.style.pointerEvents = 'none';
+        main.querySelectorAll('.year-pill, .year-slider-arrow').forEach(b => b.disabled = true);
+      }
+      function exitEditMode() {
+        editModeOn = false;
+        document.body.classList.remove('site-edit-mode');
+        editableTextEls().forEach(el => el.removeAttribute('contenteditable'));
+        editToolbar.classList.remove('show');
+        if (editStartYearField) editStartYearField.hidden = true;
+        if (yearScroll) yearScroll.style.pointerEvents = '';
+        main.querySelectorAll('.year-pill, .year-slider-arrow').forEach(b => b.disabled = false);
+      }
+
+      if (new URLSearchParams(window.location.search).get('edit') === '1') {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('edit');
+        history.replaceState(null, '', url.pathname + url.search + url.hash);
+
+        reentryFlash.classList.add('show');
+        setTimeout(() => reentryFlash.classList.remove('show'), 280);
+        setTimeout(() => {
+          enterEditMode();
+          showToast('Editing this event — click any highlighted text or photo to change it');
+        }, 300);
+      }
+
+      /* click a highlighted photo (in edit mode) to replace it */
+      document.addEventListener('click', (e) => {
+        if (!editModeOn) return;
+        const img = e.target.closest('[data-edit-key^="img-"]');
+        if (img) {
+          e.preventDefault();
+          pendingImageEl = img;
+          editImageInput.click();
+        }
+      });
+      editImageInput.addEventListener('change', () => {
+        const file = editImageInput.files && editImageInput.files[0];
+        if (!file || !pendingImageEl) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          pendingImageEl.src = reader.result;
+          showToast('Photo updated — click "Save & show" to keep it');
+        };
+        reader.readAsDataURL(file);
+        editImageInput.value = '';
+      });
+
+      document.getElementById('saveEditsBtn').addEventListener('click', async () => {
+        const body = {};
+        editableTextEls().forEach(el => {
+          const key = el.dataset.editKey;
+          body[key] = key === 'text-event-highlights' ? el.innerText : el.textContent;
+        });
+        editableImgEls().forEach(el => { body[el.dataset.editKey] = el.src; });
+        const startYearInput = document.getElementById('editStartYearInput');
+
+        const payload = {
+          title: body['text-event-title'] || '',
+          teaser: body['text-event-teaser'] || '',
+          detail: body['text-event-detail'] || '',
+          highlights: body['text-event-highlights'] || '',
+          organized_by: body['text-event-organizedby'] || '',
+          fund_source: body['text-event-fundsource'] || '',
+          venue: body['text-event-venue'] || '',
+          when_text: body['text-event-when'] || '',
+          contact: body['text-event-contact'] || '',
+          image: body['img-event-hero'] || '',
+          start_year: startYearInput ? startYearInput.value : ''
+        };
+        try {
+          await fetch('/api/event-content/' + encodeURIComponent(item.id), {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(r => { if (!r.ok) throw new Error('Save failed (' + r.status + ')'); });
+          showToast('Saved — now visible to everyone on the website');
+          setTimeout(() => window.location.reload(), 700);
+        } catch (err) {
+          showToast('Could not save: ' + err.message);
+        }
+      });
+
+      document.getElementById('exitEditBtn').addEventListener('click', () => {
+        exitEditMode();
+        showToast('Editing mode off');
+      });
     });
 
 })();

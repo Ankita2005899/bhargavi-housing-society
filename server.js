@@ -1169,6 +1169,51 @@ const eventYearModel = {
   }
 };
 
+const eventContentModel = {
+  async findBySlug(slug) {
+    const { rows } = await pool.query('SELECT * FROM event_content WHERE event_slug=$1', [slug]);
+    return rows[0] || null;
+  },
+  // Full snapshot upsert — the edit-mode toolbar always sends every field
+  // it knows about (even unchanged ones), so a straight overwrite is safe.
+  async upsert(slug, b) {
+    const { rows } = await pool.query(
+      `INSERT INTO event_content
+         (event_slug, title, teaser, detail, highlights, organized_by, fund_source, venue, when_text, contact, image, start_year)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+       ON CONFLICT (event_slug) DO UPDATE SET
+         title = EXCLUDED.title,
+         teaser = EXCLUDED.teaser,
+         detail = EXCLUDED.detail,
+         highlights = EXCLUDED.highlights,
+         organized_by = EXCLUDED.organized_by,
+         fund_source = EXCLUDED.fund_source,
+         venue = EXCLUDED.venue,
+         when_text = EXCLUDED.when_text,
+         contact = EXCLUDED.contact,
+         image = EXCLUDED.image,
+         start_year = EXCLUDED.start_year,
+         updated_at = now()
+       RETURNING *`,
+      [
+        slug,
+        (b.title || '').trim() || null,
+        (b.teaser || '').trim() || null,
+        (b.detail || '').trim() || null,
+        (b.highlights || '').trim() || null,
+        (b.organized_by || '').trim() || null,
+        (b.fund_source || '').trim() || null,
+        (b.venue || '').trim() || null,
+        (b.when_text || '').trim() || null,
+        (b.contact || '').trim() || null,
+        b.image || null,
+        b.start_year === '' || b.start_year === undefined || b.start_year === null ? null : parseInt(b.start_year, 10)
+      ]
+    );
+    return rows[0];
+  }
+};
+
 const meetingModel = {
   async findAll() {
     const { rows } = await pool.query('SELECT * FROM meetings ORDER BY meeting_date DESC NULLS LAST, start_time DESC NULLS LAST, created_at DESC');
@@ -1265,6 +1310,21 @@ const eventYearController = {
       if (!deleted) return res.status(404).json({ error: 'No record for that event and year' });
       res.json({ success: true, id: deleted.id });
     } catch (err) { dbError(res, err); }
+  }
+};
+
+const eventContentController = {
+  // GET /api/event-content/:slug — logged-in residents & Secretary: the
+  // saved overrides for that event's page (or null if never edited).
+  async get(req, res) {
+    try { res.json(await eventContentModel.findBySlug(String(req.params.slug))); }
+    catch (err) { dbError(res, err); }
+  },
+  // PUT /api/event-content/:slug — Secretary only: overwrite the saved
+  // content for that event's page (from the "Website (edit mode)" toolbar).
+  async upsert(req, res) {
+    try { res.json(await eventContentModel.upsert(String(req.params.slug), req.body || {})); }
+    catch (err) { dbError(res, err); }
   }
 };
 
@@ -1752,6 +1812,29 @@ async function migrate() {
     );
   `);
 
+  // Base/editable content for a festival/event page (title, description,
+  // highlights, venue, contact, hero photo, etc.) — edited by the Secretary
+  // directly on the live event page via "Website (edit mode)", not through
+  // a form. One row per event_slug; any column left NULL falls back to the
+  // hardcoded default already baked into event.html's SITE_CONTENT.
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_content (
+      event_slug TEXT PRIMARY KEY,
+      title TEXT,
+      teaser TEXT,
+      detail TEXT,
+      highlights TEXT,
+      organized_by TEXT,
+      fund_source TEXT,
+      venue TEXT,
+      when_text TEXT,
+      contact TEXT,
+      image TEXT,
+      start_year INTEGER,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
   // Per-year record for the festival/celebration calendar shown on
   // event.html (Navratri, Diwali, Republic Day, etc. — the static cards
   // on the homepage). event_slug matches the "id" of that event in
@@ -2114,6 +2197,11 @@ eventYearsRouter.get('/:slug', requireAuth, eventYearController.list);
 eventYearsRouter.put('/:slug/:year', requireSecretary, eventYearController.upsert);
 eventYearsRouter.delete('/:slug/:year', requireSecretary, eventYearController.remove);
 app.use('/api/event-years', eventYearsRouter);
+
+const eventContentRouter = express.Router();
+eventContentRouter.get('/:slug', requireAuth, eventContentController.get);
+eventContentRouter.put('/:slug', requireSecretary, eventContentController.upsert);
+app.use('/api/event-content', eventContentRouter);
 
 const meetingsRouter = express.Router();
 meetingsRouter.get('/', requireSecretary, meetingsController.list);
