@@ -831,8 +831,9 @@ body.site-edit-mode{padding-bottom:64px;}
 <div class="edit-toolbar" id="editToolbar">
   <span class="edit-toolbar-msg">🖊️ Editing this event — click any highlighted text or photo to change it</span>
   <div class="edit-toolbar-actions">
-    <button class="btn btn-primary btn-sm" id="saveEditsBtn">💾 Save &amp; show on website</button>
-    <button class="btn btn-outline btn-sm" id="exitEditBtn">✖ Exit editing</button>
+    <button class="btn btn-outline btn-sm" id="editUndoBtn" title="Undo last change">↶ Undo</button>
+    <button class="btn btn-outline btn-sm" id="editRedoBtn" title="Redo">↷ Redo</button>
+    <button class="btn btn-primary btn-sm" id="saveEditsBtn">💾 Save &amp; close</button>
   </div>
 </div>
 <input type="file" id="editImageInput" accept="image/*" hidden>
@@ -1181,8 +1182,11 @@ body.site-edit-mode{padding-bottom:64px;}
       }
 
       // Secretary-only: a quick way into this page's own edit mode, without
-      // needing to type ?edit=1 by hand.
-      if (session.role === 'secretary' && new URLSearchParams(window.location.search).get('edit') !== '1') {
+      // needing to type ?edit=1 by hand. Hidden if an edit session (started
+      // from another page) is already active — the toolbar is already showing.
+      let sessionAlreadyEditingForBtn = false;
+      try { sessionAlreadyEditingForBtn = sessionStorage.getItem('bhsEditSession') === '1'; } catch (e) {}
+      if (session.role === 'secretary' && new URLSearchParams(window.location.search).get('edit') !== '1' && !sessionAlreadyEditingForBtn) {
         const editLink = document.createElement('a');
         editLink.href = '?id=' + encodeURIComponent(item.id) + '&edit=1';
         editLink.className = 'btn btn-outline btn-sm';
@@ -1467,14 +1471,19 @@ body.site-edit-mode{padding-bottom:64px;}
       }
 
       /* ---------- live edit mode: reached via "Website (edit mode)" on the
-         Secretary Dashboard, or event.html?id=<slug>&edit=1 directly. Saves
-         for real to the database (event_content table) — unlike the rest
-         of the site's edit mode, this isn't just local-storage-only, so
-         every resident sees the change, not just the editing browser. ---------- */
+         Secretary Dashboard, the floating "Edit this page" button, or
+         event.html?id=<slug>&edit=1 directly. Saves for real to the database
+         (event_content table) — unlike the rest of the site's edit mode,
+         this isn't just local-storage-only, so every resident sees the
+         change, not just the editing browser. The edit session persists via
+         sessionStorage (same key as index.html), so once turned on it stays
+         on as the Secretary clicks around to other pages, until "Save &
+         close" turns it back off. ---------- */
       const editToolbar = document.getElementById('editToolbar');
       const editImageInput = document.getElementById('editImageInput');
       const reentryFlash = document.getElementById('reentryFlash');
       const editStartYearField = document.getElementById('editStartYearField');
+      const EDIT_SESSION_KEY = 'bhsEditSession';
       let editModeOn = false;
       let pendingImageEl = null;
 
@@ -1491,6 +1500,7 @@ body.site-edit-mode{padding-bottom:64px;}
         // editing to avoid a year-switch wiping an in-progress, unsaved edit.
         if (yearScroll) yearScroll.style.pointerEvents = 'none';
         main.querySelectorAll('.year-pill, .year-slider-arrow').forEach(b => b.disabled = true);
+        try { sessionStorage.setItem(EDIT_SESSION_KEY, '1'); } catch (e) {}
       }
       function exitEditMode() {
         editModeOn = false;
@@ -1500,9 +1510,14 @@ body.site-edit-mode{padding-bottom:64px;}
         if (editStartYearField) editStartYearField.hidden = true;
         if (yearScroll) yearScroll.style.pointerEvents = '';
         main.querySelectorAll('.year-pill, .year-slider-arrow').forEach(b => b.disabled = false);
+        try { sessionStorage.removeItem(EDIT_SESSION_KEY); } catch (e) {}
       }
 
-      if (new URLSearchParams(window.location.search).get('edit') === '1') {
+      const urlAskedForEdit = new URLSearchParams(window.location.search).get('edit') === '1';
+      let sessionAlreadyEditing = false;
+      try { sessionAlreadyEditing = sessionStorage.getItem(EDIT_SESSION_KEY) === '1'; } catch (e) {}
+
+      if (urlAskedForEdit) {
         const url = new URL(window.location.href);
         url.searchParams.delete('edit');
         history.replaceState(null, '', url.pathname + url.search + url.hash);
@@ -1513,6 +1528,9 @@ body.site-edit-mode{padding-bottom:64px;}
           enterEditMode();
           showToast('Editing this event — click any highlighted text or photo to change it');
         }, 300);
+      } else if (sessionAlreadyEditing) {
+        // Quietly resume editing on this page too — no flash animation.
+        enterEditMode();
       }
 
       /* click a highlighted photo (in edit mode) to replace it */
@@ -1531,11 +1549,19 @@ body.site-edit-mode{padding-bottom:64px;}
         const reader = new FileReader();
         reader.onload = () => {
           pendingImageEl.src = reader.result;
-          showToast('Photo updated — click "Save & show" to keep it');
+          showToast('Photo updated — click "Save & close" to keep it');
         };
         reader.readAsDataURL(file);
         editImageInput.value = '';
       });
+
+      /* undo/redo — applies to whichever editable field was last focused.
+         mousedown+preventDefault keeps that field focused so clicking the
+         toolbar button doesn't blur it first. */
+      document.getElementById('editUndoBtn').addEventListener('mousedown', (e) => e.preventDefault());
+      document.getElementById('editRedoBtn').addEventListener('mousedown', (e) => e.preventDefault());
+      document.getElementById('editUndoBtn').addEventListener('click', () => { try { document.execCommand('undo'); } catch (e) {} });
+      document.getElementById('editRedoBtn').addEventListener('click', () => { try { document.execCommand('redo'); } catch (e) {} });
 
       document.getElementById('saveEditsBtn').addEventListener('click', async () => {
         const body = {};
@@ -1566,16 +1592,12 @@ body.site-edit-mode{padding-bottom:64px;}
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           }).then(r => { if (!r.ok) throw new Error('Save failed (' + r.status + ')'); });
-          showToast('Saved — now visible to everyone on the website');
-          setTimeout(() => window.location.reload(), 700);
+          exitEditMode();
+          showToast('Saved — closing editing mode');
+          setTimeout(() => window.location.reload(), 500);
         } catch (err) {
           showToast('Could not save: ' + err.message);
         }
-      });
-
-      document.getElementById('exitEditBtn').addEventListener('click', () => {
-        exitEditMode();
-        showToast('Editing mode off');
       });
     });
 
