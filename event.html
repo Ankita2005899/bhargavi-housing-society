@@ -805,7 +805,33 @@ body.site-edit-mode{padding-bottom:64px;}
           <a href="index.html#events" class="nav-dropdown-viewall">View all events on the homepage →</a>
         </div>
       </div>
-      <a href="index.html#governance">Governance</a>
+      <div class="nav-item-dropdown" id="governanceNavItem">
+        <a href="index.html#governance" class="nav-dropdown-trigger" id="governanceNavTrigger" aria-haspopup="true" aria-expanded="false">
+          Governance
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="governanceNavPanel">
+          <div class="nav-dropdown-groups">
+            <div class="nav-dropdown-group">
+              <h4>Society Governance</h4>
+              <ul>
+                <li><a href="index.html#governance">Rules &amp; Minutes</a></li>
+                <li><a href="index.html#notices">Notices Board</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-group">
+              <h4>Govt. Schemes for Residents</h4>
+              <ul>
+                <li><a href="schemes.html#caste">By Caste &amp; Community</a></li>
+                <li><a href="schemes.html#students">For Students</a></li>
+                <li><a href="schemes.html#income">By Income (Housing/Health)</a></li>
+                <li><a href="schemes.html#age">By Age (Senior/Youth)</a></li>
+              </ul>
+            </div>
+          </div>
+          <a href="schemes.html" class="nav-dropdown-viewall">Browse all government schemes →</a>
+        </div>
+      </div>
       <a href="index.html#notices">Notices</a>
       <a href="index.html#contact">Contact</a>
     </nav>
@@ -1170,6 +1196,24 @@ body.site-edit-mode{padding-bottom:64px;}
           trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
           document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
         }
+      })();
+
+      /* ---------- Governance nav dropdown (header) — fixed, hand-written list ---------- */
+      (function initGovernanceNav() {
+        const navItem = document.getElementById('governanceNavItem');
+        const trigger = document.getElementById('governanceNavTrigger');
+        if (!navItem || !trigger) return;
+        let hoverTimer = null;
+        const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+        const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+        navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+        navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+        trigger.addEventListener('click', (e) => {
+          if (!navItem.classList.contains('open')) { e.preventDefault(); openDropdown(); }
+          else { closeDropdown(); }
+        });
+        trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+        document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
       })();
 
       const id = new URLSearchParams(window.location.search).get('id');

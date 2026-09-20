@@ -1222,7 +1222,33 @@ body.site-edit-mode{padding-bottom:64px;}
           <a href="#events" class="nav-dropdown-viewall">View all events on this page →</a>
         </div>
       </div>
-      <a href="#governance">Governance</a>
+      <div class="nav-item-dropdown" id="governanceNavItem">
+        <a href="#governance" class="nav-dropdown-trigger" id="governanceNavTrigger" aria-haspopup="true" aria-expanded="false">
+          Governance
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="governanceNavPanel">
+          <div class="nav-dropdown-groups">
+            <div class="nav-dropdown-group">
+              <h4>Society Governance</h4>
+              <ul>
+                <li><a href="#governance">Rules &amp; Minutes</a></li>
+                <li><a href="#notices">Notices Board</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-group">
+              <h4>Govt. Schemes for Residents</h4>
+              <ul>
+                <li><a href="schemes.html#caste">By Caste &amp; Community</a></li>
+                <li><a href="schemes.html#students">For Students</a></li>
+                <li><a href="schemes.html#income">By Income (Housing/Health)</a></li>
+                <li><a href="schemes.html#age">By Age (Senior/Youth)</a></li>
+              </ul>
+            </div>
+          </div>
+          <a href="schemes.html" class="nav-dropdown-viewall">Browse all government schemes →</a>
+        </div>
+      </div>
       <a href="#notices">Notices</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -1253,6 +1279,7 @@ body.site-edit-mode{padding-bottom:64px;}
       <div class="slide-menu-events-list" id="slideMenuEventsList"><!-- filled by JS from the event cards below --></div>
     </div>
     <a href="#governance">Meetings &amp; Governance</a>
+    <a href="schemes.html">Government Schemes</a>
     <a href="#notices">Notice Board</a>
     <a href="#contact">Contact &amp; Location</a>
     <button class="view-details-trigger" id="viewDetailsBtn">
@@ -2602,6 +2629,27 @@ body.site-edit-mode{padding-bottom:64px;}
         if (slideEvents && slideTrigger) {
           slideTrigger.addEventListener('click', () => slideEvents.classList.toggle('open'));
         }
+      })();
+
+      /* ---------- Governance nav dropdown (header) — same hover/click
+         pattern as Events, but a fixed, hand-written list since it's just
+         two links plus the four Government Schemes categories. ---------- */
+      (function initGovernanceNav() {
+        const navItem = document.getElementById('governanceNavItem');
+        const trigger = document.getElementById('governanceNavTrigger');
+        if (!navItem || !trigger) return;
+        let hoverTimer = null;
+        const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+        const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+
+        navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+        navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+        trigger.addEventListener('click', (e) => {
+          if (!navItem.classList.contains('open')) { e.preventDefault(); openDropdown(); }
+          else { closeDropdown(); }
+        });
+        trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+        document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
       })();
 
       /* ---------- account state (login/signup vs. logged-in pill) ---------- */

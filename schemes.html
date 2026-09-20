@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Schemes — Bhargavi Housing Society</title>
+<link rel="icon" href="images/branding/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---- base/variables.css ---- */
+/* =====================================================
+   DESIGN TOKENS — shared colours, type, radius, shadow
+   Loaded before every other stylesheet.
+   ===================================================== */
+:root{
+  --navy-950: #0E1B32;
+  --navy-900: #142A4C;
+  --navy-800: #1B3A6B;
+  --navy-700: #234B85;
+  --sky-500:  #4E8FC7;
+  --sky-100:  #E7F0F9;
+  --gold-500: #D9A441;
+  --gold-600: #C08A2A;
+  --diya-600: #C1522C;
+  --diya-700: #A5411F;
+  --paper:    #F6F5F1;
+  --paper-2:  #FFFFFF;
+  --ink-900:  #1B2130;
+  --ink-600:  #4A5468;
+  --ink-400:  #7C8598;
+  --line:     #E2E1D9;
+
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 10px 30px rgba(14,27,50,0.08);
+  --shadow-card: 0 4px 18px rgba(14,27,50,0.10);
+  --ease: cubic-bezier(.22,.85,.32,1);
+}
+
+
+/* ---- pages/site.css ---- */
+/* =====================================================
+   BHARGAVI HOUSING SOCIETY — DESIGN TOKENS
+   Palette: courtyard navy + marigold gold + diya orange
+   Type: Sora (display) / Inter (body) / IBM Plex Mono (utility)
+   Signature: the courtyard fountain — a recurring wave divider
+   ===================================================== */
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink-900);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0 0 .4em;color:var(--navy-950);letter-spacing:-.01em;}
+p{margin:0 0 1em;color:var(--ink-600);}
+ul,ol{color:var(--ink-600);}
+button{font-family:var(--font-body);cursor:pointer;}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+
+/* ---------- utility ---------- */
+.eyebrow-mono{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.16em;
+  color:var(--diya-600);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+.mini-label-mono{
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.1em;
+  color:var(--ink-400);
+  text-transform:uppercase;
+  margin:0 0 .3em;
+}
+.section{padding:5.5rem 1.5rem;max-width:1240px;margin:0 auto;}
+.section-head{max-width:640px;margin-bottom:2.6rem;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.4rem);}
+.section-sub{font-size:1.02rem;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-family:var(--font-body);font-weight:600;font-size:.92rem;
+  padding:.85em 1.6em;border-radius:999px;border:1.5px solid transparent;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  white-space:nowrap;
+}
+.btn-primary{background:var(--diya-600);color:#fff;box-shadow:0 8px 20px rgba(193,82,44,.28);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(193,82,44,.36);background:var(--diya-700);}
+.btn-ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.55);color:#fff;backdrop-filter:blur(6px);}
+.btn-ghost:hover{background:rgba(255,255,255,.22);transform:translateY(-2px);}
+.btn-outline{background:transparent;border-color:var(--navy-800);color:var(--navy-800);}
+.btn-outline:hover{background:var(--navy-800);color:#fff;}
+.btn-sm{padding:.55em 1.1em;font-size:.8rem;}
+.btn-block{width:100%;}
+
+.tag{
+  display:inline-block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;
+  padding:.3em .7em;border-radius:6px;font-weight:600;text-transform:uppercase;
+}
+.tag.cultural{background:#FBEAD9;color:var(--diya-700);}
+.tag.national{background:#E4F2E7;color:#2E6B44;}
+.tag.social{background:var(--sky-100);color:var(--navy-800);}
+.tag.meetings{background:#F1E9F7;color:#6C3F91;}
+.tag.pending{background:#FDF0DA;color:#9A6716;margin-left:.5em;}
+.tag.review{background:#E4F2E7;color:#2E6B44;margin-left:.5em;}
+
+/* ---------- reveal-on-scroll ---------- */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+
+/* ---------- preloader ---------- */
+#preloader{
+  position:fixed;inset:0;background:var(--navy-950);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#preloader.hide{opacity:0;visibility:hidden;}
+.loader-ring{width:52px;height:52px;border-radius:50%;border:3px solid rgba(217,164,65,.25);border-top-color:var(--gold-500);animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- ticker ---------- */
+.ticker-bar{background:var(--navy-950);color:var(--sky-100);overflow:hidden;padding:.5rem 0;position:relative;z-index:210;}
+.ticker-track{display:flex;gap:3rem;white-space:nowrap;width:max-content;animation:ticker 28s linear infinite;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.02em;padding-left:1rem;}
+.ticker-track span{opacity:.92;}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---------- header ---------- */
+.site-header{
+  position:sticky;top:0;z-index:200;background:rgba(20,42,76,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);
+  transition:background .3s ease;
+}
+.header-inner{max-width:1240px;margin:0 auto;padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
+.brand{display:flex;align-items:center;gap:.7rem;}
+.brand-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.2;}
+.brand-text strong{font-family:var(--font-display);color:#fff;font-size:1rem;}
+.brand-text em{font-style:normal;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--sky-100);opacity:.75;}
+
+.main-nav{display:flex;gap:1.9rem;}
+.main-nav a{color:#EDEFF3;font-size:.88rem;font-weight:500;position:relative;padding:.2rem 0;}
+.main-nav a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--gold-500);transition:width .3s var(--ease);}
+.main-nav a:hover::after{width:100%;}
+
+.hamburger{background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:10px;width:42px;height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.hamburger span{display:block;width:19px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
+
+/* ---------- header auth (login / signup, or account pill) ---------- */
+.header-auth{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.header-auth .account-pill{background:rgba(255,255,255,.14);color:#fff;}
+.header-auth .btn-outline{border-color:rgba(255,255,255,.55);color:#fff;background:transparent;}
+.header-auth .btn-outline:hover{background:rgba(255,255,255,.16);color:#fff;}
+@media (max-width:560px){
+  .header-auth{gap:.4rem;}
+  .header-auth .btn{padding:.5em .8em;font-size:.74rem;}
+}
+@media (max-width:400px){
+  .header-auth .btn-sm.auth-signup-btn{display:none;} /* keep just "Log in" on very small screens */
+}
+
+/* ---------- slide-in menu ---------- */
+.menu-overlay{position:fixed;inset:0;background:rgba(14,27,50,.45);opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;z-index:300;}
+.menu-overlay.show{opacity:1;visibility:visible;}
+.slide-menu{
+  position:fixed;top:0;right:0;height:100%;width:320px;max-width:88vw;background:var(--paper-2);
+  z-index:301;transform:translateX(100%);transition:transform .4s var(--ease);
+  box-shadow:-20px 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column;padding:1.6rem;
+}
+.slide-menu.show{transform:translateX(0);}
+.slide-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem;}
+.slide-menu-logo{width:38px;height:38px;border-radius:9px;}
+.close-btn{background:none;border:none;font-size:1.8rem;line-height:1;color:var(--ink-600);}
+.slide-menu-links{display:flex;flex-direction:column;gap:.2rem;}
+.slide-menu-links a{padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);font-size:1rem;transition:padding-left .25s ease, color .25s ease;}
+.slide-menu-links a:hover{padding-left:.7rem;color:var(--diya-600);}
+
+.view-details-trigger{
+  display:flex;align-items:center;gap:.5rem;width:100%;text-align:left;background:none;border:none;
+  padding:.8rem .3rem;font-weight:600;color:var(--navy-950);border-bottom:1px solid var(--line);
+  font-size:1rem;font-family:var(--font-body);cursor:pointer;transition:padding-left .25s ease, color .25s ease;
+}
+.view-details-trigger:hover{padding-left:.7rem;color:var(--diya-600);}
+.slide-menu-divider{height:1px;background:var(--line);margin:1.4rem 0;}
+.secretary-trigger{
+  display:flex;align-items:center;gap:.8rem;background:var(--navy-950);color:#fff;border:none;
+  padding:.9rem 1rem;border-radius:var(--radius-md);text-align:left;transition:transform .25s ease, background .25s ease;
+}
+.secretary-trigger:hover{transform:translateY(-2px);background:var(--navy-800);}
+.secretary-trigger .lock-ic{font-size:1.3rem;}
+.secretary-trigger strong{display:block;font-size:.92rem;}
+.secretary-trigger small{color:var(--sky-100);opacity:.75;font-size:.72rem;}
+.slide-menu-foot{margin-top:auto;font-family:var(--font-mono);font-size:.7rem;color:var(--ink-400);text-align:center;}
+
+/* ---------- modals ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(14,27,50,.55);z-index:400;
+  display:flex;align-items:center;justify-content:center;padding:1.2rem;
+  opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s ease;
+}
+.modal-overlay.show{opacity:1;visibility:visible;}
+.modal-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);padding:2.2rem;max-width:420px;width:100%;
+  position:relative;box-shadow:0 30px 60px rgba(0,0,0,.25);
+  transform:scale(.92) translateY(10px);opacity:0;transition:transform .35s var(--ease), opacity .35s var(--ease);
+  max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.show .modal-card{transform:scale(1) translateY(0);opacity:1;}
+.modal-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;font-size:1.6rem;color:var(--ink-400);line-height:1;}
+.modal-icon{font-size:2rem;margin-bottom:.4rem;}
+.modal-card h3{font-size:1.35rem;}
+.modal-card input[type=password]{
+  width:100%;padding:.85em 1em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-mono);letter-spacing:.3em;font-size:1rem;margin:1rem 0 .4rem;text-align:center;
+}
+.modal-card input[type=password]:focus{outline:none;border-color:var(--diya-600);}
+.modal-error{color:#B3261E;font-size:.82rem;display:none;margin-bottom:.8rem;}
+.modal-error.show{display:block;}
+
+.secretary-panel{max-width:640px;}
+.sec-panel-head{display:flex;gap:.9rem;align-items:flex-start;margin-bottom:0;}
+.sec-panel-head .lock-ic{font-size:1.8rem;}
+.sec-panel-head p{margin:0;}
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.sec-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.1rem;}
+.sec-card h4{font-size:.95rem;margin-bottom:.6rem;}
+.sec-card ul{list-style:none;margin:0;padding:0;font-size:.82rem;}
+.sec-card li{padding:.35rem 0;border-bottom:1px dashed var(--line);}
+.sec-card li:last-child{border-bottom:none;}
+.sec-mini{font-size:.82rem;margin:.2rem 0 .6rem;}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:.4rem;}
+.progress-fill{height:100%;background:var(--gold-500);border-radius:99px;}
+.sec-note{margin-top:1.2rem;font-size:.76rem;color:var(--ink-400);}
+
+/* ---------- secretary full admin panel ---------- */
+.secretary-panel-full{max-width:960px;width:96vw;padding:1.8rem 1.8rem 2rem;}
+.sec-top-bar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding-right:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1.1rem;margin-bottom:1.1rem;}
+.sec-top-actions{display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.sec-top-actions .modal-close{position:static;font-size:1.5rem;}
+#secGoWebsiteBtn{white-space:nowrap;}
+
+.sec-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.sec-tab{
+  background:var(--paper);border:1.5px solid var(--line);color:var(--ink-600);
+  font-weight:600;font-size:.86rem;padding:.55em 1.1em;border-radius:999px;
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.sec-tab:hover{border-color:var(--gold-500);}
+.sec-tab.active{background:var(--navy-950);color:#fff;border-color:var(--navy-950);}
+
+.sec-tab-panel{display:none;}
+.sec-tab-panel.active{display:block;animation:fadeInTab .3s ease;}
+@keyframes fadeInTab{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.1rem;}
+.sec-summary-box{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:.8rem 1rem;}
+.sec-summary-box span{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;color:var(--ink-400);text-transform:uppercase;margin-bottom:.3rem;}
+.sec-summary-box strong{font-family:var(--font-display);font-size:1.25rem;color:var(--navy-950);}
+.sec-summary-box.income strong{color:#2E6B44;}
+.sec-summary-box.expense strong{color:#B3261E;}
+.sec-summary-box.balance strong{color:var(--diya-600);}
+
+.sec-inline-form{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;background:var(--paper);border:1px dashed var(--line);border-radius:var(--radius-md);padding:.9rem;margin-bottom:1.1rem;}
+.sec-inline-form input, .sec-inline-form select{
+  flex:1 1 140px;min-width:110px;padding:.6em .8em;border-radius:var(--radius-sm);border:1.5px solid var(--line);
+  font-family:var(--font-body);font-size:.85rem;background:#fff;color:var(--ink-900);
+}
+.sec-inline-form input:focus, .sec-inline-form select:focus{outline:none;border-color:var(--diya-600);}
+.sec-inline-form button{flex:0 0 auto;}
+
+.sec-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-md);}
+.sec-table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:560px;}
+.sec-table th{text-align:left;background:var(--paper);color:var(--ink-400);font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;padding:.7rem .8rem;border-bottom:1px solid var(--line);}
+.sec-table td{padding:.65rem .8rem;border-bottom:1px solid var(--line);color:var(--ink-900);vertical-align:middle;}
+.sec-table tbody tr:last-child td{border-bottom:none;}
+.sec-table tbody tr:hover{background:var(--sky-100);}
+.sec-row-btn{background:none;border:none;font-size:.95rem;padding:.15rem .35rem;border-radius:6px;color:var(--ink-400);}
+.sec-row-btn:hover{background:var(--line);color:var(--navy-950);}
+.sec-row-btn.danger:hover{background:#FBE4E1;color:#B3261E;}
+.sec-empty{padding:1.4rem;text-align:center;color:var(--ink-400);font-size:.85rem;}
+.tag.active{background:#E4F2E7;color:#2E6B44;}
+.tag.inactive{background:#F1E1E1;color:#8A3B3B;}
+.tag.due{background:#FDF0DA;color:#9A6716;}
+.tag.paid{background:#E4F2E7;color:#2E6B44;}
+.tag.ongoing{background:#F1E9F7;color:#6C3F91;}
+.tag.planned{background:var(--sky-100);color:var(--navy-800);}
+.tag.completed{background:#E4F2E7;color:#2E6B44;}
+
+@media (max-width:640px){
+  .sec-summary-row{grid-template-columns:1fr;}
+  .secretary-panel-full{padding:1.4rem 1.1rem 1.6rem;}
+  .edit-toolbar{flex-direction:column;align-items:stretch;text-align:center;border-radius:var(--radius-lg);padding:.9rem;}
+  .edit-toolbar-actions{justify-content:center;}
+}
+
+/* ---------- live edit mode: persistent yellow highlight on editable content ---------- */
+body.site-edit-mode{padding-bottom:64px;}
+.site-edit-mode [data-edit-key]{
+  outline:2px dashed var(--gold-500);outline-offset:3px;border-radius:4px;
+  background:rgba(217,164,65,.10);transition:background .2s ease, outline-color .2s ease;
+}
+.site-edit-mode [data-edit-key^="text-"]{cursor:text;}
+.site-edit-mode [data-edit-key]:hover{background:rgba(217,164,65,.26);outline-color:var(--diya-600);}
+.site-edit-mode [data-edit-key^="text-"]:focus{outline:2px solid var(--diya-600);background:rgba(217,164,65,.18);}
+.site-edit-mode [data-edit-key^="img-"]{cursor:pointer;position:relative;display:block;}
+.site-edit-mode [data-edit-key^="img-"]::after{
+  content:"✏️ Click to change photo";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  background:var(--navy-950);color:#fff;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.03em;
+  padding:.35em .7em;border-radius:999px;opacity:0;transition:opacity .2s ease;white-space:nowrap;pointer-events:none;
+}
+.site-edit-mode [data-edit-key^="img-"]:hover::after{opacity:1;}
+
+.edit-toolbar{
+  position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%) translateY(140%);
+  z-index:500;background:var(--navy-950);color:#fff;border-radius:999px;
+  display:flex;align-items:center;gap:1rem;padding:.6rem .7rem .6rem 1.3rem;
+  box-shadow:0 16px 40px rgba(0,0,0,.3);border:1.5px solid var(--gold-500);
+  transition:transform .35s var(--ease);max-width:92vw;flex-wrap:wrap;
+}
+.edit-toolbar.show{transform:translateX(-50%) translateY(0);}
+.edit-toolbar-msg{font-size:.82rem;color:var(--sky-100);}
+.edit-toolbar-actions{display:flex;gap:.5rem;flex-shrink:0;}
+
+/* ---------- yellow "re-entering the website" flash ---------- */
+.reentry-flash{
+  position:fixed;inset:0;background:var(--gold-500);opacity:0;pointer-events:none;
+  z-index:9998;transition:opacity .28s ease;
+}
+.reentry-flash.show{opacity:.5;}
+.glow-pulse{animation:glowPulse .8s ease;position:relative;z-index:1;}
+@keyframes glowPulse{
+  0%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+  35%{box-shadow:0 0 0 5px rgba(217,164,65,.6), 0 0 46px 12px rgba(217,164,65,.4);}
+  100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}
+}
+
+.meeting-popup{max-width:440px;}
+.meeting-detail-row{display:flex;align-items:center;gap:.6em;font-size:.92rem;color:var(--ink-600);margin-bottom:.4em;}
+.meeting-agenda{background:var(--paper);border-radius:var(--radius-md);padding:1rem 1.2rem;margin:1rem 0;}
+.meeting-agenda ol{margin:0;padding-left:1.1rem;font-size:.86rem;}
+.meeting-agenda li{margin-bottom:.3rem;}
+.meeting-actions{display:flex;gap:.6rem;flex-wrap:wrap;}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;color:#fff;}
+.hero-media{position:absolute;inset:0;z-index:0;}
+.hero-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);animation:heroZoom 16s ease-in-out infinite alternate;}
+@keyframes heroZoom{from{transform:scale(1.06);}to{transform:scale(1);}}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(14,27,50,.55) 0%, rgba(14,27,50,.72) 55%, rgba(14,27,50,.92) 100%);}
+.hero-content{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:6rem 1.5rem 3rem;text-align:center;}
+.hero-content h1{font-size:clamp(2.4rem,6vw,4.2rem);color:#fff;line-height:1.03;}
+.hero-sub{font-size:1.08rem;color:#DDE3EE;max-width:560px;margin:1.1rem auto 1.8rem;}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.hero-stats{
+  position:relative;z-index:1;display:flex;justify-content:center;gap:clamp(1.4rem,5vw,4rem);
+  padding:1.6rem 1.5rem 2.4rem;flex-wrap:wrap;
+}
+.hero-stats div{text-align:center;}
+.hero-stats strong{display:block;font-family:var(--font-mono);font-size:1.9rem;color:var(--gold-500);}
+.hero-stats span{font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:#C7CEDB;}
+
+/* ---------- fountain divider (signature) ---------- */
+.fountain-divider{width:100%;overflow:hidden;line-height:0;color:var(--navy-800);background:var(--paper);}
+.fountain-divider svg{width:100%;height:40px;display:block;}
+.fountain-divider path{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.35;}
+.fountain-divider.small svg{height:26px;}
+
+/* ---------- layout w/ left rail ---------- */
+.with-rail{display:grid;grid-template-columns:280px 1fr;gap:0;max-width:1400px;margin:0 auto;align-items:start;}
+.content-col{min-width:0;}
+
+.left-rail{
+  position:sticky;top:110px;align-self:start;padding:2.4rem 1.2rem 2.4rem 1.5rem;
+  display:flex;flex-direction:column;gap:1.6rem;
+}
+.rail-slider{background:var(--navy-950);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-soft);}
+.rail-track{display:flex;transition:transform .6s var(--ease);}
+.rail-slide{min-width:100%;position:relative;}
+.rail-slide img{width:100%;height:210px;object-fit:cover;}
+.rail-slide p{
+  position:absolute;left:0;right:0;bottom:0;margin:0;padding:1rem;
+  background:linear-gradient(180deg, transparent, rgba(14,27,50,.92));color:#fff;font-size:.8rem;
+}
+.rail-slide p strong{display:block;font-family:var(--font-display);font-size:.92rem;margin-bottom:.2rem;color:var(--gold-500);}
+.rail-dots{display:flex;justify-content:center;gap:.4rem;padding:.8rem;}
+.rail-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .25s ease, transform .25s ease;}
+.rail-dots span.active{background:var(--gold-500);transform:scale(1.3);}
+
+.rail-actions{display:flex;flex-direction:column;gap:.55rem;}
+.rail-btn{
+  text-align:left;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:.75rem .9rem;font-size:.84rem;font-weight:500;color:var(--navy-950);
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.rail-btn:hover{transform:translateX(4px);border-color:var(--diya-600);box-shadow:var(--shadow-card);}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2.8rem;align-items:center;}
+.about-facts{display:flex;gap:1.8rem;margin-top:1.4rem;flex-wrap:wrap;}
+.about-facts div{display:flex;flex-direction:column;gap:.15rem;}
+.fact-num-mono{font-family:var(--font-mono);font-weight:600;color:var(--navy-800);font-size:1.05rem;}
+.about-facts span:last-child{font-size:.74rem;color:var(--ink-400);text-transform:uppercase;letter-spacing:.05em;}
+.about-photos{position:relative;height:380px;}
+.about-photos .photo-a{position:absolute;top:0;left:0;width:72%;height:260px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);}
+.about-photos .photo-b{position:absolute;bottom:0;right:0;width:60%;height:220px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);border:6px solid var(--paper);}
+
+/* ---------- dashboard mock ---------- */
+.dashboard-mock{background:var(--navy-950);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:var(--shadow-soft);}
+.dash-topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.4rem;}
+.dash-tabs{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.dash-tab{font-size:.84rem;color:#AEB8CC;font-weight:500;padding-bottom:.3rem;border-bottom:2px solid transparent;cursor:default;}
+.dash-tab.active{color:#fff;border-color:var(--gold-500);}
+.dash-body{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.dash-card{background:var(--navy-900);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-md);padding:1.1rem;}
+.dash-card h4{color:#fff;font-size:1.05rem;margin-bottom:.15rem;}
+.dash-card .mini-label-mono{color:var(--gold-500);opacity:.85;}
+.dash-note{font-size:.78rem;color:#9AA6BC;margin-bottom:.8rem;}
+.dash-card .btn-outline{border-color:rgba(255,255,255,.4);color:#fff;}
+.dash-card .btn-outline:hover{background:#fff;color:var(--navy-950);}
+
+/* ---------- events ---------- */
+.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:2.2rem;}
+.filter-chip{
+  padding:.55em 1.2em;border-radius:999px;border:1.5px solid var(--line);background:var(--paper-2);
+  font-size:.82rem;font-weight:600;color:var(--ink-600);transition:all .25s ease;
+}
+.filter-chip:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.filter-chip.active{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
+
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.event-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.event-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(14,27,50,.16);}
+.event-card img{height:190px;width:100%;object-fit:cover;transition:transform .5s ease;}
+.event-card:hover img{transform:scale(1.06);}
+.event-body{padding:1.2rem 1.3rem 1.4rem;}
+.event-body h3{font-size:1.12rem;margin:.5rem 0 .4rem;}
+.event-body p{font-size:.88rem;margin:0;}
+.event-card.hidden{display:none;}
+
+/* ---------- governance ---------- */
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+.gov-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.5rem;transition:transform .3s ease, box-shadow .3s ease;}
+.gov-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card);}
+.gov-num-mono{font-family:var(--font-mono);font-weight:700;color:var(--gold-600);font-size:1.5rem;display:block;margin-bottom:.5rem;}
+.gov-card h4{font-size:1rem;}
+.gov-card p{font-size:.85rem;}
+
+/* ---------- notice board ---------- */
+.notices-section{background:var(--paper);}
+.notice-board{
+  background:#FBF9F2;border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:1.6rem;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;
+  background-image:radial-gradient(circle, rgba(0,0,0,.03) 1px, transparent 1px);
+  background-size:14px 14px;
+}
+.pin-note{
+  background:var(--paper-2);border-radius:var(--radius-sm);padding:1rem 1.1rem;position:relative;
+  box-shadow:0 3px 10px rgba(14,27,50,.08);border-left:3px solid var(--diya-600);
+}
+.pin-date-mono{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;color:var(--diya-600);font-weight:700;display:block;margin-bottom:.35rem;}
+.pin-note p{margin:0;font-size:.88rem;color:var(--ink-900);}
+
+/* ---------- contact ---------- */
+.contact-section{background:var(--navy-950);color:#fff;max-width:none;margin:0;padding:5.5rem 1.5rem;}
+.contact-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center;}
+.contact-copy h2{color:#fff;}
+.contact-copy p{color:#B9C2D4;}
+.contact-buttons{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem;}
+.contact-copy .btn-outline{border-color:rgba(255,255,255,.5);color:#fff;}
+.contact-copy .btn-outline:hover{background:#fff;color:var(--navy-950);}
+.contact-photo img{border-radius:var(--radius-lg);height:340px;object-fit:cover;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+
+/* ---------- footer ---------- */
+.site-footer{background:var(--navy-950);color:#C7CEDB;border-top:1px solid rgba(255,255,255,.08);}
+.footer-top{
+  max-width:1240px;margin:0 auto;padding:3.4rem 1.5rem 2.4rem;
+  display:grid;grid-template-columns:1.4fr .8fr .8fr 1fr 1.2fr;gap:2rem;
+}
+.footer-brand img{width:44px;height:44px;border-radius:10px;margin-bottom:.7rem;}
+.footer-brand p{color:#fff;font-family:var(--font-display);font-size:1rem;}
+.footer-brand span{font-family:var(--font-body);font-size:.78rem;color:#8B96AC;font-weight:400;}
+.footer-col h5{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-500);margin:0 0 .9rem;}
+.footer-col a{display:block;font-size:.86rem;color:#C7CEDB;padding:.3rem 0;transition:color .2s ease, padding-left .2s ease;}
+.footer-col a:hover{color:var(--gold-500);padding-left:.3rem;}
+.footer-note{font-size:.82rem;color:#8B96AC;margin-bottom:.7rem;}
+.footer-form{display:flex;gap:.4rem;}
+.footer-form input{flex:1;min-width:0;padding:.6em .8em;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:.82rem;}
+.footer-form input::placeholder{color:#7C87A0;}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);padding:1.2rem 1.5rem;max-width:1240px;margin:0 auto;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.76rem;color:#7C87A0;
+}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%) translateY(20px);
+  background:var(--navy-950);color:#fff;padding:.85em 1.4em;border-radius:999px;font-size:.86rem;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:opacity .3s ease, transform .3s ease, visibility .3s ease;
+  z-index:500;max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+
+/* ---------- scroll top ---------- */
+.scroll-top{
+  position:fixed;right:1.4rem;bottom:1.6rem;width:44px;height:44px;border-radius:50%;
+  background:var(--diya-600);color:#fff;border:none;font-size:1.1rem;box-shadow:0 8px 20px rgba(193,82,44,.35);
+  opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s ease, transform .3s ease, visibility .3s ease;z-index:150;
+}
+.scroll-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1080px){
+  .with-rail{grid-template-columns:1fr;}
+  .left-rail{position:static;flex-direction:row;overflow-x:auto;padding:1.6rem;gap:1rem;}
+  .rail-slider{min-width:280px;}
+  .rail-actions{flex-direction:row;flex-wrap:wrap;min-width:280px;}
+  .rail-btn{flex:1 1 auto;}
+  .dash-body{grid-template-columns:repeat(2,1fr);}
+  .gov-grid{grid-template-columns:repeat(2,1fr);}
+  .events-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media (max-width: 760px){
+  .main-nav{display:none;}
+  .about-grid{grid-template-columns:1fr;}
+  .about-photos{height:300px;margin-top:1rem;}
+  .contact-grid{grid-template-columns:1fr;}
+  .contact-photo img{height:220px;}
+  .events-grid{grid-template-columns:1fr;}
+  .dash-body{grid-template-columns:1fr;}
+  .sec-grid{grid-template-columns:1fr;}
+  .notice-board{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .hero-content{padding-top:4rem;}
+}
+/* =====================================================
+   NAV — refined pill-hover, better spacing/legibility
+   ===================================================== */
+.main-nav{align-items:center;gap:.3rem;}
+.main-nav a{
+  padding:.5rem .95rem;border-radius:999px;font-size:.85rem;letter-spacing:.01em;
+  transition:background .25s var(--ease), color .25s var(--ease);
+}
+.main-nav a::after{display:none;}
+.main-nav a:hover{background:rgba(255,255,255,.1);}
+.main-nav a.active{background:rgba(217,164,65,.16);color:var(--gold-500);font-weight:600;}
+
+/* =====================================================
+   EVENTS NAV DROPDOWN — same behaviour as the homepage:
+   hover or click "Events" to see every event, grouped by
+   category, each linking to its own event.html?id=... page.
+   ===================================================== */
+.nav-item-dropdown{position:relative;}
+.nav-dropdown-trigger{display:inline-flex;align-items:center;gap:.3rem;}
+.nav-dropdown-caret{width:9px;height:9px;transition:transform .25s var(--ease);}
+.nav-item-dropdown.open .nav-dropdown-caret,
+.nav-item-dropdown:hover .nav-dropdown-caret{transform:rotate(180deg);}
+.nav-dropdown-panel{
+  position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
+  min-width:560px;max-width:640px;background:var(--paper-2);border-radius:var(--radius-md);
+  box-shadow:0 22px 46px -14px rgba(14,27,50,.34);padding:1.3rem 1.4rem 1.1rem;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
+  z-index:80;
+}
+.nav-item-dropdown:hover .nav-dropdown-panel,
+.nav-item-dropdown.open .nav-dropdown-panel{
+  opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);
+}
+.nav-dropdown-panel::before{
+  content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:12px;height:12px;background:var(--paper-2);border-radius:2px;
+}
+.nav-dropdown-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem 1.4rem;}
+.nav-dropdown-group h4{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-400);margin:0 0 .55em;font-weight:600;
+}
+.nav-dropdown-group ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.15rem;}
+.nav-dropdown-group a{
+  display:block;padding:.32rem .4rem;border-radius:8px;font-size:.85rem;color:var(--ink-900);font-weight:500;
+  transition:background .18s ease, color .18s ease, padding-left .18s ease;
+}
+.nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);padding-left:.6rem;}
+.nav-dropdown-viewall{
+  display:block;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
+  font-size:.8rem;font-weight:700;color:var(--diya-600);text-align:center;
+}
+.nav-dropdown-viewall:hover{text-decoration:underline;}
+@media (max-width:1180px){
+  .nav-dropdown-panel{min-width:440px;left:auto;right:-1rem;transform:translateY(6px);}
+  .nav-item-dropdown:hover .nav-dropdown-panel,
+  .nav-item-dropdown.open .nav-dropdown-panel{transform:translateY(0);}
+  .nav-dropdown-panel::before{left:auto;right:2.2rem;}
+  .nav-dropdown-groups{grid-template-columns:repeat(2,1fr);}
+}
+
+/* =====================================================
+   TEASER CARDS — "read more" link that opens the full page
+   ===================================================== */
+.card-readmore{
+  display:inline-flex;align-items:center;gap:.35em;margin-top:.7em;
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.03em;font-weight:600;
+  color:var(--diya-600);
+}
+.card-readmore svg{width:13px;height:13px;transition:transform .2s var(--ease);}
+.event-card:hover .card-readmore svg,
+.gov-card:hover .card-readmore svg,
+.pin-note:hover .card-readmore svg{transform:translateX(3px);}
+.event-card, .gov-card, .pin-note{cursor:pointer;transition:transform .25s var(--ease), box-shadow .25s var(--ease);}
+.event-card:hover, .gov-card:hover, .pin-note:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+
+/* =====================================================
+   DETAIL PAGES — event.html / governance.html / notice.html
+   ===================================================== */
+.detail-breadcrumb{
+  font-family:var(--font-mono);font-size:.76rem;color:var(--ink-400);
+  display:flex;align-items:center;gap:.4em;flex-wrap:wrap;margin-bottom:1.4rem;
+}
+.detail-breadcrumb a{color:var(--diya-600);font-weight:600;}
+.detail-hero-img{width:100%;max-height:420px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:1.8rem;box-shadow:var(--shadow-card);}
+.detail-title-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8em;margin-bottom:.3em;}
+.detail-title-row h1{font-size:clamp(1.7rem,3.4vw,2.5rem);margin:0;}
+.detail-lede{font-size:1.05rem;color:var(--ink-600);max-width:680px;margin-bottom:1.8rem;}
+.detail-meta-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem;
+  background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.3rem 1.5rem;margin-bottom:2rem;
+}
+.detail-meta-item .mini-label-mono{margin-bottom:.25em;}
+.detail-meta-item p{margin:0;color:var(--navy-950);font-weight:600;font-size:.94rem;}
+.detail-body p{font-size:1.02rem;max-width:720px;}
+.detail-highlights{margin:0 0 2rem;padding:0;list-style:none;max-width:680px;}
+.detail-highlights li{
+  display:flex;align-items:flex-start;gap:.6em;padding:.55em 0;
+  border-bottom:1px solid var(--line);color:var(--ink-600);font-size:.96rem;
+}
+.detail-highlights li:last-child{border-bottom:none;}
+.detail-highlights li svg{flex:0 0 auto;width:16px;height:16px;color:var(--diya-600);margin-top:.15em;}
+.detail-related{margin-top:2.6rem;padding-top:2.2rem;border-top:1px solid var(--line);}
+.detail-related h3{font-size:1.15rem;margin-bottom:1rem;}
+.detail-related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+.detail-related-card{
+  display:block;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;
+  background:var(--paper-2);transition:transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+.detail-related-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+.detail-related-card img{width:100%;height:110px;object-fit:cover;}
+.detail-related-card .drc-body{padding:.8rem .9rem;}
+.detail-related-card h4{margin:0 0 .2em;font-size:.9rem;color:var(--navy-950);}
+.detail-related-card p{margin:0;font-size:.78rem;color:var(--ink-400);}
+.detail-back{
+  display:inline-flex;align-items:center;gap:.4em;margin-bottom:1.6rem;
+  font-family:var(--font-mono);font-size:.8rem;color:var(--ink-600);font-weight:600;
+}
+.detail-back:hover{color:var(--diya-600);}
+.detail-notfound{padding:5rem 0;text-align:center;}
+.detail-page-main{max-width:900px;margin:0 auto;padding:3.2rem 1.5rem 5rem;}
+.detail-page-main.has-sidebar{max-width:1240px;}
+.edit-startyear-field{
+  display:inline-block;margin:0 0 1.2rem;padding:.4rem .8rem;border-radius:8px;
+  background:var(--sky-100);font-size:.82rem;font-weight:600;color:var(--navy-800);
+}
+.edit-startyear-field input{width:80px;margin-left:.4em;padding:.15rem .4rem;border-radius:6px;border:1px solid var(--line);font-family:var(--font-mono);}
+
+@media (max-width: 760px){
+  .detail-meta-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* =====================================================
+   EVENT DETAIL — left info sidebar + top-center year slider
+   ===================================================== */
+.event-side-layout{display:flex;gap:2.2rem;align-items:flex-start;}
+.event-sidebar{
+  flex:0 0 250px;position:sticky;top:96px;background:var(--paper-2);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:.9rem;
+}
+.event-sidebar-title{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-400);padding:.5rem .6rem .7rem;
+}
+.event-sidebar nav{display:flex;flex-direction:column;gap:.15rem;}
+.event-sidebar button{
+  display:flex;align-items:center;gap:.65rem;width:100%;text-align:left;
+  background:none;border:none;border-radius:10px;padding:.62rem .7rem;
+  font-family:var(--font-body);font-size:.86rem;font-weight:600;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease;
+}
+.event-sidebar button svg{flex:0 0 auto;width:17px;height:17px;color:var(--ink-400);transition:color .2s ease;}
+.event-sidebar button:hover{background:var(--sky-100);color:var(--navy-950);}
+.event-sidebar button.is-active{background:var(--navy-950);color:#fff;}
+.event-sidebar button.is-active svg{color:var(--gold-500);}
+.event-main-col{flex:1 1 auto;min-width:0;}
+
+.year-slider-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
+  padding:1.3rem 1.5rem 1.5rem;margin-bottom:1.8rem;
+}
+.year-slider-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem;}
+.year-slider-head h4{margin:0;font-size:.98rem;}
+.year-slider-head .mini-label-mono{color:var(--ink-400);}
+.year-slider-track{display:flex;align-items:center;gap:.5rem;}
+.year-slider-arrow{
+  flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.year-slider-arrow:hover{background:var(--navy-950);border-color:var(--navy-950);color:#fff;}
+.year-slider-arrow:disabled{opacity:.3;pointer-events:none;}
+.year-slider-scroll{flex:1 1 auto;display:flex;gap:.5rem;overflow-x:auto;scroll-behavior:smooth;padding:.2rem;}
+.year-slider-scroll::-webkit-scrollbar{height:5px;}
+.year-slider-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;}
+.year-pill{
+  flex:0 0 auto;padding:.5rem 1.05rem;border-radius:999px;border:1.5px solid var(--line);
+  background:#fff;font-family:var(--font-mono);font-weight:600;font-size:.86rem;color:var(--ink-600);
+  transition:background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.year-pill:hover{border-color:var(--diya-600);color:var(--diya-600);}
+.year-pill.is-active{background:var(--diya-600);border-color:var(--diya-600);color:#fff;transform:translateY(-1px);}
+
+.event-panel{display:none;animation:eventDetailFadeIn .3s var(--ease);}
+.event-panel.is-active{display:block;}
+.event-panel h3{font-size:1.2rem;margin-bottom:.7rem;}
+.event-panel-intro{color:var(--ink-600);font-size:.94rem;margin-bottom:1.1rem;max-width:640px;}
+.event-fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.2rem;}
+.event-fact-card{
+  background:var(--paper-2);border-radius:var(--radius-md);box-shadow:var(--shadow-card);
+  padding:1rem 1.1rem;
+}
+.event-fact-card .mini-label-mono{color:var(--ink-400);margin-bottom:.3em;}
+.event-fact-card p{margin:0;color:var(--navy-950);font-weight:700;font-size:1.05rem;}
+.event-fact-card small{display:block;margin-top:.25em;color:var(--ink-400);font-weight:500;font-size:.76rem;}
+.event-timeline{list-style:none;margin:0 0 1rem;padding:0;display:flex;flex-wrap:wrap;gap:.5rem;}
+.event-timeline li{
+  font-family:var(--font-mono);font-size:.78rem;font-weight:600;color:var(--navy-800);
+  background:var(--sky-100);border-radius:999px;padding:.35rem .8rem;
+}
+.event-year-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-top:1rem;}
+.event-year-gallery img{width:100%;height:120px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-card);}
+.event-year-gallery figcaption{margin-top:.3em;font-size:.74rem;color:var(--ink-400);text-align:center;}
+@media (max-width:900px){
+  .event-side-layout{flex-direction:column;}
+  .event-sidebar{position:static;width:100%;flex:1 1 auto;}
+  .event-sidebar nav{flex-direction:row;flex-wrap:wrap;}
+  .event-sidebar button{width:auto;flex:1 1 140px;justify-content:center;}
+}
+
+
+/* =====================================================
+   GOVERNMENT SCHEMES PAGE — category sections + scheme cards
+   ===================================================== */
+.schemes-hero{background:var(--navy-950);color:#fff;padding:4.5rem 1.5rem 3.5rem;}
+.schemes-hero-inner{max-width:900px;margin:0 auto;}
+.schemes-hero h1{color:#fff;font-size:clamp(1.9rem,3.4vw,2.6rem);}
+.schemes-hero p{color:var(--sky-100);font-size:1.02rem;max-width:640px;}
+.schemes-finder-card{
+  margin-top:1.6rem;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.22);
+  border-radius:var(--radius-lg);padding:1.4rem 1.6rem;display:flex;align-items:center;
+  justify-content:space-between;gap:1.2rem;flex-wrap:wrap;
+}
+.schemes-finder-card h3{color:#fff;font-size:1.05rem;margin-bottom:.2em;}
+.schemes-finder-card p{color:var(--sky-100);margin:0;font-size:.9rem;}
+
+.schemes-jump{
+  display:flex;gap:.6rem;flex-wrap:wrap;max-width:1240px;margin:-1.6rem auto 0;padding:0 1.5rem;
+  position:relative;z-index:5;
+}
+.schemes-jump a{
+  background:var(--paper-2);box-shadow:var(--shadow-card);border-radius:999px;
+  padding:.6rem 1.2rem;font-size:.84rem;font-weight:600;color:var(--navy-800);
+}
+.schemes-jump a:hover{background:var(--navy-950);color:#fff;}
+
+.scheme-category{padding:4rem 1.5rem;max-width:1240px;margin:0 auto;scroll-margin-top:90px;}
+.scheme-category-head{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem;}
+.scheme-category-head .cat-icon{
+  width:44px;height:44px;border-radius:12px;background:var(--sky-100);color:var(--navy-800);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.scheme-category-head h2{margin:0;font-size:1.5rem;}
+.scheme-category-sub{max-width:640px;margin-bottom:2rem;}
+
+.scheme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.3rem;}
+.scheme-card{
+  background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
+  padding:1.5rem;display:flex;flex-direction:column;gap:.7rem;
+}
+.scheme-card-icon{
+  width:40px;height:40px;border-radius:10px;background:#FBEAD9;color:var(--diya-700);
+  display:flex;align-items:center;justify-content:center;
+}
+.scheme-card h4{font-size:1.05rem;margin-bottom:.1em;}
+.scheme-card p{font-size:.88rem;margin:0;flex:1 1 auto;}
+.scheme-card .scheme-official{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-400);}
+.scheme-card .btn{margin-top:.3rem;align-self:flex-start;}
+
+.schemes-disclaimer{
+  max-width:900px;margin:0 auto 4rem;padding:1.2rem 1.5rem;background:var(--sky-100);
+  border-radius:var(--radius-md);font-size:.84rem;color:var(--navy-800);
+}
+</style>
+<style>body.site-gate-pending{visibility:hidden;}</style>
+</head>
+<body class="site-gate-pending">
+
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
+    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
+    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
+    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/branding/logo.jpg" alt="Bhargavi Housing Society logo" class="brand-logo">
+      <span class="brand-text">
+        <strong>Bhargavi Housing Society</strong>
+        <em>Community &amp; Home · Reg. No. 123/2026</em>
+      </span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html#about">About</a>
+      <a href="index.html#dashboard">Dashboard</a>
+      <a href="index.html#events">Events</a>
+      <div class="nav-item-dropdown" id="governanceNavItem">
+        <a href="index.html#governance" class="nav-dropdown-trigger active" id="governanceNavTrigger" aria-haspopup="true" aria-expanded="false">
+          Governance
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="governanceNavPanel">
+          <div class="nav-dropdown-groups">
+            <div class="nav-dropdown-group">
+              <h4>Society Governance</h4>
+              <ul>
+                <li><a href="index.html#governance">Rules &amp; Minutes</a></li>
+                <li><a href="index.html#notices">Notices Board</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-group">
+              <h4>Govt. Schemes for Residents</h4>
+              <ul>
+                <li><a href="schemes.html#caste">By Caste &amp; Community</a></li>
+                <li><a href="schemes.html#students">For Students</a></li>
+                <li><a href="schemes.html#income">By Income (Housing/Health)</a></li>
+                <li><a href="schemes.html#age">By Age (Senior/Youth)</a></li>
+              </ul>
+            </div>
+          </div>
+          <a href="schemes.html" class="nav-dropdown-viewall">Browse all government schemes →</a>
+        </div>
+      </div>
+      <a href="index.html#notices">Notices</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="header-auth" id="headerAuthSlot"></div>
+  </div>
+</header>
+
+<section class="schemes-hero">
+  <div class="schemes-hero-inner">
+    <span class="eyebrow-mono" style="color:var(--gold-500);">GOVERNANCE · FOR RESIDENTS</span>
+    <h1>Government Schemes You May Be Eligible For</h1>
+    <p>A quick, organised starting point to central government welfare schemes — grouped by caste &amp; community, student status, income level, and age. Every "Apply / Learn more" button takes you straight to the real, official government page for that scheme.</p>
+    <div class="schemes-finder-card">
+      <div>
+        <h3>🧭 Not sure which one applies to you?</h3>
+        <p>Use the Government of India's own eligibility finder — answer a few questions about yourself and it matches you to schemes automatically.</p>
+      </div>
+      <a class="btn btn-primary" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Find My Schemes ↗</a>
+    </div>
+  </div>
+</section>
+
+<nav class="schemes-jump" aria-label="Jump to category">
+  <a href="#caste">🤝 Caste &amp; Community</a>
+  <a href="#students">🎓 Students &amp; Education</a>
+  <a href="#income">🏠 Income — Housing &amp; Health</a>
+  <a href="#age">🧓 Age — Senior Citizens &amp; Youth</a>
+</nav>
+
+<section class="scheme-category" id="caste">
+  <div class="scheme-category-head">
+    <span class="cat-icon">🤝</span>
+    <h2>Caste &amp; Community Welfare</h2>
+  </div>
+  <p class="scheme-category-sub">Scholarships, business support and welfare schemes for SC, ST, OBC and EWS communities. Documents typically needed: caste certificate, income certificate, Aadhaar.</p>
+  <div class="scheme-grid">
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🎓</div>
+      <h4>PM-YASASVI (OBC / EBC / DNT students)</h4>
+      <p>Full financial support for OBC, EBC and De-notified Tribe students for studies beyond Class XII, awarded through a national entrance test.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/schemes/pm-yasasvitcceobcebcdnts" target="_blank" rel="noopener">Learn more ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">📚</div>
+      <h4>Pre &amp; Post-Matric Scholarships (SC/ST/OBC)</h4>
+      <p>Central scholarships covering tuition and related costs for SC, ST and OBC students from Class 1 through post-graduation, income-linked.</p>
+      <span class="scheme-official">scholarships.gov.in — National Scholarship Portal</span>
+      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">💼</div>
+      <h4>Stand-Up India</h4>
+      <p>Bank loans between ₹10 lakh and ₹1 crore for SC/ST and women entrepreneurs setting up a new greenfield enterprise.</p>
+      <span class="scheme-official">standupmitra.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.standupmitra.in" target="_blank" rel="noopener">Learn more ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🏘️</div>
+      <h4>PM-AJAY (Village &amp; community development)</h4>
+      <p>Support for infrastructure, skill development and livelihood projects in villages and areas with a significant SC population.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="scheme-category" id="students">
+  <div class="scheme-category-head">
+    <span class="cat-icon">🎓</span>
+    <h2>Students &amp; Education</h2>
+  </div>
+  <p class="scheme-category-sub">Scholarships, loans and skill-development support, open to students of every category. Most run through one of two national portals.</p>
+  <div class="scheme-grid">
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🗂️</div>
+      <h4>National Scholarship Portal (NSP)</h4>
+      <p>The single-window portal for most central and many state scholarships — search by class, category and course to see what you qualify for.</p>
+      <span class="scheme-official">scholarships.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🏦</div>
+      <h4>PM-Vidyalakshmi (Education loans)</h4>
+      <p>Collateral-free, guarantor-free education loans up to ₹10 lakh at accredited institutions, with interest subsidy for eligible income groups.</p>
+      <span class="scheme-official">vidyalakshmi.co.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.vidyalakshmi.co.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🏅</div>
+      <h4>National Means-cum-Merit Scholarship</h4>
+      <p>A stipend for meritorious students from economically weaker sections to continue Class 9–12 in a government school.</p>
+      <span class="scheme-official">scholarships.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🛠️</div>
+      <h4>PM Kaushal Vikas Yojana (Skill training)</h4>
+      <p>Free, short-term skill-training courses for youth, with a certificate and placement assistance on completion.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="scheme-category" id="income">
+  <div class="scheme-category-head">
+    <span class="cat-icon">🏠</span>
+    <h2>Income-Based — Housing &amp; Health</h2>
+  </div>
+  <p class="scheme-category-sub">Housing subsidies, health cover and essentials support, with eligibility usually based on your household income category (EWS/LIG/MIG or BPL).</p>
+  <div class="scheme-grid">
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🏡</div>
+      <h4>Pradhan Mantri Awas Yojana (PMAY)</h4>
+      <p>Interest subsidy and financial assistance for buying or building a home, for households in the EWS, LIG and MIG income categories.</p>
+      <span class="scheme-official">pmaymis.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://pmaymis.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🏥</div>
+      <h4>Ayushman Bharat (PM-JAY)</h4>
+      <p>Free hospitalisation cover up to ₹5 lakh per family per year for eligible lower-income households, at empanelled hospitals nationwide.</p>
+      <span class="scheme-official">pmjay.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://pmjay.gov.in" target="_blank" rel="noopener">Check eligibility ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🔥</div>
+      <h4>PM Ujjwala Yojana</h4>
+      <p>A free LPG gas connection for women from low-income households, to replace unsafe traditional cooking fuel.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="scheme-category" id="age">
+  <div class="scheme-category-head">
+    <span class="cat-icon">🧓</span>
+    <h2>Age-Based — Senior Citizens &amp; Youth</h2>
+  </div>
+  <p class="scheme-category-sub">Pension and savings schemes for senior residents, and skill/employment schemes for younger residents just starting out.</p>
+  <div class="scheme-grid">
+    <div class="scheme-card">
+      <div class="scheme-card-icon">💰</div>
+      <h4>Atal Pension Yojana &amp; PM Jan Suraksha schemes</h4>
+      <p>A guaranteed monthly pension after age 60 for anyone aged 18–40 who enrols and contributes, plus low-cost life and accident insurance.</p>
+      <span class="scheme-official">jansuraksha.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.jansuraksha.gov.in" target="_blank" rel="noopener">Learn more ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🧑‍🦳</div>
+      <h4>Indira Gandhi National Old Age Pension</h4>
+      <p>A monthly pension for senior citizens from BPL households, as part of the National Social Assistance Programme.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
+    </div>
+    <div class="scheme-card">
+      <div class="scheme-card-icon">🎒</div>
+      <h4>PM Kaushal Vikas Yojana (Youth)</h4>
+      <p>Skill certification and placement support aimed at young residents entering the workforce for the first time.</p>
+      <span class="scheme-official">myscheme.gov.in</span>
+      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
+    </div>
+  </div>
+</section>
+
+<div class="schemes-disclaimer">
+  <strong>Please note:</strong> this page is a resident convenience, not an official government service. Bhargavi Housing Society doesn't process applications, verify eligibility, or collect any documents for these schemes — every "Apply / Learn more" button opens the real, official government site, where you should always check the current eligibility, required documents and benefit amounts before applying. Applying for every scheme listed here is free — never pay any person or agent claiming to guarantee approval.
+</div>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Bhargavi Housing Society. Reg. No. 123/2026. All rights reserved.</p>
+    <p>Built with 🧡 by the residents, for the residents.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+'use strict';
+
+    // ---- utils/api.js (renamed to avoid collision) ----
+    async function sharedApiCore(path, options = {}) {
+      const res = await fetch(path, {
+        method: options.method || 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* no body */ }
+      if (!res.ok) {
+        throw new Error((data && data.error) || `Request failed (${res.status})`);
+      }
+      return data;
+    }
+
+    // ---- utils/icons.js (only the couple this page needs) ----
+    const paths = {
+      user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+      logout: '<path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 12H3m0 0 3.5-3.5M3 12l3.5 3.5"/>'
+    };
+    function icon(name, size) {
+      const s = size || 18;
+      const body = paths[name] || paths.user;
+      return `<svg class="icon" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+    }
+
+    // ---- detail-shared.js ----
+    async function gateAndInitHeader() {
+      let session;
+      try { session = await sharedApiCore('/api/auth/session'); }
+      catch (e) { session = { loggedIn: false }; }
+      if (!session.loggedIn) {
+        const next = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace(`login.html?next=${next}`);
+        return null;
+      }
+      document.body.classList.remove('site-gate-pending');
+
+      const slot = document.getElementById('headerAuthSlot');
+      if (slot) {
+        const label = session.role === 'secretary' ? 'Secretary' : 'Resident';
+        slot.innerHTML = `
+          <span class="account-pill">${icon('user', 15)} ${label}</span>
+          <button class="btn btn-outline btn-sm" id="logoutBtn">${icon('logout', 14)} Log out</button>`;
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+          await sharedApiCore('/api/auth/logout', { method: 'POST' });
+          window.location.href = 'login.html';
+        });
+      }
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      return session;
+    }
+
+    // ---- page script ----
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await gateAndInitHeader();
+      if (!session) return;
+
+      /* ---------- Governance nav dropdown (header) ---------- */
+      (function initGovernanceNav() {
+        const navItem = document.getElementById('governanceNavItem');
+        const trigger = document.getElementById('governanceNavTrigger');
+        if (!navItem || !trigger) return;
+        let hoverTimer = null;
+        const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+        const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+        navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+        navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+        trigger.addEventListener('click', (e) => {
+          if (!navItem.classList.contains('open')) { e.preventDefault(); openDropdown(); }
+          else { closeDropdown(); }
+        });
+        trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+        document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
+      })();
+    });
+
+})();
+</script>
+</body>
+</html>
