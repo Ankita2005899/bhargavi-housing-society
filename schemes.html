@@ -774,9 +774,19 @@ body.site-edit-mode{padding-bottom:64px;}
    GOVERNMENT SCHEMES PAGE — category sections + scheme cards
    ===================================================== */
 .schemes-hero{background:var(--navy-950);color:#fff;padding:4.5rem 1.5rem 3.5rem;}
-.schemes-hero-inner{max-width:900px;margin:0 auto;}
+.schemes-hero-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:3rem;}
+.schemes-hero-text{flex:1 1 480px;min-width:0;}
+.schemes-hero-img{
+  flex:1 1 380px;max-width:440px;border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:0 20px 46px -14px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);
+}
+.schemes-hero-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .schemes-hero h1{color:#fff;font-size:clamp(1.9rem,3.4vw,2.6rem);}
 .schemes-hero p{color:var(--sky-100);font-size:1.02rem;max-width:640px;}
+@media (max-width:860px){
+  .schemes-hero-inner{flex-direction:column;}
+  .schemes-hero-img{max-width:100%;width:100%;height:220px;}
+}
 .schemes-finder-card{
   margin-top:1.6rem;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.22);
   border-radius:var(--radius-lg);padding:1.4rem 1.6rem;display:flex;align-items:center;
@@ -796,6 +806,10 @@ body.site-edit-mode{padding-bottom:64px;}
 .schemes-jump a:hover{background:var(--navy-950);color:#fff;}
 
 .scheme-category{padding:4rem 1.5rem;max-width:1240px;margin:0 auto;scroll-margin-top:90px;}
+.scheme-category-banner{
+  width:100%;height:200px;object-fit:cover;border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-card);margin-bottom:1.5rem;
+}
 .scheme-category-head{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem;}
 .scheme-category-head .cat-icon{
   width:44px;height:44px;border-radius:12px;background:var(--sky-100);color:var(--navy-800);
@@ -885,15 +899,20 @@ body.site-edit-mode{padding-bottom:64px;}
 
 <section class="schemes-hero">
   <div class="schemes-hero-inner">
-    <span class="eyebrow-mono" style="color:var(--gold-500);">GOVERNANCE · FOR RESIDENTS</span>
-    <h1>Government Schemes You May Be Eligible For</h1>
-    <p>A quick, organised starting point to central government welfare schemes — grouped by caste &amp; community, student status, income level, and age. Every "Apply / Learn more" button takes you straight to the real, official government page for that scheme.</p>
-    <div class="schemes-finder-card">
-      <div>
-        <h3>🧭 Not sure which one applies to you?</h3>
-        <p>Use the Government of India's own eligibility finder — answer a few questions about yourself and it matches you to schemes automatically.</p>
+    <div class="schemes-hero-text">
+      <span class="eyebrow-mono" style="color:var(--gold-500);">GOVERNANCE · FOR RESIDENTS</span>
+      <h1>Government Schemes You May Be Eligible For</h1>
+      <p>A quick, organised starting point to central government welfare schemes — grouped by caste &amp; community, student status, income level, and age. Every "Apply / Learn more" button takes you straight to the real, official government page for that scheme.</p>
+      <div class="schemes-finder-card">
+        <div>
+          <h3>🧭 Not sure which one applies to you?</h3>
+          <p>Use the Government of India's own eligibility finder — answer a few questions about yourself and it matches you to schemes automatically.</p>
+        </div>
+        <a class="btn btn-primary" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Find My Schemes ↗</a>
       </div>
-      <a class="btn btn-primary" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Find My Schemes ↗</a>
+    </div>
+    <div class="schemes-hero-img">
+      <img src="images/schemes/hero-banner.jpg" alt="Diverse residents accessing government welfare schemes">
     </div>
   </div>
 </section>
@@ -906,6 +925,7 @@ body.site-edit-mode{padding-bottom:64px;}
 </nav>
 
 <section class="scheme-category" id="caste">
+  <img class="scheme-category-banner" src="images/schemes/category-caste.jpg" alt="Community members supporting one another">
   <div class="scheme-category-head">
     <span class="cat-icon">🤝</span>
     <h2>Caste &amp; Community Welfare</h2>
@@ -944,6 +964,7 @@ body.site-edit-mode{padding-bottom:64px;}
 </section>
 
 <section class="scheme-category" id="students">
+  <img class="scheme-category-banner" src="images/schemes/category-students.jpg" alt="Students studying, representing education and scholarship schemes">
   <div class="scheme-category-head">
     <span class="cat-icon">🎓</span>
     <h2>Students &amp; Education</h2>
@@ -982,6 +1003,7 @@ body.site-edit-mode{padding-bottom:64px;}
 </section>
 
 <section class="scheme-category" id="income">
+  <img class="scheme-category-banner" src="images/schemes/category-income.jpg" alt="A home and family, representing housing and health schemes">
   <div class="scheme-category-head">
     <span class="cat-icon">🏠</span>
     <h2>Income-Based — Housing &amp; Health</h2>
@@ -1013,6 +1035,7 @@ body.site-edit-mode{padding-bottom:64px;}
 </section>
 
 <section class="scheme-category" id="age">
+  <img class="scheme-category-banner" src="images/schemes/category-age.jpg" alt="A senior citizen and a young person together, representing age-based schemes">
   <div class="scheme-category-head">
     <span class="cat-icon">🧓</span>
     <h2>Age-Based — Senior Citizens &amp; Youth</h2>
