@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Government Schemes — Bhargavi Housing Society</title>
+<title>About Us — Bhargavi Housing Society</title>
 <link rel="icon" href="images/branding/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -771,71 +771,49 @@ body.site-edit-mode{padding-bottom:64px;}
 
 
 /* =====================================================
-   GOVERNMENT SCHEMES PAGE — category sections + scheme cards
+   ABOUT PAGE — hero with real photo, story, stats band,
+   and the Managing Committee grid
    ===================================================== */
-.schemes-hero{background:var(--navy-950);color:#fff;padding:4.5rem 1.5rem 3.5rem;}
-.schemes-hero-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:3rem;}
-.schemes-hero-text{flex:1 1 480px;min-width:0;}
-.schemes-hero-img{
-  flex:1 1 380px;max-width:440px;border-radius:var(--radius-lg);overflow:hidden;
-  box-shadow:0 20px 46px -14px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);
+.about-hero{
+  position:relative;height:420px;display:flex;align-items:flex-end;
+  background:linear-gradient(180deg, rgba(14,27,50,.25), rgba(14,27,50,.88)), url('images/branding/aerial-view.jpg');
+  background-size:cover;background-position:center;color:#fff;
 }
-.schemes-hero-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.schemes-hero h1{color:#fff;font-size:clamp(1.9rem,3.4vw,2.6rem);}
-.schemes-hero p{color:var(--sky-100);font-size:1.02rem;max-width:640px;}
-@media (max-width:860px){
-  .schemes-hero-inner{flex-direction:column;}
-  .schemes-hero-img{max-width:100%;width:100%;height:220px;}
-}
-.schemes-finder-card{
-  margin-top:1.6rem;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.22);
-  border-radius:var(--radius-lg);padding:1.4rem 1.6rem;display:flex;align-items:center;
-  justify-content:space-between;gap:1.2rem;flex-wrap:wrap;
-}
-.schemes-finder-card h3{color:#fff;font-size:1.05rem;margin-bottom:.2em;}
-.schemes-finder-card p{color:var(--sky-100);margin:0;font-size:.9rem;}
+.about-hero-inner{max-width:1240px;margin:0 auto;padding:0 1.5rem 3rem;width:100%;}
+.about-hero h1{color:#fff;font-size:clamp(2rem,4vw,3rem);margin-bottom:.3em;}
+.about-hero p{color:var(--sky-100);max-width:640px;font-size:1.05rem;}
 
-.schemes-jump{
-  display:flex;gap:.6rem;flex-wrap:wrap;max-width:1240px;margin:-1.6rem auto 0;padding:0 1.5rem;
-  position:relative;z-index:5;
+.about-story{max-width:1240px;margin:0 auto;padding:4.5rem 1.5rem;display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:start;}
+.about-story-copy p{margin-bottom:1.1rem;}
+.about-story-photos{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.about-story-photos img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-card);}
+.about-story-photos img:first-child{grid-row:span 2;height:100%;}
+@media (max-width:900px){
+  .about-story{grid-template-columns:1fr;}
 }
-.schemes-jump a{
-  background:var(--paper-2);box-shadow:var(--shadow-card);border-radius:999px;
-  padding:.6rem 1.2rem;font-size:.84rem;font-weight:600;color:var(--navy-800);
-}
-.schemes-jump a:hover{background:var(--navy-950);color:#fff;}
 
-.scheme-category{padding:4rem 1.5rem;max-width:1240px;margin:0 auto;scroll-margin-top:90px;}
-.scheme-category-banner{
-  width:100%;height:200px;object-fit:cover;border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-card);margin-bottom:1.5rem;
-}
-.scheme-category-head{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem;}
-.scheme-category-head .cat-icon{
-  width:44px;height:44px;border-radius:12px;background:var(--sky-100);color:var(--navy-800);
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
-}
-.scheme-category-head h2{margin:0;font-size:1.5rem;}
-.scheme-category-sub{max-width:640px;margin-bottom:2rem;}
+.about-stats-band{background:var(--navy-950);padding:3rem 1.5rem;}
+.about-stats-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;text-align:center;}
+.about-stats-inner div span{display:block;}
+.about-stats-inner .stat-num{font-family:var(--font-mono);font-weight:700;font-size:2rem;color:var(--gold-500);}
+.about-stats-inner .stat-label{color:var(--sky-100);font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;margin-top:.3em;}
 
-.scheme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.3rem;}
-.scheme-card{
+.committee-section{max-width:1240px;margin:0 auto;padding:4.5rem 1.5rem 5rem;}
+.committee-head{text-align:center;max-width:640px;margin:0 auto 3rem;}
+.committee-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.6rem;}
+.committee-card{
   background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
-  padding:1.5rem;display:flex;flex-direction:column;gap:.7rem;
+  overflow:hidden;text-align:center;transition:transform .25s var(--ease), box-shadow .25s var(--ease);
 }
-.scheme-card-icon{
-  width:40px;height:40px;border-radius:10px;background:#FBEAD9;color:var(--diya-700);
-  display:flex;align-items:center;justify-content:center;
+.committee-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -14px rgba(14,27,50,.28);}
+.committee-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;}
+.committee-card-body{padding:1.1rem 1rem 1.3rem;}
+.committee-card-body h4{font-size:1rem;margin-bottom:.15em;}
+.committee-card-role{
+  display:inline-block;font-family:var(--font-mono);font-size:.72rem;font-weight:600;
+  color:var(--diya-600);background:#FBEAD9;border-radius:999px;padding:.25rem .7rem;margin-bottom:.5em;
 }
-.scheme-card h4{font-size:1.05rem;margin-bottom:.1em;}
-.scheme-card p{font-size:.88rem;margin:0;flex:1 1 auto;}
-.scheme-card .scheme-official{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-400);}
-.scheme-card .btn{margin-top:.3rem;align-self:flex-start;}
-
-.schemes-disclaimer{
-  max-width:900px;margin:0 auto 4rem;padding:1.2rem 1.5rem;background:var(--sky-100);
-  border-radius:var(--radius-md);font-size:.84rem;color:var(--navy-800);
-}
+.committee-card-body p{font-size:.82rem;color:var(--ink-600);margin:0;}
 </style>
 <style>body.site-gate-pending{visibility:hidden;}</style>
 </head>
@@ -860,11 +838,11 @@ body.site-edit-mode{padding-bottom:64px;}
       </span>
     </a>
     <nav class="main-nav">
-      <a href="about.html">About</a>
+      <a href="about.html" class="active">About</a>
       <a href="index.html#dashboard">Dashboard</a>
       <a href="index.html#events">Events</a>
       <div class="nav-item-dropdown" id="governanceNavItem">
-        <a href="index.html#governance" class="nav-dropdown-trigger active" id="governanceNavTrigger" aria-haspopup="true" aria-expanded="false">
+        <a href="index.html#governance" class="nav-dropdown-trigger" id="governanceNavTrigger" aria-haspopup="true" aria-expanded="false">
           Governance
           <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </a>
@@ -897,178 +875,144 @@ body.site-edit-mode{padding-bottom:64px;}
   </div>
 </header>
 
-<section class="schemes-hero">
-  <div class="schemes-hero-inner">
-    <div class="schemes-hero-text">
-      <span class="eyebrow-mono" style="color:var(--gold-500);">GOVERNANCE · FOR RESIDENTS</span>
-      <h1>Government Schemes You May Be Eligible For</h1>
-      <p>A quick, organised starting point to central government welfare schemes — grouped by caste &amp; community, student status, income level, and age. Every "Apply / Learn more" button takes you straight to the real, official government page for that scheme.</p>
-      <div class="schemes-finder-card">
-        <div>
-          <h3>🧭 Not sure which one applies to you?</h3>
-          <p>Use the Government of India's own eligibility finder — answer a few questions about yourself and it matches you to schemes automatically.</p>
-        </div>
-        <a class="btn btn-primary" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Find My Schemes ↗</a>
+<section class="about-hero">
+  <div class="about-hero-inner">
+    <span class="eyebrow-mono" style="color:var(--gold-500);">01 · ABOUT US</span>
+    <h1>Three wings, one community</h1>
+    <p>Bhargavi Housing Society is home to families across Wing A, Wing B and Wing C, built around a shared courtyard that has hosted everything from flag hoistings to festival feasts.</p>
+  </div>
+</section>
+
+<section class="about-story">
+  <div class="about-story-copy">
+    <h2>Our story</h2>
+    <p>Bhargavi Housing Society was registered to give three growing wings of families a shared address and a shared sense of belonging. What started as a housing complex has, over the years, become a genuine neighbourhood — one where residents know each other's names, celebrate every festival on the same courtyard, and look out for one another.</p>
+    <p>Our managing committee — President, Vice President, Secretary, Treasurer and Joint Secretary — works alongside wing representatives and volunteer coordinators to keep the society safe, well-maintained, and social. Whether it's a rangoli competition, a safety workshop, or the Annual General Body Meeting, our courtyard has a way of turning 216 households into one community.</p>
+    <p>Day to day, the committee handles maintenance, security, dues collection and event planning, but the real work of building community happens in the small things — a WhatsApp group that actually helps, a watchman who knows every child's school bus timing, a festival that the whole society turns up for.</p>
+  </div>
+  <div class="about-story-photos">
+    <img src="images/branding/gate-signboard.jpg" alt="Bhargavi Housing Society main gate signboard">
+    <img src="images/gallery/wing-a.jpg" alt="Wing A building exterior">
+    <img src="images/gallery/courtyard-kids.jpg" alt="Children playing in the courtyard">
+  </div>
+</section>
+
+<section class="about-stats-band">
+  <div class="about-stats-inner">
+    <div><span class="stat-num">3</span><span class="stat-label">Wings</span></div>
+    <div><span class="stat-num">216</span><span class="stat-label">Homes</span></div>
+    <div><span class="stat-num">12</span><span class="stat-label">Committee Members</span></div>
+    <div><span class="stat-num">17</span><span class="stat-label">Annual Events</span></div>
+    <div><span class="stat-num">G+3</span><span class="stat-label">Floors per Wing</span></div>
+    <div><span class="stat-num">24×7</span><span class="stat-label">Security &amp; CCTV</span></div>
+  </div>
+</section>
+
+<section class="committee-section">
+  <div class="committee-head">
+    <span class="eyebrow-mono">OUR PEOPLE</span>
+    <h2>Meet the Managing Committee</h2>
+    <p>Elected and volunteer residents who run the day-to-day of the society, from finances to festivals.</p>
+  </div>
+  <div class="committee-grid">
+    <div class="committee-card">
+      <img src="images/committee/president.jpg" alt="Anand Deshmukh, President">
+      <div class="committee-card-body">
+        <h4>Anand Deshmukh</h4>
+        <span class="committee-card-role">President</span>
+        <p>Overall leadership of the society and final approval on major decisions.</p>
       </div>
     </div>
-    <div class="schemes-hero-img">
-      <img src="images/schemes/hero-banner.jpg" alt="Diverse residents accessing government welfare schemes">
+    <div class="committee-card">
+      <img src="images/committee/vice-president.jpg" alt="Sunita Kulkarni, Vice President">
+      <div class="committee-card-body">
+        <h4>Sunita Kulkarni</h4>
+        <span class="committee-card-role">Vice President</span>
+        <p>Supports the President and steps in to chair meetings when needed.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/secretary.jpg" alt="Rajesh Patil, Secretary">
+      <div class="committee-card-body">
+        <h4>Rajesh Patil</h4>
+        <span class="committee-card-role">Secretary</span>
+        <p>Runs day-to-day administration, notices, meetings and resident records.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/treasurer.jpg" alt="Meera Joshi, Treasurer">
+      <div class="committee-card-body">
+        <h4>Meera Joshi</h4>
+        <span class="committee-card-role">Treasurer</span>
+        <p>Manages maintenance dues, the society's accounts, and annual budgeting.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/joint-secretary.jpg" alt="Vikram Shah, Joint Secretary">
+      <div class="committee-card-body">
+        <h4>Vikram Shah</h4>
+        <span class="committee-card-role">Joint Secretary</span>
+        <p>Assists the Secretary and handles vendor &amp; contractor coordination.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/wing-a-rep.jpg" alt="Priya Nair, Wing A Representative">
+      <div class="committee-card-body">
+        <h4>Priya Nair</h4>
+        <span class="committee-card-role">Wing A Representative</span>
+        <p>Point of contact for Wing A residents' concerns and feedback.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/wing-b-rep.jpg" alt="Arjun Rao, Wing B Representative">
+      <div class="committee-card-body">
+        <h4>Arjun Rao</h4>
+        <span class="committee-card-role">Wing B Representative</span>
+        <p>Point of contact for Wing B residents' concerns and feedback.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/wing-c-rep.jpg" alt="Kavita Iyer, Wing C Representative">
+      <div class="committee-card-body">
+        <h4>Kavita Iyer</h4>
+        <span class="committee-card-role">Wing C Representative</span>
+        <p>Point of contact for Wing C residents' concerns and feedback.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/events-head.jpg" alt="Rohan Mehta, Events & Cultural Committee Head">
+      <div class="committee-card-body">
+        <h4>Rohan Mehta</h4>
+        <span class="committee-card-role">Events &amp; Cultural Head</span>
+        <p>Plans and runs festivals, celebrations and community events all year.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/maintenance-head.jpg" alt="Sanjay Pawar, Maintenance & Facilities Head">
+      <div class="committee-card-body">
+        <h4>Sanjay Pawar</h4>
+        <span class="committee-card-role">Maintenance Head</span>
+        <p>Oversees repairs, housekeeping, water supply and common-area upkeep.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/security-coordinator.jpg" alt="Deepa Kamble, Security & Safety Coordinator">
+      <div class="committee-card-body">
+        <h4>Deepa Kamble</h4>
+        <span class="committee-card-role">Security Coordinator</span>
+        <p>Coordinates with the security desk, gate-pass system and CCTV upkeep.</p>
+      </div>
+    </div>
+    <div class="committee-card">
+      <img src="images/committee/welfare-coordinator.jpg" alt="Neha Gokhale, Social Welfare Coordinator">
+      <div class="committee-card-body">
+        <h4>Neha Gokhale</h4>
+        <span class="committee-card-role">Welfare Coordinator</span>
+        <p>Looks after senior-citizen welfare, new-resident onboarding and support.</p>
+      </div>
     </div>
   </div>
 </section>
-
-<nav class="schemes-jump" aria-label="Jump to category">
-  <a href="#caste">🤝 Caste &amp; Community</a>
-  <a href="#students">🎓 Students &amp; Education</a>
-  <a href="#income">🏠 Income — Housing &amp; Health</a>
-  <a href="#age">🧓 Age — Senior Citizens &amp; Youth</a>
-</nav>
-
-<section class="scheme-category" id="caste">
-  <img class="scheme-category-banner" src="images/schemes/category-caste.jpg" alt="Community members supporting one another">
-  <div class="scheme-category-head">
-    <span class="cat-icon">🤝</span>
-    <h2>Caste &amp; Community Welfare</h2>
-  </div>
-  <p class="scheme-category-sub">Scholarships, business support and welfare schemes for SC, ST, OBC and EWS communities. Documents typically needed: caste certificate, income certificate, Aadhaar.</p>
-  <div class="scheme-grid">
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🎓</div>
-      <h4>PM-YASASVI (OBC / EBC / DNT students)</h4>
-      <p>Full financial support for OBC, EBC and De-notified Tribe students for studies beyond Class XII, awarded through a national entrance test.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/schemes/pm-yasasvitcceobcebcdnts" target="_blank" rel="noopener">Learn more ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">📚</div>
-      <h4>Pre &amp; Post-Matric Scholarships (SC/ST/OBC)</h4>
-      <p>Central scholarships covering tuition and related costs for SC, ST and OBC students from Class 1 through post-graduation, income-linked.</p>
-      <span class="scheme-official">scholarships.gov.in — National Scholarship Portal</span>
-      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">💼</div>
-      <h4>Stand-Up India</h4>
-      <p>Bank loans between ₹10 lakh and ₹1 crore for SC/ST and women entrepreneurs setting up a new greenfield enterprise.</p>
-      <span class="scheme-official">standupmitra.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.standupmitra.in" target="_blank" rel="noopener">Learn more ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🏘️</div>
-      <h4>PM-AJAY (Village &amp; community development)</h4>
-      <p>Support for infrastructure, skill development and livelihood projects in villages and areas with a significant SC population.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
-    </div>
-  </div>
-</section>
-
-<section class="scheme-category" id="students">
-  <img class="scheme-category-banner" src="images/schemes/category-students.jpg" alt="Students studying, representing education and scholarship schemes">
-  <div class="scheme-category-head">
-    <span class="cat-icon">🎓</span>
-    <h2>Students &amp; Education</h2>
-  </div>
-  <p class="scheme-category-sub">Scholarships, loans and skill-development support, open to students of every category. Most run through one of two national portals.</p>
-  <div class="scheme-grid">
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🗂️</div>
-      <h4>National Scholarship Portal (NSP)</h4>
-      <p>The single-window portal for most central and many state scholarships — search by class, category and course to see what you qualify for.</p>
-      <span class="scheme-official">scholarships.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🏦</div>
-      <h4>PM-Vidyalakshmi (Education loans)</h4>
-      <p>Collateral-free, guarantor-free education loans up to ₹10 lakh at accredited institutions, with interest subsidy for eligible income groups.</p>
-      <span class="scheme-official">vidyalakshmi.co.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.vidyalakshmi.co.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🏅</div>
-      <h4>National Means-cum-Merit Scholarship</h4>
-      <p>A stipend for meritorious students from economically weaker sections to continue Class 9–12 in a government school.</p>
-      <span class="scheme-official">scholarships.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://scholarships.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🛠️</div>
-      <h4>PM Kaushal Vikas Yojana (Skill training)</h4>
-      <p>Free, short-term skill-training courses for youth, with a certificate and placement assistance on completion.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
-    </div>
-  </div>
-</section>
-
-<section class="scheme-category" id="income">
-  <img class="scheme-category-banner" src="images/schemes/category-income.jpg" alt="A home and family, representing housing and health schemes">
-  <div class="scheme-category-head">
-    <span class="cat-icon">🏠</span>
-    <h2>Income-Based — Housing &amp; Health</h2>
-  </div>
-  <p class="scheme-category-sub">Housing subsidies, health cover and essentials support, with eligibility usually based on your household income category (EWS/LIG/MIG or BPL).</p>
-  <div class="scheme-grid">
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🏡</div>
-      <h4>Pradhan Mantri Awas Yojana (PMAY)</h4>
-      <p>Interest subsidy and financial assistance for buying or building a home, for households in the EWS, LIG and MIG income categories.</p>
-      <span class="scheme-official">pmaymis.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://pmaymis.gov.in" target="_blank" rel="noopener">Apply on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🏥</div>
-      <h4>Ayushman Bharat (PM-JAY)</h4>
-      <p>Free hospitalisation cover up to ₹5 lakh per family per year for eligible lower-income households, at empanelled hospitals nationwide.</p>
-      <span class="scheme-official">pmjay.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://pmjay.gov.in" target="_blank" rel="noopener">Check eligibility ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🔥</div>
-      <h4>PM Ujjwala Yojana</h4>
-      <p>A free LPG gas connection for women from low-income households, to replace unsafe traditional cooking fuel.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
-    </div>
-  </div>
-</section>
-
-<section class="scheme-category" id="age">
-  <img class="scheme-category-banner" src="images/schemes/category-age.jpg" alt="A senior citizen and a young person together, representing age-based schemes">
-  <div class="scheme-category-head">
-    <span class="cat-icon">🧓</span>
-    <h2>Age-Based — Senior Citizens &amp; Youth</h2>
-  </div>
-  <p class="scheme-category-sub">Pension and savings schemes for senior residents, and skill/employment schemes for younger residents just starting out.</p>
-  <div class="scheme-grid">
-    <div class="scheme-card">
-      <div class="scheme-card-icon">💰</div>
-      <h4>Atal Pension Yojana &amp; PM Jan Suraksha schemes</h4>
-      <p>A guaranteed monthly pension after age 60 for anyone aged 18–40 who enrols and contributes, plus low-cost life and accident insurance.</p>
-      <span class="scheme-official">jansuraksha.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.jansuraksha.gov.in" target="_blank" rel="noopener">Learn more ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🧑‍🦳</div>
-      <h4>Indira Gandhi National Old Age Pension</h4>
-      <p>A monthly pension for senior citizens from BPL households, as part of the National Social Assistance Programme.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
-    </div>
-    <div class="scheme-card">
-      <div class="scheme-card-icon">🎒</div>
-      <h4>PM Kaushal Vikas Yojana (Youth)</h4>
-      <p>Skill certification and placement support aimed at young residents entering the workforce for the first time.</p>
-      <span class="scheme-official">myscheme.gov.in</span>
-      <a class="btn btn-outline btn-sm" href="https://www.myscheme.gov.in/find-scheme" target="_blank" rel="noopener">Search on official portal ↗</a>
-    </div>
-  </div>
-</section>
-
-<div class="schemes-disclaimer">
-  <strong>Please note:</strong> this page is a resident convenience, not an official government service. Bhargavi Housing Society doesn't process applications, verify eligibility, or collect any documents for these schemes — every "Apply / Learn more" button opens the real, official government site, where you should always check the current eligibility, required documents and benefit amounts before applying. Applying for every scheme listed here is free — never pay any person or agent claiming to guarantee approval.
-</div>
 
 <footer class="site-footer">
   <div class="footer-bottom">
