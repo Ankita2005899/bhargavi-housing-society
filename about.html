@@ -775,13 +775,13 @@ body.site-edit-mode{padding-bottom:64px;}
    and the Managing Committee grid
    ===================================================== */
 .about-hero{
-  position:relative;height:420px;display:flex;align-items:flex-end;
-  background:linear-gradient(180deg, rgba(14,27,50,.25), rgba(14,27,50,.88)), url('images/branding/aerial-view.jpg');
+  position:relative;height:460px;display:flex;align-items:flex-end;
+  background:linear-gradient(180deg, rgba(14,27,50,.15) 0%, rgba(14,27,50,.55) 55%, rgba(14,27,50,.94) 100%), url('images/branding/aerial-view.jpg');
   background-size:cover;background-position:center;color:#fff;
 }
-.about-hero-inner{max-width:1240px;margin:0 auto;padding:0 1.5rem 3rem;width:100%;}
-.about-hero h1{color:#fff;font-size:clamp(2rem,4vw,3rem);margin-bottom:.3em;}
-.about-hero p{color:var(--sky-100);max-width:640px;font-size:1.05rem;}
+.about-hero-inner{max-width:1240px;margin:0 auto;padding:0 1.5rem 3.4rem;width:100%;}
+.about-hero h1{color:#fff;font-size:clamp(2.1rem,4.4vw,3.2rem);margin-bottom:.35em;text-shadow:0 2px 18px rgba(0,0,0,.35);}
+.about-hero p{color:var(--sky-100);max-width:640px;font-size:1.08rem;text-shadow:0 1px 10px rgba(0,0,0,.3);}
 
 .about-story{max-width:1240px;margin:0 auto;padding:4.5rem 1.5rem;display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:start;}
 .about-story-copy p{margin-bottom:1.1rem;}
@@ -792,28 +792,40 @@ body.site-edit-mode{padding-bottom:64px;}
   .about-story{grid-template-columns:1fr;}
 }
 
-.about-stats-band{background:var(--navy-950);padding:3rem 1.5rem;}
+.about-stats-band{background:var(--navy-950);padding:3.4rem 1.5rem;}
 .about-stats-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;text-align:center;}
+.about-stats-inner div{position:relative;padding:0 .5rem;}
+.about-stats-inner div:not(:last-child)::after{
+  content:"";position:absolute;top:10%;bottom:10%;right:0;width:1px;background:rgba(255,255,255,.14);
+}
 .about-stats-inner div span{display:block;}
-.about-stats-inner .stat-num{font-family:var(--font-mono);font-weight:700;font-size:2rem;color:var(--gold-500);}
-.about-stats-inner .stat-label{color:var(--sky-100);font-size:.82rem;letter-spacing:.03em;text-transform:uppercase;margin-top:.3em;}
+.about-stats-inner .stat-num{font-family:var(--font-mono);font-weight:700;font-size:2.1rem;color:var(--gold-500);}
+.about-stats-inner .stat-label{color:var(--sky-100);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin-top:.35em;}
 
 .committee-section{max-width:1240px;margin:0 auto;padding:4.5rem 1.5rem 5rem;}
-.committee-head{text-align:center;max-width:640px;margin:0 auto 3rem;}
-.committee-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.6rem;}
+.committee-head{text-align:center;max-width:640px;margin:0 auto 3.5rem;}
+.committee-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2rem 1.6rem;}
 .committee-card{
   background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
-  overflow:hidden;text-align:center;transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+  text-align:center;padding:2.2rem 1.3rem 1.7rem;position:relative;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
 }
-.committee-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -14px rgba(14,27,50,.28);}
-.committee-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;}
-.committee-card-body{padding:1.1rem 1rem 1.3rem;}
-.committee-card-body h4{font-size:1rem;margin-bottom:.15em;}
+.committee-card::before{
+  content:"";position:absolute;top:0;left:14%;right:14%;height:4px;border-radius:0 0 6px 6px;
+  background:linear-gradient(90deg, var(--diya-600), var(--gold-500));
+}
+.committee-card:hover{transform:translateY(-6px);box-shadow:0 22px 44px -16px rgba(14,27,50,.3);}
+.committee-card img{
+  width:118px;height:118px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.1rem;
+  border:4px solid #fff;box-shadow:0 8px 20px -6px rgba(14,27,50,.35);
+}
+.committee-card-body h4{font-size:1.05rem;margin-bottom:.3em;}
 .committee-card-role{
-  display:inline-block;font-family:var(--font-mono);font-size:.72rem;font-weight:600;
-  color:var(--diya-600);background:#FBEAD9;border-radius:999px;padding:.25rem .7rem;margin-bottom:.5em;
+  display:inline-block;font-family:var(--font-mono);font-size:.7rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--diya-700);background:#FBEAD9;
+  border-radius:999px;padding:.3rem .8rem;margin-bottom:.8em;
 }
-.committee-card-body p{font-size:.82rem;color:var(--ink-600);margin:0;}
+.committee-card-body p{font-size:.85rem;color:var(--ink-600);margin:0;line-height:1.5;}
 </style>
 <style>body.site-gate-pending{visibility:hidden;}</style>
 </head>
@@ -916,7 +928,7 @@ body.site-edit-mode{padding-bottom:64px;}
   </div>
   <div class="committee-grid">
     <div class="committee-card">
-      <img src="images/committee/president.jpg" alt="Anand Deshmukh, President">
+      <img src="images/committee/president.png" alt="Anand Deshmukh, President">
       <div class="committee-card-body">
         <h4>Anand Deshmukh</h4>
         <span class="committee-card-role">President</span>
@@ -924,7 +936,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/vice-president.jpg" alt="Sunita Kulkarni, Vice President">
+      <img src="images/committee/vice-president.png" alt="Sunita Kulkarni, Vice President">
       <div class="committee-card-body">
         <h4>Sunita Kulkarni</h4>
         <span class="committee-card-role">Vice President</span>
@@ -932,7 +944,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/secretary.jpg" alt="Rajesh Patil, Secretary">
+      <img src="images/committee/secretary.png" alt="Rajesh Patil, Secretary">
       <div class="committee-card-body">
         <h4>Rajesh Patil</h4>
         <span class="committee-card-role">Secretary</span>
@@ -940,7 +952,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/treasurer.jpg" alt="Meera Joshi, Treasurer">
+      <img src="images/committee/treasurer.png" alt="Meera Joshi, Treasurer">
       <div class="committee-card-body">
         <h4>Meera Joshi</h4>
         <span class="committee-card-role">Treasurer</span>
@@ -948,7 +960,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/joint-secretary.jpg" alt="Vikram Shah, Joint Secretary">
+      <img src="images/committee/joint-secretary.png" alt="Vikram Shah, Joint Secretary">
       <div class="committee-card-body">
         <h4>Vikram Shah</h4>
         <span class="committee-card-role">Joint Secretary</span>
@@ -956,7 +968,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/wing-a-rep.jpg" alt="Priya Nair, Wing A Representative">
+      <img src="images/committee/wing-a-rep.png" alt="Priya Nair, Wing A Representative">
       <div class="committee-card-body">
         <h4>Priya Nair</h4>
         <span class="committee-card-role">Wing A Representative</span>
@@ -964,7 +976,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/wing-b-rep.jpg" alt="Arjun Rao, Wing B Representative">
+      <img src="images/committee/wing-b-rep.png" alt="Arjun Rao, Wing B Representative">
       <div class="committee-card-body">
         <h4>Arjun Rao</h4>
         <span class="committee-card-role">Wing B Representative</span>
@@ -972,7 +984,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/wing-c-rep.jpg" alt="Kavita Iyer, Wing C Representative">
+      <img src="images/committee/wing-c-rep.png" alt="Kavita Iyer, Wing C Representative">
       <div class="committee-card-body">
         <h4>Kavita Iyer</h4>
         <span class="committee-card-role">Wing C Representative</span>
@@ -980,7 +992,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/events-head.jpg" alt="Rohan Mehta, Events & Cultural Committee Head">
+      <img src="images/committee/events-head.png" alt="Rohan Mehta, Events & Cultural Committee Head">
       <div class="committee-card-body">
         <h4>Rohan Mehta</h4>
         <span class="committee-card-role">Events &amp; Cultural Head</span>
@@ -988,7 +1000,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/maintenance-head.jpg" alt="Sanjay Pawar, Maintenance & Facilities Head">
+      <img src="images/committee/maintenance-head.png" alt="Sanjay Pawar, Maintenance & Facilities Head">
       <div class="committee-card-body">
         <h4>Sanjay Pawar</h4>
         <span class="committee-card-role">Maintenance Head</span>
@@ -996,7 +1008,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/security-coordinator.jpg" alt="Deepa Kamble, Security & Safety Coordinator">
+      <img src="images/committee/security-coordinator.png" alt="Deepa Kamble, Security & Safety Coordinator">
       <div class="committee-card-body">
         <h4>Deepa Kamble</h4>
         <span class="committee-card-role">Security Coordinator</span>
@@ -1004,7 +1016,7 @@ body.site-edit-mode{padding-bottom:64px;}
       </div>
     </div>
     <div class="committee-card">
-      <img src="images/committee/welfare-coordinator.jpg" alt="Neha Gokhale, Social Welfare Coordinator">
+      <img src="images/committee/welfare-coordinator.png" alt="Neha Gokhale, Social Welfare Coordinator">
       <div class="committee-card-body">
         <h4>Neha Gokhale</h4>
         <span class="committee-card-role">Welfare Coordinator</span>
