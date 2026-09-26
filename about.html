@@ -826,6 +826,31 @@ body.site-edit-mode{padding-bottom:64px;}
   border-radius:999px;padding:.3rem .8rem;margin-bottom:.8em;
 }
 .committee-card-body p{font-size:.85rem;color:var(--ink-600);margin:0;line-height:1.5;}
+
+/* =====================================================
+   ANIMATION LAYER — hero entrance, scroll reveals, stat
+   count-up, staggered committee cards, hover polish
+   ===================================================== */
+@media (prefers-reduced-motion: no-preference){
+  .about-hero{background-attachment:fixed;}
+  @media (max-width:900px){ .about-hero{background-attachment:scroll;} }
+
+  .about-hero-inner > *{opacity:0;transform:translateY(26px);animation:aboutFadeUp .9s var(--ease) forwards;}
+  .about-hero-inner > .eyebrow-mono{animation-delay:.1s;}
+  .about-hero-inner > h1{animation-delay:.3s;}
+  .about-hero-inner > p{animation-delay:.5s;}
+  @keyframes aboutFadeUp{to{opacity:1;transform:translateY(0);}}
+
+  .committee-card img{transition:transform .45s var(--ease), box-shadow .3s ease;}
+  .committee-card:hover img{transform:scale(1.08);}
+  .about-story-photos img{transition:transform .5s var(--ease);}
+  .about-story-photos img:hover{transform:scale(1.03);}
+
+  .stat-num{transition:color .3s ease;}
+}
+@media (prefers-reduced-motion: reduce){
+  .about-hero-inner > *{opacity:1;transform:none;}
+}
 </style>
 <style>body.site-gate-pending{visibility:hidden;}</style>
 </head>
@@ -850,7 +875,22 @@ body.site-edit-mode{padding-bottom:64px;}
       </span>
     </a>
     <nav class="main-nav">
-      <a href="about.html" class="active">About</a>
+      <div class="nav-item-dropdown" id="aboutNavItem">
+        <a href="about.html" class="nav-dropdown-trigger active" id="aboutNavTrigger" aria-haspopup="true" aria-expanded="false">
+          About
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="aboutNavPanel">
+          <div class="nav-dropdown-groups" style="grid-template-columns:1fr;">
+            <div class="nav-dropdown-group">
+              <ul>
+                <li><a href="about.html">About Us &amp; Committee</a></li>
+                <li><a href="facilities.html">Society Life &amp; Services</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <a href="index.html#dashboard">Dashboard</a>
       <a href="index.html#events">Events</a>
       <div class="nav-item-dropdown" id="governanceNavItem">
@@ -896,13 +936,13 @@ body.site-edit-mode{padding-bottom:64px;}
 </section>
 
 <section class="about-story">
-  <div class="about-story-copy">
+  <div class="about-story-copy reveal">
     <h2>Our story</h2>
     <p>Bhargavi Housing Society was registered to give three growing wings of families a shared address and a shared sense of belonging. What started as a housing complex has, over the years, become a genuine neighbourhood — one where residents know each other's names, celebrate every festival on the same courtyard, and look out for one another.</p>
     <p>Our managing committee — President, Vice President, Secretary, Treasurer and Joint Secretary — works alongside wing representatives and volunteer coordinators to keep the society safe, well-maintained, and social. Whether it's a rangoli competition, a safety workshop, or the Annual General Body Meeting, our courtyard has a way of turning 216 households into one community.</p>
     <p>Day to day, the committee handles maintenance, security, dues collection and event planning, but the real work of building community happens in the small things — a WhatsApp group that actually helps, a watchman who knows every child's school bus timing, a festival that the whole society turns up for.</p>
   </div>
-  <div class="about-story-photos">
+  <div class="about-story-photos reveal">
     <img src="images/branding/gate-signboard.jpg" alt="Bhargavi Housing Society main gate signboard">
     <img src="images/gallery/wing-a.jpg" alt="Wing A building exterior">
     <img src="images/gallery/courtyard-kids.jpg" alt="Children playing in the courtyard">
@@ -911,23 +951,23 @@ body.site-edit-mode{padding-bottom:64px;}
 
 <section class="about-stats-band">
   <div class="about-stats-inner">
-    <div><span class="stat-num">3</span><span class="stat-label">Wings</span></div>
-    <div><span class="stat-num">216</span><span class="stat-label">Homes</span></div>
-    <div><span class="stat-num">12</span><span class="stat-label">Committee Members</span></div>
-    <div><span class="stat-num">17</span><span class="stat-label">Annual Events</span></div>
-    <div><span class="stat-num">G+3</span><span class="stat-label">Floors per Wing</span></div>
-    <div><span class="stat-num">24×7</span><span class="stat-label">Security &amp; CCTV</span></div>
+    <div class="reveal"><span class="stat-num" data-target="3">0</span><span class="stat-label">Wings</span></div>
+    <div class="reveal"><span class="stat-num" data-target="216">0</span><span class="stat-label">Homes</span></div>
+    <div class="reveal"><span class="stat-num" data-target="12">0</span><span class="stat-label">Committee Members</span></div>
+    <div class="reveal"><span class="stat-num" data-target="17">0</span><span class="stat-label">Annual Events</span></div>
+    <div class="reveal"><span class="stat-num">G+3</span><span class="stat-label">Floors per Wing</span></div>
+    <div class="reveal"><span class="stat-num">24×7</span><span class="stat-label">Security &amp; CCTV</span></div>
   </div>
 </section>
 
 <section class="committee-section">
-  <div class="committee-head">
+  <div class="committee-head reveal">
     <span class="eyebrow-mono">OUR PEOPLE</span>
     <h2>Meet the Managing Committee</h2>
     <p>Elected and volunteer residents who run the day-to-day of the society, from finances to festivals.</p>
   </div>
   <div class="committee-grid">
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/president.png" alt="Anand Deshmukh, President">
       <div class="committee-card-body">
         <h4>Anand Deshmukh</h4>
@@ -935,7 +975,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Overall leadership of the society and final approval on major decisions.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/vice-president.png" alt="Sunita Kulkarni, Vice President">
       <div class="committee-card-body">
         <h4>Sunita Kulkarni</h4>
@@ -943,7 +983,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Supports the President and steps in to chair meetings when needed.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/secretary.png" alt="Rajesh Patil, Secretary">
       <div class="committee-card-body">
         <h4>Rajesh Patil</h4>
@@ -951,7 +991,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Runs day-to-day administration, notices, meetings and resident records.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/treasurer.png" alt="Meera Joshi, Treasurer">
       <div class="committee-card-body">
         <h4>Meera Joshi</h4>
@@ -959,7 +999,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Manages maintenance dues, the society's accounts, and annual budgeting.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/joint-secretary.png" alt="Vikram Shah, Joint Secretary">
       <div class="committee-card-body">
         <h4>Vikram Shah</h4>
@@ -967,7 +1007,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Assists the Secretary and handles vendor &amp; contractor coordination.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/wing-a-rep.png" alt="Priya Nair, Wing A Representative">
       <div class="committee-card-body">
         <h4>Priya Nair</h4>
@@ -975,7 +1015,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Point of contact for Wing A residents' concerns and feedback.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/wing-b-rep.png" alt="Arjun Rao, Wing B Representative">
       <div class="committee-card-body">
         <h4>Arjun Rao</h4>
@@ -983,7 +1023,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Point of contact for Wing B residents' concerns and feedback.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/wing-c-rep.png" alt="Kavita Iyer, Wing C Representative">
       <div class="committee-card-body">
         <h4>Kavita Iyer</h4>
@@ -991,7 +1031,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Point of contact for Wing C residents' concerns and feedback.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/events-head.png" alt="Rohan Mehta, Events & Cultural Committee Head">
       <div class="committee-card-body">
         <h4>Rohan Mehta</h4>
@@ -999,7 +1039,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Plans and runs festivals, celebrations and community events all year.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/maintenance-head.png" alt="Sanjay Pawar, Maintenance & Facilities Head">
       <div class="committee-card-body">
         <h4>Sanjay Pawar</h4>
@@ -1007,7 +1047,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Oversees repairs, housekeeping, water supply and common-area upkeep.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/security-coordinator.png" alt="Deepa Kamble, Security & Safety Coordinator">
       <div class="committee-card-body">
         <h4>Deepa Kamble</h4>
@@ -1015,7 +1055,7 @@ body.site-edit-mode{padding-bottom:64px;}
         <p>Coordinates with the security desk, gate-pass system and CCTV upkeep.</p>
       </div>
     </div>
-    <div class="committee-card">
+    <div class="committee-card reveal">
       <img src="images/committee/welfare-coordinator.png" alt="Neha Gokhale, Social Welfare Coordinator">
       <div class="committee-card-body">
         <h4>Neha Gokhale</h4>
@@ -1099,7 +1139,24 @@ body.site-edit-mode{padding-bottom:64px;}
       const session = await gateAndInitHeader();
       if (!session) return;
 
-      /* ---------- Governance nav dropdown (header) ---------- */
+      /* ---------- Nav dropdown wiring, reused for "About" and "Governance" ---------- */
+      function wireNavDropdown(itemId, triggerId) {
+        const navItem = document.getElementById(itemId);
+        const trigger = document.getElementById(triggerId);
+        if (!navItem || !trigger) return;
+        let hoverTimer = null;
+        const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+        const closeDropdown = () => { navItem.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+        navItem.addEventListener('mouseenter', () => { clearTimeout(hoverTimer); openDropdown(); });
+        navItem.addEventListener('mouseleave', () => { hoverTimer = setTimeout(closeDropdown, 150); });
+        trigger.addEventListener('click', (e) => {
+          if (!navItem.classList.contains('open')) { e.preventDefault(); openDropdown(); }
+          else { closeDropdown(); }
+        });
+        trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+        document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
+      }
+      wireNavDropdown('aboutNavItem', 'aboutNavTrigger');
       (function initGovernanceNav() {
         const navItem = document.getElementById('governanceNavItem');
         const trigger = document.getElementById('governanceNavTrigger');
@@ -1116,6 +1173,49 @@ body.site-edit-mode{padding-bottom:64px;}
         trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
         document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
       })();
+
+      /* ---------- scroll reveals: fade + slide up as sections enter view ---------- */
+      const revealEls = document.querySelectorAll('.reveal');
+      // Stagger the committee cards so they cascade in one after another
+      // instead of all popping in at once.
+      document.querySelectorAll('.committee-card').forEach((card, i) => {
+        card.style.transitionDelay = `${Math.min(i, 7) * 70}ms`;
+      });
+
+      const revealIO = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            revealIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      revealEls.forEach(el => revealIO.observe(el));
+
+      /* ---------- count-up animation for the stats band ---------- */
+      function animateCount(el) {
+        const target = parseInt(el.dataset.target, 10);
+        if (!Number.isFinite(target)) return;
+        const duration = 1100;
+        const start = performance.now();
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+          el.textContent = Math.round(target * eased).toLocaleString('en-IN');
+          if (progress < 1) requestAnimationFrame(tick);
+          else el.textContent = target.toLocaleString('en-IN');
+        }
+        requestAnimationFrame(tick);
+      }
+      const statIO = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            statIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.6 });
+      document.querySelectorAll('.stat-num[data-target]').forEach(el => statIO.observe(el));
     });
 
 })();

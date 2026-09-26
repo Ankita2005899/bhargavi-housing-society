@@ -1210,7 +1210,22 @@ body.site-edit-mode{padding-bottom:64px;}
     </a>
 
     <nav class="main-nav" id="mainNav">
-      <a href="about.html">About</a>
+      <div class="nav-item-dropdown" id="aboutNavItem">
+        <a href="about.html" class="nav-dropdown-trigger" id="aboutNavTrigger" aria-haspopup="true" aria-expanded="false">
+          About
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="aboutNavPanel">
+          <div class="nav-dropdown-groups" style="grid-template-columns:1fr;">
+            <div class="nav-dropdown-group">
+              <ul>
+                <li><a href="about.html">About Us &amp; Committee</a></li>
+                <li><a href="facilities.html">Society Life &amp; Services</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <a href="#dashboard">Dashboard</a>
       <div class="nav-item-dropdown" id="eventsNavItem">
         <a href="#events" class="nav-dropdown-trigger" id="eventsNavTrigger" aria-haspopup="true" aria-expanded="false">
@@ -1270,6 +1285,7 @@ body.site-edit-mode{padding-bottom:64px;}
   </div>
   <nav class="slide-menu-links">
     <a href="about.html">About the Society</a>
+    <a href="facilities.html">Society Life &amp; Services</a>
     <a href="#dashboard">Resident Dashboard</a>
     <div class="slide-menu-events" id="slideMenuEvents">
       <button type="button" class="slide-menu-events-trigger" id="slideMenuEventsTrigger">
@@ -1784,6 +1800,7 @@ body.site-edit-mode{padding-bottom:64px;}
     <div class="footer-col">
       <h5>Explore</h5>
       <a href="about.html">About</a>
+      <a href="facilities.html">Society Life &amp; Services</a>
       <a href="#dashboard">Dashboard</a>
       <a href="#events">Events</a>
       <a href="#governance">Governance</a>
@@ -2631,12 +2648,12 @@ body.site-edit-mode{padding-bottom:64px;}
         }
       })();
 
-      /* ---------- Governance nav dropdown (header) — same hover/click
-         pattern as Events, but a fixed, hand-written list since it's just
-         two links plus the four Government Schemes categories. ---------- */
-      (function initGovernanceNav() {
-        const navItem = document.getElementById('governanceNavItem');
-        const trigger = document.getElementById('governanceNavTrigger');
+      /* ---------- Nav dropdown wiring — same hover/click pattern reused
+         for both "About" and "Governance", since both are just fixed,
+         hand-written lists rather than data-driven like Events. ---------- */
+      function wireNavDropdown(itemId, triggerId) {
+        const navItem = document.getElementById(itemId);
+        const trigger = document.getElementById(triggerId);
         if (!navItem || !trigger) return;
         let hoverTimer = null;
         const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
@@ -2650,7 +2667,9 @@ body.site-edit-mode{padding-bottom:64px;}
         });
         trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
         document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
-      })();
+      }
+      wireNavDropdown('aboutNavItem', 'aboutNavTrigger');
+      wireNavDropdown('governanceNavItem', 'governanceNavTrigger');
 
       /* ---------- account state (login/signup vs. logged-in pill) ---------- */
       initAccountMenu();

@@ -793,7 +793,22 @@ body.site-edit-mode{padding-bottom:64px;}
       </span>
     </a>
     <nav class="main-nav">
-      <a href="about.html">About</a>
+      <div class="nav-item-dropdown" id="aboutNavItem">
+        <a href="about.html" class="nav-dropdown-trigger" id="aboutNavTrigger" aria-haspopup="true" aria-expanded="false">
+          About
+          <svg class="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+        <div class="nav-dropdown-panel" id="aboutNavPanel">
+          <div class="nav-dropdown-groups" style="grid-template-columns:1fr;">
+            <div class="nav-dropdown-group">
+              <ul>
+                <li><a href="about.html">About Us &amp; Committee</a></li>
+                <li><a href="facilities.html">Society Life &amp; Services</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <a href="index.html#dashboard">Dashboard</a>
       <div class="nav-item-dropdown" id="eventsNavItem">
         <a href="index.html#events" class="nav-dropdown-trigger active" id="eventsNavTrigger" aria-haspopup="true" aria-expanded="false">
@@ -1198,10 +1213,10 @@ body.site-edit-mode{padding-bottom:64px;}
         }
       })();
 
-      /* ---------- Governance nav dropdown (header) — fixed, hand-written list ---------- */
-      (function initGovernanceNav() {
-        const navItem = document.getElementById('governanceNavItem');
-        const trigger = document.getElementById('governanceNavTrigger');
+      /* ---------- Nav dropdown wiring, reused for "About" and "Governance" ---------- */
+      function wireNavDropdown(itemId, triggerId) {
+        const navItem = document.getElementById(itemId);
+        const trigger = document.getElementById(triggerId);
         if (!navItem || !trigger) return;
         let hoverTimer = null;
         const openDropdown = () => { navItem.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
@@ -1214,7 +1229,9 @@ body.site-edit-mode{padding-bottom:64px;}
         });
         trigger.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
         document.addEventListener('click', (e) => { if (!navItem.contains(e.target)) closeDropdown(); });
-      })();
+      }
+      wireNavDropdown('aboutNavItem', 'aboutNavTrigger');
+      wireNavDropdown('governanceNavItem', 'governanceNavTrigger');
 
       const id = new URLSearchParams(window.location.search).get('id');
       const item = SITE_CONTENT.events.find(e => e.id === id);
