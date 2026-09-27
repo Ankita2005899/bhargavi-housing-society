@@ -1108,21 +1108,30 @@ body.site-edit-mode{padding-bottom:64px;}
   .gov-doc-spotlight-arrow{margin-left:calc(72px + 1.1rem);}
 }
 
-/* ---------- colourful detail banner (event detail panel) ---------- */
+/* ---------- detail banner (event detail panel) — kept in the same
+   white-card + thin accent-bar language as the compact card above it,
+   instead of a full-bleed saturated block that clashed with the rest
+   of the site's softer look ---------- */
 .inline-detail-banner{
-  position:relative;overflow:hidden;margin:-1.5rem -1.7rem 1.3rem;padding:1.7rem 1.7rem 2.1rem;color:#fff;
-  background:linear-gradient(135deg,var(--cat-a,var(--navy-800)),var(--cat-b,var(--navy-950)));
+  position:relative;overflow:hidden;margin:-1.5rem -1.7rem 1.3rem;padding:1.9rem 1.7rem 1.5rem;
+  background:var(--paper-2);border-bottom:1px solid var(--line);
 }
-.inline-detail-banner::before{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.13);top:-75px;right:-45px;}
-.inline-detail-banner::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-60px;left:-30px;}
+.inline-detail-banner::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--cat-a,var(--diya-600)),var(--cat-b,var(--gold-500)));
+}
+.inline-detail-banner::after{display:none;}
 .inline-detail-banner > *{position:relative;}
-.inline-detail-banner .gov-doc-icon{background:rgba(255,255,255,.22);box-shadow:none;}
-.inline-detail-banner h3{color:#fff;margin:.6rem 0 0;padding-right:0;}
+.inline-detail-banner .gov-doc-icon{
+  background:linear-gradient(135deg,var(--cat-a,var(--diya-600)),var(--cat-b,var(--gold-500)));
+  box-shadow:0 10px 24px -8px var(--cat-glow,rgba(193,82,44,.35));
+}
+.inline-detail-banner h3{color:var(--navy-950);margin:.6rem 0 0;padding-right:0;}
 .inline-detail-banner .inline-detail-meta{margin-bottom:0;}
 .inline-detail-banner .category-pill,
-.inline-detail-banner .status-pill{background:rgba(255,255,255,.22)!important;color:#fff!important;}
-.inline-detail-card:has(.inline-detail-banner) .inline-detail-close{background:rgba(255,255,255,.25);color:#fff;}
-.inline-detail-card:has(.inline-detail-banner) .inline-detail-close:hover{background:rgba(255,255,255,.4);color:#fff;}
+.inline-detail-banner .status-pill{background:var(--cat-soft,#F4EEE2)!important;color:var(--cat-dark,var(--diya-600))!important;}
+.inline-detail-card:has(.inline-detail-banner) .inline-detail-close{background:var(--paper);color:var(--ink-600);}
+.inline-detail-card:has(.inline-detail-banner) .inline-detail-close:hover{background:var(--diya-600);color:#fff;}
 
 /* =====================================================
    DETAIL PAGES — event.html / governance.html / notice.html
