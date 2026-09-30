@@ -1256,6 +1256,56 @@ body.site-edit-mode{padding-bottom:64px;}
   .site-header .brand,.site-header .brand-logo,.site-header .brand::before{animation:none;}
 }
 </style>
+<style id="dropdown-fix">
+/* ===== DROPDOWN FIX: panels open cleanly below the taller navbar, neatly arranged ===== */
+.site-header .nav-item-dropdown{position:static;}
+.site-header .main-nav{position:relative;}
+.site-header .nav-dropdown-panel{
+  position:absolute;top:calc(100% + 6px);left:50%;
+  transform:translateX(-50%) translateY(-10px);
+  width:min(880px,calc(100vw - 2.5rem));min-width:0;max-width:none;
+  max-height:calc(100vh - 130px);overflow-y:auto;
+  padding:1.5rem 1.8rem 1.2rem;border-radius:18px;
+  border:1px solid var(--line);border-top:3px solid var(--gold-500);
+  box-shadow:0 28px 60px -16px rgba(8,18,36,.45);
+}
+.site-header .nav-item-dropdown:hover .nav-dropdown-panel,
+.site-header .nav-item-dropdown.open .nav-dropdown-panel{transform:translateX(-50%) translateY(0);}
+.site-header .nav-dropdown-panel::before{display:none;}
+/* invisible bridge so the panel doesn't close while the mouse travels down to it */
+.site-header .nav-dropdown-panel::after{content:"";position:absolute;left:0;right:0;top:-24px;height:24px;}
+.site-header .nav-dropdown-groups{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.4rem 2rem;align-items:start;}
+.site-header .nav-dropdown-group h4{font-size:.78rem;color:var(--diya-600);padding-bottom:.5rem;margin-bottom:.6rem;border-bottom:1px solid var(--line);}
+.site-header .nav-dropdown-group ul{gap:.1rem;}
+.site-header .nav-dropdown-group a{font-size:1rem;padding:.5rem .7rem;border-radius:10px;color:var(--ink-900);}
+.site-header .nav-dropdown-group a:hover{padding-left:1rem;background:var(--sky-100);color:var(--navy-950);}
+.site-header .nav-dropdown-viewall{font-size:.92rem;margin-top:1rem;padding-top:.9rem;}
+/* small About / Governance panels: narrower so they don't look empty */
+#aboutNavPanel{width:min(320px,calc(100vw - 2.5rem));}
+#governanceNavPanel{width:min(640px,calc(100vw - 2.5rem));}
+@media (max-width:1180px){
+  .site-header .nav-dropdown-panel{left:50%;right:auto;transform:translateX(-50%) translateY(-10px);min-width:0;}
+  .site-header .nav-item-dropdown:hover .nav-dropdown-panel,
+  .site-header .nav-item-dropdown.open .nav-dropdown-panel{transform:translateX(-50%) translateY(0);}
+  .site-header .nav-dropdown-groups{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+}
+</style>
+<style id="dropdown-fix-2">
+/* Events panel anchors to the navbar itself so it opens fully BELOW the header line */
+.site-header .header-inner,.site-header .main-nav,.site-header #eventsNavItem{position:static;}
+.site-header #eventsNavPanel{top:calc(100% + 8px);}
+/* About / Governance stay under their own button, offset to clear the taller header */
+.site-header #aboutNavItem,.site-header #governanceNavItem{position:relative;}
+.site-header #aboutNavPanel,.site-header #governanceNavPanel{top:calc(100% + 28px);}
+/* "View all" link was white-on-white and pill-shaped because of .main-nav a */
+.site-header .main-nav .nav-dropdown-viewall{
+  color:var(--diya-600);background:none;border-radius:0;font-weight:700;font-size:.95rem;
+  padding:.9rem 0 .2rem;margin-top:1rem;border-top:1px solid var(--line);text-align:center;display:block;
+}
+.site-header .main-nav .nav-dropdown-viewall:hover{background:none;color:var(--diya-700);text-decoration:underline;}
+.site-header .main-nav .nav-dropdown-group a{border-radius:10px;font-size:1rem;font-weight:500;color:var(--ink-900);}
+.site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
+</style>
 </head>
 <body class="site-gate-pending">
 
