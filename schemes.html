@@ -838,17 +838,77 @@ body.site-edit-mode{padding-bottom:64px;}
 }
 </style>
 <style>body.site-gate-pending{visibility:hidden;}</style>
+
+<style id="navbar-upgrade">
+/* ===== NAVBAR UPGRADE: full-width, larger type, animated professional logo (no ticker) ===== */
+.site-header{background:linear-gradient(180deg,rgba(16,34,63,.97),rgba(22,46,84,.94));box-shadow:0 6px 24px rgba(8,18,36,.28);border-bottom:1px solid rgba(217,164,65,.28);}
+.site-header .header-inner{max-width:none;width:100%;padding:.85rem clamp(1.25rem,3.2vw,3.5rem);gap:2rem;}
+
+/* --- logo badge --- */
+.site-header .brand{gap:1rem;position:relative;text-decoration:none;flex-shrink:0;animation:brandIn .9s var(--ease) both;}
+.site-header .brand-logo{
+  width:60px;height:60px;border-radius:16px;object-fit:cover;background:#fff;padding:3px;
+  border:2px solid var(--gold-500);
+  box-shadow:0 0 0 4px rgba(217,164,65,.16),0 8px 22px rgba(0,0,0,.35);
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-radius .45s var(--ease);
+  animation:logoGlow 3.6s ease-in-out infinite;
+}
+.site-header .brand::before{ /* soft shine sweep across the logo */
+  content:"";position:absolute;left:0;top:0;width:60px;height:60px;border-radius:16px;pointer-events:none;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);
+  background-size:250% 100%;background-position:150% 0;animation:logoShine 4.5s ease-in-out 1.2s infinite;
+  mix-blend-mode:overlay;z-index:2;
+}
+.site-header .brand:hover .brand-logo{transform:scale(1.09) rotate(-4deg);border-radius:20px;
+  box-shadow:0 0 0 6px rgba(217,164,65,.28),0 12px 30px rgba(0,0,0,.45);}
+.site-header .brand:active .brand-logo,
+.site-header .brand.brand-clicked .brand-logo{animation:logoPop .5s var(--ease);}
+.site-header .brand-text strong{font-size:1.4rem;letter-spacing:.005em;font-weight:700;
+  background:linear-gradient(90deg,#fff 0%,#fff 60%,#F3D9A0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.site-header .brand-text em{font-size:.78rem;letter-spacing:.07em;opacity:.9;color:#F3D9A0;margin-top:.15rem;}
+.site-header .brand-text::after{content:"";display:block;height:2px;width:0;margin-top:.3rem;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold-500),transparent);transition:width .5s var(--ease);}
+.site-header .brand:hover .brand-text::after{width:100%;}
+
+@keyframes brandIn{from{opacity:0;transform:translateX(-22px) scale(.92);}to{opacity:1;transform:none;}}
+@keyframes logoGlow{
+  0%,100%{box-shadow:0 0 0 4px rgba(217,164,65,.14),0 8px 22px rgba(0,0,0,.35);}
+  50%{box-shadow:0 0 0 8px rgba(217,164,65,.26),0 10px 28px rgba(217,164,65,.30);}
+}
+@keyframes logoShine{0%{background-position:150% 0;}45%,100%{background-position:-50% 0;}}
+@keyframes logoPop{0%{transform:scale(1);}35%{transform:scale(.86) rotate(-6deg);}70%{transform:scale(1.14) rotate(5deg);}100%{transform:scale(1);}}
+
+/* --- bigger navigation text --- */
+.site-header .main-nav{gap:.45rem;}
+.site-header .main-nav a{font-size:1.08rem;font-weight:600;padding:.65rem 1.15rem;letter-spacing:.01em;}
+.site-header .nav-dropdown-caret{width:11px;height:11px;}
+.site-header .header-auth{gap:.8rem;}
+.site-header .header-auth .btn{font-size:1rem;padding:.65em 1.2em;font-weight:600;}
+.site-header .hamburger{width:52px;height:48px;border-radius:12px;gap:6px;}
+.site-header .hamburger span{width:24px;height:2.5px;}
+
+@media (max-width:1280px){
+  .site-header .header-inner{gap:1.2rem;}
+  .site-header .main-nav a{font-size:1rem;padding:.6rem .85rem;}
+  .site-header .brand-text strong{font-size:1.25rem;}
+}
+@media (max-width:1024px){
+  .site-header .brand-text em{display:none;}
+  .site-header .main-nav a{font-size:.95rem;padding:.55rem .7rem;}
+}
+@media (max-width:760px){
+  .site-header .header-inner{padding:.7rem 1rem;}
+  .site-header .brand-logo,.site-header .brand::before{width:48px;height:48px;}
+  .site-header .brand-text strong{font-size:1.05rem;}
+  .site-header .header-auth .btn{font-size:.82rem;padding:.55em .9em;}
+  .site-header .hamburger{width:44px;height:42px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .site-header .brand,.site-header .brand-logo,.site-header .brand::before{animation:none;}
+}
+</style>
 </head>
 <body class="site-gate-pending">
-
-<div class="ticker-bar">
-  <div class="ticker-track">
-    <span>📌 AGM scheduled — 30th Aug, Community Hall, 6:00 PM</span>
-    <span>💧 Water tank cleaning on 22nd Aug, 10 AM – 1 PM</span>
-    <span>🎉 Ganesh Chaturthi decorations begin 25th Aug — volunteers welcome</span>
-    <span>🛡️ New visitor gate-pass system live from Wing A security desk</span>
-  </div>
-</div>
 
 <header class="site-header">
   <div class="header-inner">
@@ -1179,6 +1239,20 @@ body.site-edit-mode{padding-bottom:64px;}
       wireNavDropdown('governanceNavItem', 'governanceNavTrigger');
     });
 
+})();
+</script>
+
+<script id="brand-click-anim">
+(function(){
+  var b=document.querySelector('.site-header .brand'); if(!b) return;
+  b.addEventListener('click',function(e){
+    b.classList.remove('brand-clicked'); void b.offsetWidth; b.classList.add('brand-clicked');
+    if(e.ctrlKey||e.metaKey||e.shiftKey||e.button===1) return;
+    var href=b.getAttribute('href')||'';
+    if(href==='#top'){ e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); }
+    else if(href && href.charAt(0)!=='#'){ e.preventDefault(); setTimeout(function(){location.href=href;},420); }
+    setTimeout(function(){b.classList.remove('brand-clicked');},520);
+  });
 })();
 </script>
 </body>
