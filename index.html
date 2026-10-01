@@ -1307,6 +1307,44 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
 <link rel="stylesheet" href="layout-fix.css">
+<style id="spotlight-upgrade">
+.sp-head{display:flex;align-items:center;gap:.7rem;margin:2.4rem 0 1.1rem;}
+.sp-head svg{width:1.5rem;height:1.5rem;color:var(--diya-600);transform:rotate(25deg);flex:0 0 auto;}
+.sp-head h3{margin:0;font-size:1.35rem;white-space:nowrap;}
+.sp-head::after{content:"";flex:1;border-top:2px dashed var(--line);}
+.gov-docs-list.single{max-width:none;}
+.gov-docs-list.single .gov-doc-spotlight{max-width:none;padding:0;gap:0;align-items:stretch;cursor:pointer;min-height:190px;
+  background:linear-gradient(100deg,#fff 55%,var(--cat-soft,#FBF1DC));box-shadow:0 14px 36px rgba(14,27,50,.12);}
+.sp-date{flex:0 0 150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;padding:1.4rem 1rem;color:#fff;position:relative;z-index:1;
+  background:linear-gradient(160deg,var(--cat-a,var(--diya-600)),var(--cat-b,var(--diya-700)));}
+.sp-mon{font:700 .95rem var(--font-body);letter-spacing:.14em;text-transform:uppercase;opacity:.9;}
+.sp-day{font:800 3.6rem/1 var(--font-display);display:flex;}
+.sp-day svg{width:2.6rem;height:2.6rem;margin:.5rem 0;}
+.sp-wk{font:600 .85rem var(--font-body);opacity:.9;text-align:center;}
+.gov-docs-list.single .gov-doc-spotlight-body{padding:1.8rem 2rem;align-self:center;}
+.gov-docs-list.single .gov-doc-spotlight-body h4{font-size:2rem;}
+.gov-docs-list.single .gov-doc-spotlight-body p{font-size:1.05rem;display:flex;align-items:center;gap:.4rem;margin:0;}
+.gov-doc-spotlight-body p svg{width:16px;height:16px;flex:0 0 auto;color:var(--cat-b,var(--diya-600));}
+.sp-stub{flex:0 0 clamp(220px,28%,360px);position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:center;padding:1.4rem;border-left:3px dashed rgba(14,27,50,.18);overflow:hidden;}
+.sp-stub::before,.sp-stub::after{content:"";position:absolute;left:-13px;width:23px;height:23px;border-radius:50%;background:var(--paper);}
+.sp-stub::before{top:-12px}.sp-stub::after{bottom:-12px}
+.sp-stub img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.sp-stub:has(img)::selection{background:transparent}
+.sp-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-62%) rotate(-8deg);color:var(--cat-a,var(--diya-600));opacity:.2;}
+.sp-mark svg{width:120px;height:120px;}
+.sp-stub .gov-doc-spotlight-arrow{position:relative;margin:0;background:var(--cat-a,var(--diya-600));color:#fff;box-shadow:0 8px 20px rgba(14,27,50,.25);}
+.gov-doc-spotlight:hover .sp-stub .gov-doc-spotlight-arrow{background:var(--navy-950);}
+@media (max-width:760px){
+  .gov-docs-list.single .gov-doc-spotlight{flex-wrap:wrap;}
+  .sp-date{flex:1 1 100%;flex-direction:row;gap:.8rem;padding:.9rem}
+  .sp-day{font-size:2.2rem}.sp-day svg{width:1.8rem;height:1.8rem;margin:0}
+  .gov-docs-list.single .gov-doc-spotlight-body{flex:1 1 100%;padding:1.3rem}
+  .gov-docs-list.single .gov-doc-spotlight-body h4{font-size:1.5rem}
+  .sp-stub{flex:1 1 100%;border-left:0;border-top:3px dashed rgba(14,27,50,.18);min-height:90px;justify-content:flex-start}
+  .sp-stub::before,.sp-stub::after{display:none}
+}
+</style>
+
 <style id="governance-upgrade">
 .gov-board{display:grid;grid-template-columns:minmax(260px,.8fr) 2fr;border-radius:26px;overflow:hidden;background:var(--paper-2);border:1px solid var(--line);box-shadow:0 18px 44px rgba(14,27,50,.12);}
 .gov-intro{background:linear-gradient(170deg,var(--navy-900),var(--navy-950));color:#fff;padding:2.2rem 1.8rem;display:flex;flex-direction:column;justify-content:flex-end;gap:.4rem;}
@@ -1888,7 +1926,7 @@ body.site-edit-mode{padding-bottom:64px;}
         </div>
 
         <div class="gov-docs-block reveal" id="secretaryEventsBlock" hidden>
-          <p class="mini-label-mono" style="margin:2rem 0 1rem;">Scheduled by the Secretary's office</p>
+          <div class="sp-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M8 3h8l-1 7 3 3H6l3-3-1-7z"/></svg><h3>Pinned by the Secretary's office</h3></div>
           <div class="gov-docs-list" id="secretaryEventsList"></div>
         </div>
         <div class="inline-detail-panel" id="secretaryEventDetailPanel"></div>
@@ -3452,17 +3490,25 @@ body.site-edit-mode{padding-bottom:64px;}
           const statusClass = ev.status ? `status-${escapeHtml(ev.status.toLowerCase())}` : '';
           const dateLine = escapeHtml([formatDateLong(ev.start_date), ev.location].filter(Boolean).join(' • ')) || 'Date to be announced';
           if (liveEvents.length === 1) {
+            const d = ev.start_date ? new Date(ev.start_date) : null;
+            const ok = d && !isNaN(d);
+            const dateBlock = ok
+              ? `<span class="sp-mon">${d.toLocaleString('en-IN',{month:'short'})}</span><span class="sp-day">${d.getDate()}</span><span class="sp-wk">${d.toLocaleString('en-IN',{weekday:'long'})}</span>`
+              : `<span class="sp-mon">Date</span><span class="sp-day">${icon('calendar', 30)}</span><span class="sp-wk">To be announced</span>`;
             card.innerHTML = `
-              <div class="gov-doc-icon">${icon(theme.icon, 22)}</div>
+              <div class="sp-date">${dateBlock}</div>
               <div class="gov-doc-spotlight-body">
                 <div class="gov-doc-badges">
                   ${ev.category ? `<span class="category-pill">${escapeHtml(ev.category)}</span>` : ''}
                   ${ev.status ? `<span class="status-pill ${statusClass}">${escapeHtml(ev.status)}</span>` : ''}
                 </div>
                 <h4>${escapeHtml(ev.title || 'Untitled event')}</h4>
-                <p>${dateLine}</p>
+                <p>${ev.location ? `${icon('pin', 14)} ${escapeHtml(ev.location)}` : 'Location will be shared by the Secretary'}</p>
               </div>
-              <span class="gov-doc-spotlight-arrow">View details ${icon('chevronRight', 16)}</span>`;
+              <div class="sp-stub">
+                ${ev.image ? `<img src="${ev.image}" alt="">` : `<span class="sp-mark">${icon(theme.icon, 64)}</span>`}
+                <span class="gov-doc-spotlight-arrow">View details ${icon('chevronRight', 16)}</span>
+              </div>`;
           } else {
             card.innerHTML = `
               <div class="gov-doc-icon">${icon(theme.icon, 18)}</div>
