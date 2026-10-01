@@ -1,0 +1,93 @@
+/* =====================================================================
+   layout-fix.css — shared by every page.
+   1) Removes the empty left/right space (full-width layout, small gutter)
+   2) Makes all text larger (everything is sized in rem, so one root size
+      scales the whole site). Change --site-font to tune: 112.5% = 18px.
+   ===================================================================== */
+:root{ --site-gutter: clamp(1rem, 2vw, 2rem); --site-font: 112.5%; }
+html{ font-size: var(--site-font); }
+
+/* ---- full-width content containers ---- */
+.section,
+.about-story,
+.committee-section,
+.fac-gallery-section,
+.fac-services-section,
+.scheme-category,
+.detail-page-main,
+.detail-page-main.has-sidebar,
+.detail-page-main.board-mode,
+.about-hero-inner,
+.fac-hero-inner,
+.schemes-hero-inner,
+.about-stats-inner,
+.schemes-jump,
+.contact-grid,
+.footer-top,
+.footer-bottom,
+.with-rail{
+  max-width: none !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+.section,
+.about-story,
+.committee-section,
+.fac-gallery-section,
+.fac-services-section,
+.scheme-category,
+.detail-page-main,
+.about-hero-inner,
+.fac-hero-inner,
+.schemes-hero-inner,
+.schemes-jump,
+.footer-top,
+.footer-bottom{
+  padding-left: var(--site-gutter) !important;
+  padding-right: var(--site-gutter) !important;
+}
+.contact-section{ padding-left: var(--site-gutter); padding-right: var(--site-gutter); }
+.about-stats-inner{ padding-left: var(--site-gutter); padding-right: var(--site-gutter); }
+
+/* long reading text / banners can use the full width too */
+.detail-body p{ max-width: none !important; }
+.fac-disclaimer,
+.schemes-disclaimer{ max-width: none !important; margin-left: var(--site-gutter); margin-right: var(--site-gutter); }
+
+/* left rail on the home page keeps its width but no longer floats in the middle */
+.left-rail{ padding-left: var(--site-gutter) !important; }
+
+/* secretary dashboard + notice board use the whole width as well */
+.sec-page-wrap{ max-width: 100% !important; padding-left: var(--site-gutter) !important; padding-right: var(--site-gutter) !important; }
+.bb-frame{ max-width: none; }
+
+/* ---- keep the header from overflowing now that text is larger ---- */
+.site-header .header-inner{ gap: 1rem; flex-wrap: wrap; }
+.site-header .brand{ min-width: 0; }
+.site-header .brand-text strong{ font-size: 1.15rem; }
+@media (max-width:1500px){
+  .site-header .main-nav a{ font-size:.95rem; padding:.5rem .7rem; }
+  .site-header .header-auth{ gap:.5rem; }
+  .site-header .header-auth .btn{ font-size:.85rem; padding:.5em .9em; }
+  .site-header .brand-text em{ display:none; }
+}
+@media (max-width:900px){
+  .site-header .header-inner{ padding:.6rem var(--site-gutter); }
+  .site-header .brand-logo{ width:44px; height:44px; }
+  .site-header .brand-text strong{ font-size:.95rem; }
+  .site-header .header-auth .btn{ font-size:.78rem; padding:.45em .75em; }
+  .site-header .header-auth .account-pill{ font-size:.75rem; padding:.35em .7em; }
+}
+@media (max-width:480px){
+  .site-header .header-auth .account-pill{ display:none; }
+  .site-header .brand-text{ max-width: 46vw; }
+}
+
+/* ---- secretary dashboard on small screens ---- */
+.sec-page-header{ flex-wrap: wrap; gap: .6rem; }
+.sec-top-actions{ flex-wrap: wrap; justify-content: flex-end; }
+.sec-tabs{ overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: .3rem; }
+.sec-tab{ white-space: nowrap; flex: 0 0 auto; }
+@media (max-width:640px){
+  .sec-top-actions .btn{ font-size:.75rem !important; padding:.4em .7em !important; }
+}
