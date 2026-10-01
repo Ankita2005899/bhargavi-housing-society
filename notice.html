@@ -6,7 +6,7 @@
 <title>Notice — Bhargavi Housing Society</title>
 <link rel="icon" href="images/branding/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 /* ---- base/variables.css ---- */
 /* =====================================================
@@ -756,6 +756,70 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a{border-radius:10px;font-size:1rem;font-weight:500;color:var(--ink-900);}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
+<style id="blackboard-board">
+.detail-page-main.board-mode{max-width:1080px;padding:2rem 1rem 4rem;}
+.bb-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem;}
+.bb-head h1{margin:0;font-family:var(--font-display);font-size:clamp(1.5rem,3.4vw,2.1rem);color:var(--navy-950);}
+.bb-head p{margin:.2rem 0 0;color:var(--ink-600);font-size:.95rem;}
+.bb-counter{font-family:var(--font-mono);font-size:.8rem;color:var(--ink-600);background:var(--sky-100);padding:.35rem .8rem;border-radius:999px;}
+.bb-frame{position:relative;padding:16px;border-radius:18px;background:linear-gradient(135deg,#8a5a33,#5e3a1d 45%,#7b4e29);box-shadow:0 22px 50px -18px rgba(14,27,50,.55),inset 0 2px 0 rgba(255,255,255,.18);}
+.bb-viewport{position:relative;overflow:hidden;border-radius:8px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
+  background:radial-gradient(ellipse at 20% 15%,rgba(255,255,255,.07),transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(255,255,255,.05),transparent 50%),linear-gradient(160deg,#25443a,#1b3329 60%,#172b22);
+  box-shadow:inset 0 0 60px rgba(0,0,0,.55),inset 0 0 0 2px rgba(0,0,0,.35);}
+.bb-viewport.dragging{cursor:grabbing;}
+.bb-track{display:flex;transition:transform .45s cubic-bezier(.22,.8,.3,1);will-change:transform;}
+.bb-track.no-anim{transition:none;}
+.bb-slide{flex:0 0 100%;min-height:520px;max-height:640px;padding:1.4rem 4.6rem 1.6rem;display:flex;flex-direction:column;color:#f4f3ea;font-family:'Caveat','Segoe Print',cursive;overflow-y:auto;}
+.bb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+.bb-thought{flex:1;border:2px dashed rgba(244,243,234,.45);border-radius:12px;padding:.55rem 1rem .65rem;max-width:calc(100% - 150px);}
+.bb-thought small{display:block;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;color:#f0d98a;text-transform:uppercase;}
+.bb-thought q{display:block;font-size:1.45rem;line-height:1.15;font-weight:500;quotes:none;}
+.bb-date{text-align:center;border:2px solid #f0d98a;border-radius:10px;padding:.3rem .8rem;color:#f0d98a;min-width:112px;transform:rotate(2deg);}
+.bb-date b{display:block;font-size:2.3rem;line-height:1;font-weight:700;}
+.bb-date span{display:block;font-size:1.05rem;}
+.bb-date em{display:block;font-style:normal;font-size:.9rem;opacity:.85;}
+.bb-body{flex:1;margin-top:1rem;}
+.bb-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.3rem;}
+.bb-tag{font-size:1.05rem;border:1.5px solid rgba(244,243,234,.6);border-radius:999px;padding:0 .8rem;}
+.bb-tag.urgent{border-color:#ff9c85;color:#ff9c85;} .bb-tag.important{border-color:#f0d98a;color:#f0d98a;}
+.bb-title{margin:.1rem 0 .3rem;font-size:clamp(2rem,4.5vw,2.8rem);line-height:1.05;font-weight:700;color:#fff;text-decoration:underline wavy rgba(240,217,138,.7);text-underline-offset:7px;text-decoration-thickness:1.5px;}
+.bb-msg{font-size:1.65rem;line-height:1.3;white-space:pre-wrap;word-wrap:break-word;}
+.bb-foot{margin-top:1rem;font-size:1.15rem;color:rgba(244,243,234,.75);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.bb-tray{height:12px;margin:0 22px;border-radius:0 0 8px 8px;background:linear-gradient(#a06b3c,#6d4423);box-shadow:0 8px 14px -6px rgba(0,0,0,.5);position:relative;}
+.bb-tray::before,.bb-tray::after{content:"";position:absolute;top:-6px;height:6px;border-radius:3px;background:#f4f3ea;}
+.bb-tray::before{left:14%;width:34px;} .bb-tray::after{left:calc(14% + 48px);width:22px;background:#f0d98a;}
+.bb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;border:2px solid rgba(244,243,234,.55);background:rgba(14,27,50,.55);color:#f4f3ea;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.bb-nav:hover{background:rgba(14,27,50,.85);} .bb-nav[disabled]{opacity:.25;cursor:default;}
+.bb-nav.prev{left:26px;} .bb-nav.next{right:26px;}
+.bb-hint{margin-top:.9rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.85rem;color:var(--ink-600);}
+.bb-req{align-items:center;justify-content:center;text-align:center;gap:.9rem;}
+.bb-req h2{margin:0;font-size:clamp(2rem,4.5vw,3rem);color:#fff;text-decoration:underline wavy rgba(240,217,138,.7);text-underline-offset:8px;text-decoration-thickness:1.5px;}
+.bb-req p{margin:0;font-size:1.6rem;max-width:560px;line-height:1.25;}
+.bb-chalk-btn{font-family:'Caveat',cursive;font-size:1.7rem;font-weight:700;color:#1b3329;background:#f0d98a;border:none;border-radius:12px;padding:.35rem 1.6rem;cursor:pointer;box-shadow:0 5px 0 #b39a47;}
+.bb-chalk-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b39a47;}
+.bb-mine{width:100%;max-width:560px;text-align:left;font-size:1.25rem;border-top:2px dashed rgba(244,243,234,.35);padding-top:.6rem;}
+.bb-mine div{display:flex;justify-content:space-between;gap:1rem;}
+.bb-st-pending{color:#f0d98a;} .bb-st-approved{color:#9be3a4;} .bb-st-rejected{color:#ff9c85;}
+.bb-empty{align-items:center;justify-content:center;text-align:center;font-size:1.8rem;}
+.rq-overlay{position:fixed;inset:0;z-index:9000;background:rgba(14,27,50,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:14px;}
+.rq-overlay.show{display:flex;}
+.rq-card{background:#fff;border-radius:16px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;padding:1.5rem 1.5rem 1.3rem;position:relative;box-shadow:0 30px 70px -20px rgba(14,27,50,.6);}
+.rq-card h3{margin:0 0 .2rem;font-family:var(--font-display);color:var(--navy-950);}
+.rq-card .rq-sub{margin:0 0 1rem;color:var(--ink-600);font-size:.9rem;}
+.rq-x{position:absolute;top:.7rem;right:.9rem;background:none;border:none;font-size:1.7rem;color:var(--ink-400);cursor:pointer;line-height:1;}
+.rq-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.rq-grid .full{grid-column:1/-1;}
+@media(max-width:560px){.rq-grid{grid-template-columns:1fr;}.bb-slide{padding:1rem 1rem 1.2rem;min-height:560px;}.bb-thought{max-width:100%;}.bb-top{flex-direction:column-reverse;}.bb-nav{display:none;}.bb-frame{padding:10px;}}
+.rq-card label{display:block;font-size:.78rem;font-weight:600;color:var(--ink-600);margin-bottom:.25rem;}
+.rq-card input,.rq-card select,.rq-card textarea{width:100%;box-sizing:border-box;padding:.6rem .75rem;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:.95rem;color:var(--ink-900);background:#fff;}
+.rq-card input:focus,.rq-card select:focus,.rq-card textarea:focus{outline:none;border-color:var(--sky-500);box-shadow:0 0 0 3px var(--sky-100);}
+.rq-card textarea{min-height:90px;resize:vertical;}
+.rq-card input[readonly]{background:var(--paper);color:var(--ink-600);}
+.rq-err{color:#b3261e;font-size:.85rem;min-height:1.1em;margin:.7rem 0 0;}
+.rq-actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;}
+.rq-ok{text-align:center;max-width:400px;}
+.rq-ok .rq-tick{width:64px;height:64px;border-radius:50%;background:#E3F5E7;color:#1c8a3a;margin:0 auto .8rem;display:flex;align-items:center;justify-content:center;font-size:2rem;}
+</style>
 </head>
 <body class="site-gate-pending">
 
@@ -773,7 +837,7 @@ body.site-edit-mode{padding-bottom:64px;}
       <a href="index.html#dashboard">Dashboard</a>
       <a href="index.html#events">Events</a>
       <a href="index.html#governance">Governance</a>
-      <a href="index.html#notices" class="active">Notices</a>
+      <a href="notice.html" class="active">Notices</a>
       <a href="index.html#contact">Contact</a>
     </nav>
     <div class="header-auth" id="headerAuthSlot"></div>
@@ -1048,12 +1112,232 @@ body.site-edit-mode{padding-bottom:64px;}
     }
 
 
+    // ---- Notice Board (blackboard slider + request form) ----
+    const THOUGHTS = [
+      'Small acts of kindness make a big community.', 'A good neighbour is a found treasure.', 'Together we build a home, not just a building.',
+      'Respect costs nothing and means everything.', 'Clean surroundings, clear minds.', 'Be the reason someone smiles today.',
+      'Great things happen when neighbours talk.', 'Discipline is the bridge between goals and success.', 'Start where you are. Use what you have.',
+      'Patience today, peace tomorrow.', 'Unity is strength — together we thrive.', 'Keep your promises, keep your peace.',
+      'A calm word can end a loud argument.', 'Every day is a fresh page. Write kindly.', 'Share what you have; it grows when given.',
+      'Look after the place that looks after you.', 'Courtesy is the key to every door.', 'Today’s effort is tomorrow’s comfort.',
+      'Listen first, then speak.', 'Light a lamp for someone else and your own path brightens.', 'Honesty is the best policy, always.',
+      'Be early, be ready, be helpful.', 'Gratitude turns what we have into enough.', 'One small step daily beats a giant leap once.',
+      'Safe homes begin with watchful neighbours.', 'The best way to predict tomorrow is to care today.', 'Teach children by example, not by order.',
+      'Waste less, share more.', 'A community is only as strong as its smallest voice.', 'Say thank you often — it never gets old.',
+      'Keep learning; wisdom has no age.', 'Where there is cooperation, there is progress.', 'Kind words are free, yet priceless.',
+      'Be punctual to your promises.', 'Plant a tree, grow a legacy.', 'Respect elders, guide the young.',
+      'Hard work quietly done speaks loudest.', 'Peaceful homes make a peaceful society.', 'Look up, smile, greet your neighbour.',
+      'Do your part, and the whole improves.', 'Courage is simply kindness that doesn’t give up.', 'Rules protect everyone, including you.',
+      'Today is a good day to be helpful.', 'Make the common space a shared pride.', 'Think good, speak good, do good.',
+      'Little drops of effort fill the ocean of success.', 'Let your actions say “welcome”.', 'A tidy corner starts with one person.',
+      'Be the change your lane needs.', 'Trust is built one honest day at a time.', 'Celebrate together, support together.',
+      'Stay positive — it is contagious.', 'Mind the noise, keep the peace.', 'The best view is a neighbourhood that cares.',
+      'Gentle words open locked hearts.', 'Do not wait for the perfect moment — create it.', 'Wherever you go, leave it better.',
+      'Smile — it is the shortest distance between two neighbours.', 'Time is precious; spend it with kindness.', 'Choose understanding over being right.'
+    ];
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function keyOfDate(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+    function parseKey(k) { const p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+    function thoughtFor(key) {
+      const d = parseKey(key);
+      const dayNo = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+      return THOUGHTS[((dayNo % THOUGHTS.length) + THOUGHTS.length) % THOUGHTS.length];
+    }
+    function noticeKey(n) {
+      if (n.publish_date) return String(n.publish_date).slice(0, 10);
+      const d = new Date(n.created_at);
+      return isNaN(d) ? keyOfDate(new Date()) : keyOfDate(d);
+    }
+
+    async function renderBoard(session) {
+      const main = document.getElementById('detailMain');
+      main.classList.add('board-mode');
+      document.title = 'Notice Board — Bhargavi Housing Society';
+      const todayKey = keyOfDate(new Date());
+
+      let notices = [];
+      try { notices = await sharedApiCore('/api/notices/active'); } catch (e) { notices = []; }
+      notices = notices.map(n => ({ title: n.title, message: n.message, category: n.category, priority: n.priority,
+        key: noticeKey(n), by: n.created_by, pinned: n.pinned, ts: new Date(n.created_at).getTime() || 0 }));
+      if (!notices.length) {   // nothing posted yet: show the society's standing notices
+        notices = SITE_CONTENT.notices.map(n => {
+          const d = new Date(n.dateFull);
+          return { title: n.teaser, message: n.detail, category: n.category, priority: 'Normal',
+            key: isNaN(d) ? todayKey : keyOfDate(d), by: n.contact, pinned: false, ts: 0 };
+        });
+      }
+      notices.sort((a, b) => b.key.localeCompare(a.key) || b.ts - a.ts);   // newest day first
+
+      function dateBox(key) {
+        const d = parseKey(key);
+        return `<div class="bb-date"><span>${d.toLocaleDateString('en-IN', { weekday: 'long' })}</span><b>${pad2(d.getDate())}</b>
+          <span>${d.toLocaleDateString('en-IN', { month: 'short' })} ${d.getFullYear()}</span>${key === todayKey ? '<em>Today</em>' : ''}</div>`;
+      }
+      function noticeSlide(n) {
+        const pr = String(n.priority || 'Normal').toLowerCase();
+        const by = n.by && String(n.by).indexOf('@') === -1 ? n.by : 'Secretary';
+        return `<section class="bb-slide" aria-label="Notice">
+          <div class="bb-top">
+            <div class="bb-thought"><small>Thought of the day</small><q>${escapeHtml(thoughtFor(n.key))}</q></div>
+            ${dateBox(n.key)}
+          </div>
+          <div class="bb-body">
+            <div class="bb-tags"><span class="bb-tag">${escapeHtml(n.category || 'General')}</span>${pr !== 'normal' ? `<span class="bb-tag ${pr}">${escapeHtml(n.priority)}</span>` : ''}${n.pinned ? '<span class="bb-tag important">Pinned</span>' : ''}</div>
+            <h2 class="bb-title">${escapeHtml(n.title)}</h2>
+            <div class="bb-msg">${escapeHtml(n.message)}</div>
+          </div>
+          <div class="bb-foot"><span>— ${escapeHtml(by)}</span><span>Bhargavi Housing Society</span></div>
+        </section>`;
+      }
+      const requestSlide = `<section class="bb-slide bb-req" aria-label="Request a notice">
+          <div class="bb-top" style="width:100%"><div class="bb-thought"><small>Thought of the day</small><q>${escapeHtml(thoughtFor(todayKey))}</q></div>${dateBox(todayKey)}</div>
+          <h2>Request a Notice</h2>
+          <p>Have something important that everyone should know? Send it to the Secretary and, once approved, it goes up on this board.</p>
+          <button type="button" class="bb-chalk-btn" id="bbOpenReq">✍ Request a notice</button>
+          <div class="bb-mine" id="bbMine" hidden></div>
+        </section>`;
+      const emptySlide = `<section class="bb-slide bb-empty"><div>No notices on the board yet.<br>Swipe right to request one!</div></section>`;
+      const slides = [requestSlide].concat(notices.length ? notices.map(noticeSlide) : [emptySlide]);
+      let index = notices.length ? 1 : 0;
+
+      main.innerHTML = `
+        <div class="bb-head">
+          <div><h1>Society Notice Board</h1><p>Swipe left for earlier notices · swipe right to request a notice.</p></div>
+          <span class="bb-counter" id="bbCounter"></span>
+        </div>
+        <div class="bb-frame">
+          <button class="bb-nav prev" id="bbPrev" aria-label="Previous (towards request)">&#10094;</button>
+          <button class="bb-nav next" id="bbNext" aria-label="Next (earlier notice)">&#10095;</button>
+          <div class="bb-viewport" id="bbViewport"><div class="bb-track" id="bbTrack">${slides.join('')}</div></div>
+        </div>
+        <div class="bb-tray"></div>
+        <div class="bb-hint"><span>&#8592; Swipe right: Request a notice</span><span>Swipe left: earlier notices &#8594;</span></div>
+
+        <div class="rq-overlay" id="rqOverlay"><div class="rq-card" role="dialog" aria-modal="true" aria-labelledby="rqTitle">
+          <button class="rq-x" id="rqClose" aria-label="Close">&times;</button>
+          <h3 id="rqTitle">Request a notice</h3>
+          <p class="rq-sub">Fill in the details. The Secretary will review it and put it on the board on the date you choose.</p>
+          <form id="rqForm" novalidate><div class="rq-grid">
+            <div class="full"><label for="rqTopic">Topic of the notice *</label><input id="rqTopic" maxlength="150" placeholder="e.g. Lift maintenance in Wing B"></div>
+            <div><label for="rqFrom">From (your name) *</label><input id="rqFrom" maxlength="100" placeholder="Your name / committee"></div>
+            <div><label for="rqTo">To (who is it for) *</label>
+              <select id="rqTo"><option>All residents</option><option>Wing A</option><option>Wing B</option><option>Wing C</option><option>Managing Committee</option><option value="__other">Other…</option></select></div>
+            <div class="full" id="rqToOtherWrap" hidden><label for="rqToOther">Specify who *</label><input id="rqToOther" maxlength="100" placeholder="e.g. Ground-floor residents"></div>
+            <div><label for="rqCat">Category</label><select id="rqCat"><option>General</option><option>Maintenance</option><option>Events</option><option>Governance</option><option>Community</option><option>Safety</option><option>Finance</option></select></div>
+            <div><label for="rqPri">Priority</label><select id="rqPri"><option>Normal</option><option>Important</option><option>Urgent</option></select></div>
+            <div class="full"><label for="rqDetails">Notice details *</label><textarea id="rqDetails" maxlength="2000" placeholder="What exactly should residents know?"></textarea></div>
+            <div class="full"><label for="rqReason">Reason / why this is important</label><textarea id="rqReason" maxlength="1000" style="min-height:60px" placeholder="Why does this need to be on the notice board?"></textarea></div>
+            <div><label for="rqDisplay">Show on notice board on *</label><input id="rqDisplay" type="date" min="${todayKey}" value="${todayKey}"></div>
+            <div><label for="rqSubmitted">Submitted to Secretary on</label><input id="rqSubmitted" readonly value="${parseKey(todayKey).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}"></div>
+            <div class="full"><label for="rqContact">Contact (phone / flat no.) — optional</label><input id="rqContact" maxlength="100"></div>
+          </div>
+          <p class="rq-err" id="rqErr" role="alert"></p>
+          <div class="rq-actions"><button type="button" class="btn btn-outline btn-sm" id="rqCancel">Cancel</button><button type="submit" class="btn btn-primary btn-sm" id="rqSubmit">Submit request</button></div>
+          </form></div></div>
+
+        <div class="rq-overlay" id="rqDone"><div class="rq-card rq-ok" role="alertdialog" aria-modal="true">
+          <div class="rq-tick">&#10003;</div><h3>Request submitted</h3>
+          <p class="rq-sub" style="margin-bottom:1.1rem">Your request has been submitted successfully. The Secretary will review it.</p>
+          <button type="button" class="btn btn-primary btn-sm" id="rqDoneOk">OK</button></div></div>`;
+
+      // ---- slider ----
+      const viewport = document.getElementById('bbViewport');
+      const track = document.getElementById('bbTrack');
+      const prev = document.getElementById('bbPrev'), next = document.getElementById('bbNext');
+      const counter = document.getElementById('bbCounter');
+      function update() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+        prev.disabled = index === 0; next.disabled = index === slides.length - 1;
+        counter.textContent = index === 0 ? 'Request a notice' : (notices.length ? `Notice ${index} of ${notices.length}` : 'Notice board');
+      }
+      function go(i) { index = Math.max(0, Math.min(slides.length - 1, i)); update(); }
+      prev.addEventListener('click', () => go(index - 1));
+      next.addEventListener('click', () => go(index + 1));
+      document.addEventListener('keydown', e => {
+        if (document.querySelector('.rq-overlay.show')) return;
+        if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return;
+        if (e.key === 'ArrowLeft') go(index - 1); else if (e.key === 'ArrowRight') go(index + 1);
+      });
+      let startX = null, startY = 0, dx = 0, locked = false;
+      viewport.addEventListener('pointerdown', e => {
+        if (e.target.closest('button, a, input, select, textarea')) return;
+        startX = e.clientX; startY = e.clientY; dx = 0; locked = false;
+      });
+      viewport.addEventListener('pointermove', e => {
+        if (startX === null) return;
+        dx = e.clientX - startX;
+        if (!locked && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - startY)) {
+          locked = true; viewport.classList.add('dragging'); track.classList.add('no-anim');
+          try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+        }
+        if (locked) {
+          let off = dx;
+          if ((index === 0 && dx > 0) || (index === slides.length - 1 && dx < 0)) off = dx * 0.25;   // resistance at the ends
+          track.style.transform = `translateX(calc(-${index * 100}% + ${off}px))`;
+        }
+      });
+      function endDrag() {
+        if (startX === null) return;
+        const moved = dx, wasLocked = locked;
+        startX = null; locked = false; viewport.classList.remove('dragging'); track.classList.remove('no-anim');
+        if (wasLocked && Math.abs(moved) > Math.min(90, viewport.clientWidth * 0.15)) go(moved < 0 ? index + 1 : index - 1);   // left = older, right = request
+        else update();
+      }
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      update();
+
+      // ---- request form ----
+      const overlay = document.getElementById('rqOverlay'), done = document.getElementById('rqDone');
+      const errEl = document.getElementById('rqErr'), form = document.getElementById('rqForm');
+      const toSel = document.getElementById('rqTo'), toWrap = document.getElementById('rqToOtherWrap');
+      function openForm() { errEl.textContent = ''; overlay.classList.add('show'); setTimeout(() => document.getElementById('rqTopic').focus(), 50); }
+      function closeForm() { overlay.classList.remove('show'); }
+      document.getElementById('bbOpenReq').addEventListener('click', openForm);
+      document.getElementById('rqClose').addEventListener('click', closeForm);
+      document.getElementById('rqCancel').addEventListener('click', closeForm);
+      overlay.addEventListener('click', e => { if (e.target === overlay) closeForm(); });
+      toSel.addEventListener('change', () => { toWrap.hidden = toSel.value !== '__other'; });
+      document.getElementById('rqDoneOk').addEventListener('click', () => done.classList.remove('show'));
+      done.addEventListener('click', e => { if (e.target === done) done.classList.remove('show'); });
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const v = id => document.getElementById(id).value.trim();
+        const to = toSel.value === '__other' ? v('rqToOther') : toSel.value;
+        const body = { topic: v('rqTopic'), from_name: v('rqFrom'), to_audience: to, category: v('rqCat'), priority: v('rqPri'),
+          details: v('rqDetails'), reason: v('rqReason'), display_date: v('rqDisplay'), contact: v('rqContact') };
+        if (!body.topic || !body.from_name || !body.to_audience || !body.details) { errEl.textContent = 'Please fill in the topic, from, to and details.'; return; }
+        if (!body.display_date || body.display_date < todayKey) { errEl.textContent = 'Please choose today or a future date for the notice board.'; return; }
+        const btn = document.getElementById('rqSubmit'); btn.disabled = true; errEl.textContent = '';
+        try {
+          await sharedApiCore('/api/notice-requests', { method: 'POST', body });
+          form.reset(); document.getElementById('rqDisplay').value = todayKey; toWrap.hidden = true;
+          closeForm(); done.classList.add('show'); loadMine();
+        } catch (err) { errEl.textContent = err.message; }
+        finally { btn.disabled = false; }
+      });
+
+      async function loadMine() {
+        const box = document.getElementById('bbMine');
+        try {
+          const rows = await sharedApiCore('/api/notice-requests/mine');
+          if (!rows.length) { box.hidden = true; return; }
+          box.hidden = false;
+          box.innerHTML = '<b>My recent requests</b>' + rows.slice(0, 4).map(r =>
+            `<div><span>${escapeHtml(r.topic)}</span><span class="bb-st-${escapeHtml(r.status)}">${escapeHtml(r.status)}</span></div>`).join('');
+        } catch (err) { box.hidden = true; }
+      }
+      loadMine();
+    }
+
     // ---- page script ----
     document.addEventListener('DOMContentLoaded', async () => {
       const session = await gateAndInitHeader();
       if (!session) return;
 
       const id = new URLSearchParams(window.location.search).get('id');
+      if (!id) { await renderBoard(session); return; }
       const item = SITE_CONTENT.notices.find(n => n.id === id);
       const main = document.getElementById('detailMain');
 
@@ -1065,9 +1349,9 @@ body.site-edit-mode{padding-bottom:64px;}
       const related = SITE_CONTENT.notices.filter(n => n.id !== item.id).slice(0, 3);
 
       main.innerHTML = `
-        <a class="detail-back" href="index.html#notices">${icon('chevronLeft', 16)} Back to Notice Board</a>
+        <a class="detail-back" href="notice.html">${icon('chevronLeft', 16)} Back to Notice Board</a>
         <div class="detail-breadcrumb">
-          <a href="index.html">Home</a> <span>/</span> <a href="index.html#notices">Notices</a> <span>/</span> <span>${escapeHtml(item.dateFull)}</span>
+          <a href="index.html">Home</a> <span>/</span> <a href="notice.html">Notices</a> <span>/</span> <span>${escapeHtml(item.dateFull)}</span>
         </div>
         <div class="detail-title-row">
           <span class="tag social">${escapeHtml(item.category)}</span>

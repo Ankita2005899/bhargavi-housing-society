@@ -505,6 +505,7 @@ const noticeModel = {
       LEFT JOIN (SELECT notice_id, COUNT(*) comments FROM notice_comments GROUP BY notice_id) c ON c.notice_id = n.id
       LEFT JOIN notice_reactions r ON r.notice_id = n.id AND r.user_id = $2
       WHERE (n.expires_at IS NULL OR n.expires_at >= CURRENT_DATE)
+        AND (n.publish_date IS NULL OR n.publish_date <= CURRENT_DATE)
         AND (n.target_wing IS NULL OR n.target_wing = '' OR n.target_wing = $1)
       ORDER BY n.pinned DESC, n.created_at DESC
     `, [wing || null, userId || null]);
@@ -514,12 +515,13 @@ const noticeModel = {
     const { rows } = await pool.query('SELECT * FROM notices WHERE id = $1', [id]);
     return rows[0] || null;
   },
-  async create({ title, message, category, priority, target_wing, expires_at, pinned, created_by }) {
+  async create({ title, message, category, priority, target_wing, expires_at, pinned, created_by, publish_date }) {
     const { rows } = await pool.query(
-      `INSERT INTO notices (title, message, category, priority, target_wing, expires_at, pinned, created_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      `INSERT INTO notices (title, message, category, priority, target_wing, expires_at, pinned, created_by, publish_date)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
       [title.trim(), message.trim(), category || 'General', priority || 'Normal',
-       (target_wing || '').trim() || null, expires_at || null, !!pinned, created_by || 'Secretary']
+       (target_wing || '').trim() || null, expires_at || null, !!pinned, created_by || 'Secretary',
+       publish_date || null]
     );
     return rows[0];
   },
@@ -1362,6 +1364,102 @@ const meetingsController = {
   }
 };
 
+const noticeRequestModel = {
+  async create(r) {
+    const { rows } = await pool.query(
+      `INSERT INTO notice_requests (user_id, topic, category, priority, details, reason, from_name, to_audience, contact, display_date)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      [r.user_id || null, r.topic.trim(), r.category || 'General', r.priority || 'Normal', r.details.trim(),
+       (r.reason || '').trim() || null, r.from_name.trim(), r.to_audience.trim(), (r.contact || '').trim() || null, r.display_date]
+    );
+    return rows[0];
+  },
+  async findAll() {
+    const { rows } = await pool.query(
+      `SELECT nr.*, u.email AS submitted_by_email
+       FROM notice_requests nr LEFT JOIN users u ON u.id = nr.user_id
+       ORDER BY (nr.status = 'pending') DESC, nr.submitted_at DESC`
+    );
+    return rows;
+  },
+  async findMine(userId) {
+    const { rows } = await pool.query(
+      'SELECT id, topic, to_audience, display_date, status, submitted_at FROM notice_requests WHERE user_id=$1 ORDER BY submitted_at DESC LIMIT 20', [userId]
+    );
+    return rows;
+  },
+  async findById(id) {
+    const { rows } = await pool.query('SELECT * FROM notice_requests WHERE id=$1', [id]);
+    return rows[0] || null;
+  },
+  async unseenCount() {
+    const { rows } = await pool.query('SELECT COUNT(*)::int AS count FROM notice_requests WHERE seen = false');
+    return rows[0].count;
+  },
+  async markAllSeen() { await pool.query('UPDATE notice_requests SET seen = true WHERE seen = false'); },
+  async decide(id, status, noticeId) {
+    const { rows } = await pool.query(
+      `UPDATE notice_requests SET status=$1, notice_id=$2, seen=true, decided_at=now() WHERE id=$3 RETURNING *`,
+      [status, noticeId || null, id]
+    );
+    return rows[0] || null;
+  },
+  async remove(id) {
+    const { rows } = await pool.query('DELETE FROM notice_requests WHERE id=$1 RETURNING id', [id]);
+    return rows[0] || null;
+  }
+};
+
+const noticeRequestsController = {
+  // POST /api/notice-requests — any logged-in user.
+  async create(req, res) {
+    try {
+      const b = req.body || {};
+      const need = { topic: 'Topic of the notice', details: 'Notice details', from_name: 'From (your name)', to_audience: 'To (who is it for)', display_date: 'Date to show on the notice board' };
+      for (const k of Object.keys(need)) {
+        if (!b[k] || !String(b[k]).trim()) return res.status(400).json({ error: need[k] + ' is required.' });
+      }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(b.display_date))) return res.status(400).json({ error: 'Please choose a valid display date.' });
+      const created = await noticeRequestModel.create({ ...b, user_id: req.session.userId });
+      res.status(201).json({ success: true, id: created.id });
+    } catch (err) { dbError(res, err); }
+  },
+  async mine(req, res) { try { res.json(await noticeRequestModel.findMine(req.session.userId)); } catch (err) { dbError(res, err); } },
+  async list(req, res) { try { res.json(await noticeRequestModel.findAll()); } catch (err) { dbError(res, err); } },
+  async unseenCount(req, res) { try { res.json({ count: await noticeRequestModel.unseenCount() }); } catch (err) { dbError(res, err); } },
+  async markSeen(req, res) { try { await noticeRequestModel.markAllSeen(); res.json({ success: true }); } catch (err) { dbError(res, err); } },
+  // PATCH /api/notice-requests/:id/decision  Body: { decision: 'approve' | 'reject' }
+  async decide(req, res) {
+    try {
+      const { decision } = req.body || {};
+      if (!['approve', 'reject'].includes(decision)) return res.status(400).json({ error: 'Decision must be approve or reject.' });
+      const r = await noticeRequestModel.findById(req.params.id);
+      if (!r) return res.status(404).json({ error: 'Request not found' });
+      if (r.status !== 'pending') return res.status(400).json({ error: 'This request was already ' + r.status + '.' });
+      let noticeId = null;
+      if (decision === 'approve') {
+        const wingMatch = /^wing\s+\S+$/i.test(r.to_audience.trim());
+        const notice = await noticeModel.create({
+          title: r.topic,
+          message: r.details + (r.reason ? '\n\nReason: ' + r.reason : '') + '\n\nFrom: ' + r.from_name + ' — To: ' + r.to_audience,
+          category: r.category, priority: r.priority,
+          target_wing: wingMatch ? r.to_audience.trim() : null,
+          publish_date: r.display_date, created_by: r.from_name
+        });
+        noticeId = notice.id;
+      }
+      res.json(await noticeRequestModel.decide(r.id, decision === 'approve' ? 'approved' : 'rejected', noticeId));
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const d = await noticeRequestModel.remove(req.params.id);
+      if (!d) return res.status(404).json({ error: 'Request not found' });
+      res.json({ success: true });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
 const noticesController = {
   // GET /api/notices — Secretary only: every notice + counts.
   async list(req, res) { try { res.json(await noticeModel.findAllWithStats()); } catch (err) { dbError(res, err); } },
@@ -1739,6 +1837,27 @@ async function migrate() {
       created_by TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`ALTER TABLE notices ADD COLUMN IF NOT EXISTS publish_date DATE;`);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notice_requests (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      topic TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'General',
+      priority TEXT NOT NULL DEFAULT 'Normal',
+      details TEXT NOT NULL,
+      reason TEXT,
+      from_name TEXT NOT NULL,
+      to_audience TEXT NOT NULL,
+      contact TEXT,
+      display_date DATE NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+      seen BOOLEAN NOT NULL DEFAULT false,
+      notice_id INTEGER REFERENCES notices(id) ON DELETE SET NULL,
+      submitted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      decided_at TIMESTAMPTZ
     );
   `);
   await pool.query(`
@@ -2168,6 +2287,16 @@ noticesRouter.post('/:id/comments', requireAuth, noticesController.addComment);
 noticesRouter.put('/:id', requireSecretary, noticesController.update);
 noticesRouter.delete('/:id', requireSecretary, noticesController.remove);
 app.use('/api/notices', noticesRouter);
+
+const noticeRequestsRouter = express.Router();
+noticeRequestsRouter.post('/', requireAuth, noticeRequestsController.create);
+noticeRequestsRouter.get('/mine', requireAuth, noticeRequestsController.mine);
+noticeRequestsRouter.get('/', requireSecretary, noticeRequestsController.list);
+noticeRequestsRouter.get('/unseen-count', requireSecretary, noticeRequestsController.unseenCount);
+noticeRequestsRouter.post('/mark-seen', requireSecretary, noticeRequestsController.markSeen);
+noticeRequestsRouter.patch('/:id/decision', requireSecretary, noticeRequestsController.decide);
+noticeRequestsRouter.delete('/:id', requireSecretary, noticeRequestsController.remove);
+app.use('/api/notice-requests', noticeRequestsRouter);
 
 const eventsRouter = express.Router();
 eventsRouter.get('/', requireSecretary, eventsController.list);
