@@ -1307,6 +1307,47 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
 <link rel="stylesheet" href="layout-fix.css">
+<style id="dashboard-upgrade">
+.dashboard-mock{background:none;padding:0;box-shadow:none;}
+.dash-topbar{margin-bottom:1.2rem;}
+.dash-title{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;}
+.dash-title strong{font:700 1.25rem var(--font-display);color:var(--navy-950);}
+.dash-title span:last-child{font-size:.9rem;color:var(--ink-400);}
+.dash-dot{width:.7rem;height:.7rem;border-radius:50%;background:#2E8B57;box-shadow:0 0 0 5px rgba(46,139,87,.2);}
+.dashboard-mock .dash-body{grid-template-columns:minmax(300px,1fr) 1.7fr;grid-template-rows:repeat(3,auto);gap:1rem;}
+.dashboard-mock .dash-card{background:var(--paper-2);border:1px solid var(--line);border-left:6px solid var(--c,var(--gold-500));border-radius:18px;padding:1.2rem 1.4rem;box-shadow:var(--shadow-card);
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"ic lab btn" "ic h4 btn" "ic note btn";column-gap:1.1rem;align-items:center;transition:transform .25s var(--ease),box-shadow .25s var(--ease);}
+.dashboard-mock .dash-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(14,27,50,.14);}
+.dc-ic{grid-area:ic;width:3.4rem;height:3.4rem;display:grid;place-items:center;font-size:1.7rem;border-radius:16px;background:var(--bg,#FBF1DC);}
+.dashboard-mock .dash-card .mini-label-mono{grid-area:lab;margin:0;color:var(--ink-400);opacity:1;font-size:.78rem;}
+.dashboard-mock .dash-card h4{grid-area:h4;color:var(--navy-950);font-size:1.3rem;margin:.1rem 0;}
+.dashboard-mock .dash-card .dash-note{grid-area:note;color:var(--ink-600);font-size:.92rem;margin:0;}
+.dashboard-mock .dash-card .btn{grid-area:btn;margin-left:1rem;}
+.dashboard-mock .dash-card .btn-outline{border-color:var(--navy-800);color:var(--navy-800);}
+.dashboard-mock .dash-card .btn-outline:hover:not(:disabled){background:var(--navy-800);color:#fff;}
+.dashboard-mock .dash-card .btn:disabled{opacity:.45;cursor:not-allowed;}
+.dash-card:nth-child(2){--c:var(--navy-700);--bg:var(--sky-100)}
+.dash-card:nth-child(3){--c:var(--diya-600);--bg:#FBEAD9}
+.dash-card:nth-child(4){--c:#2E8B57;--bg:#E4F2E7}
+/* featured maintenance card */
+.dashboard-mock .dash-card:first-child{grid-row:1 / 4;grid-template-columns:1fr;grid-template-areas:"ic" "lab" "h4" "note" "btn";align-content:end;row-gap:.3rem;border:0;color:#fff;padding:2rem;min-height:320px;
+  background:radial-gradient(circle at 85% 12%,rgba(217,164,65,.35),transparent 45%),linear-gradient(165deg,var(--navy-800),var(--navy-950));}
+.dash-card:first-child .dc-ic{background:rgba(255,255,255,.14);margin-bottom:auto;width:4rem;height:4rem;font-size:2rem;}
+.dash-card:first-child .mini-label-mono{color:var(--gold-500)!important;font-size:.85rem!important;}
+.dashboard-mock .dash-card:first-child h4{color:#fff;font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.1;}
+.dash-card:first-child .dash-note{color:#D5DCE8!important;font-size:1rem!important;}
+.dashboard-mock .dash-card:first-child .btn{justify-self:start;margin:1rem 0 0;background:var(--gold-500);border-color:var(--gold-500);color:var(--navy-950);}
+.dashboard-mock .dash-card:first-child .btn:hover:not(:disabled){background:#fff;border-color:#fff;color:var(--navy-950);}
+@media (max-width:900px){
+  .dashboard-mock .dash-body{grid-template-columns:1fr;grid-template-rows:none;}
+  .dashboard-mock .dash-card:first-child{grid-row:auto;min-height:240px;}
+}
+@media (max-width:560px){
+  .dashboard-mock .dash-card:not(:first-child){grid-template-columns:auto 1fr;grid-template-areas:"ic lab" "ic h4" "ic note" "btn btn";}
+  .dashboard-mock .dash-card:not(:first-child) .btn{margin:.8rem 0 0;justify-self:start;}
+}
+</style>
+
 <style id="spotlight-upgrade">
 .sp-head{display:flex;align-items:center;gap:.7rem;margin:2.4rem 0 1.1rem;}
 .sp-head svg{width:1.5rem;height:1.5rem;color:var(--diya-600);transform:rotate(25deg);flex:0 0 auto;}
@@ -1685,35 +1726,33 @@ body.site-edit-mode{padding-bottom:64px;}
 
         <div class="dashboard-mock reveal">
           <div class="dash-topbar">
-            <div class="dash-tabs">
-              <span class="dash-tab active">Overview</span>
-              <span class="dash-tab">Payments</span>
-              <span class="dash-tab">Notices</span>
-              <span class="dash-tab">Meetings</span>
-              <span class="dash-tab">Directory</span>
-            </div>
+            <div class="dash-title"><span class="dash-dot"></span><strong>Your home at a glance</strong><span>Live from your resident account</span></div>
             <button class="btn btn-primary btn-sm" id="openMeetingPopupBtn">Scheduled Meeting</button>
           </div>
           <div class="dash-body">
             <div class="dash-card" id="dashCardMaintenance">
+              <span class="dc-ic">💰</span>
               <p class="mini-label-mono">Maintenance</p>
               <h4>Loading…</h4>
               <p class="dash-note">&nbsp;</p>
               <button class="btn btn-outline btn-sm" id="myMaintenanceBtn" disabled>View details</button>
             </div>
             <div class="dash-card" id="dashCardMeeting">
+              <span class="dc-ic">📅</span>
               <p class="mini-label-mono">Upcoming</p>
               <h4>Loading…</h4>
               <p class="dash-note">&nbsp;</p>
               <button class="btn btn-outline btn-sm" id="openMeetingPopupBtn2" disabled>View agenda</button>
             </div>
             <div class="dash-card" id="dashCardNotice">
+              <span class="dc-ic">📌</span>
               <p class="mini-label-mono">Latest notice</p>
               <h4>Loading…</h4>
               <p class="dash-note">&nbsp;</p>
               <button class="btn btn-outline btn-sm" id="dashNoticeBtn" disabled>Read more</button>
             </div>
             <div class="dash-card">
+              <span class="dc-ic">🏛️</span>
               <p class="mini-label-mono">Amenities</p>
               <h4>Community Hall</h4>
               <p class="dash-note">Online booking is coming soon</p>
