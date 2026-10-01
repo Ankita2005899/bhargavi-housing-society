@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bhargavi Housing Society — Community &amp; Home</title>
 <link rel="icon" href="images/branding/logo.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ---- base/variables.css ---- */
 /* =====================================================
@@ -31,9 +29,9 @@
   --ink-400:  #7C8598;
   --line:     #E2E1D9;
 
-  --font-display: "Sora", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-display: "Times New Roman", Times, serif;
+  --font-body: "Times New Roman", Times, serif;
+  --font-mono: "Times New Roman", Times, serif;
 
   --radius-lg: 20px;
   --radius-md: 14px;
@@ -1307,6 +1305,11 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
 <link rel="stylesheet" href="layout-fix.css">
+<style id="events-upgrade">
+.event-detail-close{display:none !important;}
+.events-layout.has-detail .event-detail-panel{flex:0 0 46%;width:46%;}
+</style>
+
 <style id="dashboard-upgrade">
 .dashboard-mock{background:none;padding:0;box-shadow:none;}
 .dash-topbar{margin-bottom:1.2rem;}
@@ -1783,7 +1786,7 @@ body.site-edit-mode{padding-bottom:64px;}
         </div>
 
         <p class="events-carousel-hint">&larr; scroll or drag to explore &rarr;</p>
-        <div class="events-layout" id="eventsLayout">
+        <div class="events-layout has-detail" id="eventsLayout">
         <div class="events-carousel-wrap">
           <button class="carousel-arrow prev" id="eventsPrevBtn" aria-label="Previous event">&#8249;</button>
           <div class="events-grid" id="eventsGrid">
@@ -3193,6 +3196,7 @@ body.site-edit-mode{padding-bottom:64px;}
       const eventsNextBtn = document.getElementById('eventsNextBtn');
       let visibleEventCards = Array.from(document.querySelectorAll('.event-card'));
       let deckIndex = 0;
+      var deckHook;
 
       function renderDeck() {
         visibleEventCards.forEach((card, i) => {
@@ -3209,6 +3213,7 @@ body.site-edit-mode{padding-bottom:64px;}
         if (counterEl) {
           counterEl.textContent = visibleEventCards.length ? `${deckIndex + 1} / ${visibleEventCards.length}` : '';
         }
+        if (typeof deckHook === 'function') deckHook();
       }
       function goToDeckIndex(i) {
         if (!visibleEventCards.length) return;
@@ -3424,21 +3429,28 @@ body.site-edit-mode{padding-bottom:64px;}
             goToDeckIndex(visibleEventCards.indexOf(card));
             return;
           }
-          if (activeEventId === id) { closeEventDetail(); return; }
-          openEventDetail(id);
+          // front card: its detail is already showing
         });
         card.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (activeEventId === id) { closeEventDetail(); return; }
-            openEventDetail(id);
           }
         });
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && activeEventId) closeEventDetail();
-      });
+
+      deckHook = function () {
+        const front = visibleEventCards[deckIndex];
+        const id = front && front.getAttribute('data-id');
+        if (!id || !EVENTS_DETAIL[id]) { closeEventDetail(); return; }
+        if (activeEventId === id) return;
+        activeEventId = id;
+        eventDetailPanel.innerHTML = renderEventDetail(id);
+        eventsLayoutEl.classList.add('has-detail');
+        eventCards.forEach(card => card.classList.toggle('is-active', card === front));
+      };
+      deckHook();
+
 
       /* =====================================================
          LIVE CONTENT — Notices, Governance documents, and

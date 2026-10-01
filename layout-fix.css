@@ -4,7 +4,7 @@
    2) Makes all text larger (everything is sized in rem, so one root size
       scales the whole site). Change --site-font to tune: 112.5% = 18px.
    ===================================================================== */
-:root{ --site-gutter: clamp(1rem, 2vw, 2rem); --site-font: 112.5%; }
+:root{ --site-gutter: clamp(1rem, 2vw, 2rem); --site-font: 118%; }
 html{ font-size: var(--site-font); }
 
 /* ---- full-width content containers ---- */
@@ -90,4 +90,9 @@ html{ font-size: var(--site-font); }
 .sec-tab{ white-space: nowrap; flex: 0 0 auto; }
 @media (max-width:640px){
   .sec-top-actions .btn{ font-size:.75rem !important; padding:.4em .7em !important; }
+}
+
+/* ---- one typeface for the whole site: Times New Roman ---- */
+html,body,body *,body *::before,body *::after,button,input,select,textarea{
+  font-family:"Times New Roman", Times, serif !important;
 }
