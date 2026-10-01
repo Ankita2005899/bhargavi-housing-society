@@ -1307,6 +1307,53 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
 <link rel="stylesheet" href="layout-fix.css">
+<style id="home-upgrade">
+/* ===== Home page upgrade: bigger left rail + highlighted points ===== */
+@media (min-width:1081px){ .with-rail{grid-template-columns:380px 1fr !important;} }
+.left-rail{padding:2.6rem 1.4rem 2.6rem var(--site-gutter,1.5rem) !important;gap:1.8rem;top:100px;}
+.rail-slider{border-radius:24px;box-shadow:0 18px 44px rgba(14,27,50,.22);border:3px solid var(--gold-500);}
+.rail-slide img{height:320px;}
+.rail-slide p{padding:2.6rem 1.3rem 1.1rem;font-size:.95rem;line-height:1.45;background:linear-gradient(180deg,transparent,rgba(14,27,50,.96) 70%);}
+.rail-slide p strong{font-size:1.2rem;margin-bottom:.3rem;}
+.rail-dots{padding:.9rem;}
+.rail-dots span{width:9px;height:9px;}
+.rail-dots span.active{width:26px;border-radius:9px;transform:none;}
+.rail-actions{gap:.7rem;}
+.rail-actions .mini-label-mono{font-size:.8rem;color:var(--diya-700);font-weight:600;}
+.rail-btn{display:flex;align-items:center;gap:.9rem;padding:.8rem 1rem;font-size:1rem;font-weight:600;border-radius:14px;border-left:5px solid var(--gold-500);box-shadow:0 2px 8px rgba(14,27,50,.06);}
+.rail-btn .ri{flex:0 0 2.5rem;height:2.5rem;display:grid;place-items:center;font-size:1.3rem;border-radius:12px;background:#FBF1DC;}
+.rail-btn:nth-of-type(2) .ri{background:#FBEAD9}.rail-btn:nth-of-type(3) .ri{background:var(--sky-100)}
+.rail-btn:nth-of-type(4) .ri{background:#E4F2E7}.rail-btn:nth-of-type(5) .ri{background:#F1E9F7}
+.rail-btn::after{content:"›";margin-left:auto;font-size:1.5rem;color:var(--ink-400);transition:transform .2s,color .2s;}
+.rail-btn:hover{background:var(--navy-950);color:#fff;border-color:var(--navy-950);border-left-color:var(--gold-500);}
+.rail-btn:hover::after{color:var(--gold-500);transform:translateX(3px);}
+.rail-btn:focus-visible{outline:3px solid var(--sky-500);outline-offset:2px;}
+
+/* about: stronger heading, bigger facts, taller photos */
+.about-section .section-head{max-width:none;}
+.about-section .section-head h2{font-size:clamp(2.2rem,4vw,3.4rem);line-height:1.05;}
+.about-copy p{font-size:1.05rem;}
+.about-facts{gap:1rem;}
+.about-facts div{background:var(--paper-2);border:1px solid var(--line);border-top:4px solid var(--diya-600);border-radius:12px;padding:.9rem 1.2rem;min-width:9rem;box-shadow:var(--shadow-card);}
+.about-facts div:nth-child(2){border-top-color:var(--gold-500)}.about-facts div:nth-child(3){border-top-color:var(--navy-800)}
+.fact-num-mono{font-size:1.5rem;}
+.about-photos{height:480px;}
+.about-photos .photo-a{height:330px;}.about-photos .photo-b{height:280px;}
+
+/* highlight cards */
+.highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1.1rem;margin-top:3rem;}
+.hl{display:flex;gap:1rem;align-items:flex-start;padding:1.3rem;border-radius:18px;background:var(--paper-2);border:1px solid var(--line);box-shadow:var(--shadow-card);position:relative;overflow:hidden;transition:transform .25s var(--ease),box-shadow .25s var(--ease);}
+.hl::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c);}
+.hl:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(14,27,50,.16);}
+.hl-ic{flex:0 0 3.2rem;height:3.2rem;display:grid;place-items:center;font-size:1.7rem;border-radius:14px;background:var(--bg);}
+.hl h4{margin:0 0 .25rem;font-size:1.1rem;}
+.hl p{margin:0;font-size:.92rem;line-height:1.5;}
+.hl-gold{--c:var(--gold-500);--bg:#FBF1DC}.hl-blue{--c:var(--navy-700);--bg:var(--sky-100)}
+.hl-red{--c:var(--diya-600);--bg:#FBEAD9}.hl-green{--c:#2E8B57;--bg:#E4F2E7}
+@media (max-width:1080px){.rail-slider{min-width:340px}.rail-actions{min-width:340px}.rail-slide img{height:260px}}
+@media (max-width:760px){.about-photos{height:340px}.about-photos .photo-a{height:210px}.about-photos .photo-b{height:180px}}
+</style>
+
 </head>
 <body class="site-gate-pending">
 
@@ -1521,11 +1568,11 @@ body.site-edit-mode{padding-bottom:64px;}
 
       <div class="rail-actions">
         <p class="mini-label-mono">Quick actions</p>
-        <button class="rail-btn" data-toast="Redirecting to maintenance payment portal…">💳 Pay Maintenance</button>
-        <button class="rail-btn" data-toast="Complaint form opened. Our facility team replies within 24 hrs.">🛠️ Raise a Complaint</button>
-        <button class="rail-btn" data-toast="Amenity booking calendar opened for the Community Hall.">🏛️ Book Community Hall</button>
-        <button class="rail-btn" data-toast="Visitor gate-pass request sent to Wing security desk.">🚪 Visitor Gate Pass</button>
-        <button class="rail-btn" data-toast="Opening resident directory (committee members only).">📇 Resident Directory</button>
+        <button class="rail-btn" data-toast="Redirecting to maintenance payment portal…"><span class="ri">💳</span><span class="rl">Pay Maintenance</span></button>
+        <button class="rail-btn" data-toast="Complaint form opened. Our facility team replies within 24 hrs."><span class="ri">🛠️</span><span class="rl">Raise a Complaint</span></button>
+        <button class="rail-btn" data-toast="Amenity booking calendar opened for the Community Hall."><span class="ri">🏛️</span><span class="rl">Book Community Hall</span></button>
+        <button class="rail-btn" data-toast="Visitor gate-pass request sent to Wing security desk."><span class="ri">🚪</span><span class="rl">Visitor Gate Pass</span></button>
+        <button class="rail-btn" data-toast="Opening resident directory (committee members only)."><span class="ri">📇</span><span class="rl">Resident Directory</span></button>
       </div>
     </aside>
 
@@ -1551,6 +1598,13 @@ body.site-edit-mode{padding-bottom:64px;}
             <img src="images/branding/gate-signboard.jpg" alt="Bhargavi Housing Society main gate signboard" class="photo-a">
             <img src="images/gallery/wing-a.jpg" alt="Wing A building exterior" class="photo-b">
           </div>
+        </div>
+      
+        <div class="highlights reveal">
+          <div class="hl hl-gold"><span class="hl-ic">🛡️</span><div><h4>24×7 security</h4><p>Gate guards and CCTV cover every wing entrance, day and night.</p></div></div>
+          <div class="hl hl-blue"><span class="hl-ic">⛲</span><div><h4>One shared courtyard</h4><p>The fountain courtyard is where all three wings meet and celebrate.</p></div></div>
+          <div class="hl hl-red"><span class="hl-ic">🎉</span><div><h4>17 events a year</h4><p>From Republic Day flag hoisting to Diwali nights and Sports Day.</p></div></div>
+          <div class="hl hl-green"><span class="hl-ic">🗳️</span><div><h4>Elected committee</h4><p>12 members, and every resident has a vote at the annual meeting.</p></div></div>
         </div>
       </section>
 
