@@ -1307,6 +1307,31 @@ body.site-edit-mode{padding-bottom:64px;}
 .site-header .main-nav .nav-dropdown-group a:hover{background:var(--sky-100);color:var(--navy-950);}
 </style>
 <link rel="stylesheet" href="layout-fix.css">
+<style id="governance-upgrade">
+.gov-board{display:grid;grid-template-columns:minmax(260px,.8fr) 2fr;border-radius:26px;overflow:hidden;background:var(--paper-2);border:1px solid var(--line);box-shadow:0 18px 44px rgba(14,27,50,.12);}
+.gov-intro{background:linear-gradient(170deg,var(--navy-900),var(--navy-950));color:#fff;padding:2.2rem 1.8rem;display:flex;flex-direction:column;justify-content:flex-end;gap:.4rem;}
+.gov-house{width:100%;max-width:260px;margin-bottom:1.2rem;}
+.gov-intro h3{color:var(--gold-500);font-size:1.6rem;margin:0;}
+.gov-intro p{color:#D5DCE8;font-size:.98rem;margin:0;}
+.gov-list{display:flex;flex-direction:column;}
+.gov-row{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:1.2rem;padding:1.4rem 1.8rem;border-bottom:1px solid var(--line);border-left:6px solid transparent;transition:background .2s,border-color .2s;}
+.gov-row:last-child{border-bottom:0}
+.gov-row:hover,.gov-row:focus-visible{background:#FFF8EA;border-left-color:var(--gold-500);outline:none;}
+.gov-ic{width:3.4rem;height:3.4rem;border-radius:16px;display:grid;place-items:center;background:#FBF1DC;color:var(--gold-600);}
+.gov-row:nth-child(2) .gov-ic{background:#FBEAD9;color:var(--diya-600)}
+.gov-row:nth-child(3) .gov-ic{background:var(--sky-100);color:var(--navy-700)}
+.gov-row:nth-child(4) .gov-ic{background:#E4F2E7;color:#2E8B57}
+.gov-ic svg{width:1.7rem;height:1.7rem;}
+.gov-txt strong{display:block;font-family:var(--font-display);font-size:1.2rem;color:var(--navy-950);}
+.gov-txt span{display:block;font-size:.95rem;color:var(--ink-600);margin-top:.15rem;}
+.gov-plate{font-weight:700;font-size:.8rem;letter-spacing:.04em;color:var(--navy-800);border:2px solid var(--navy-800);border-radius:8px;padding:.15rem .6rem;}
+.gov-go{display:inline-flex;align-items:center;gap:.4em;font-weight:700;font-size:.85rem;color:#fff;background:var(--diya-600);padding:.55em 1.1em;border-radius:999px;transition:transform .2s,background .2s;}
+.gov-go svg{width:14px;height:14px}
+.gov-row:hover .gov-go{background:var(--diya-700);transform:translateX(3px);}
+@media (max-width:900px){.gov-board{grid-template-columns:1fr}.gov-intro{flex-direction:row;flex-wrap:wrap;align-items:center}.gov-house{max-width:150px;margin:0 1rem 0 0}}
+@media (max-width:640px){.gov-row{grid-template-columns:auto 1fr;padding:1.1rem}.gov-plate,.gov-go{grid-column:2;justify-self:start}}
+</style>
+
 <style id="home-upgrade">
 /* ===== Home page upgrade: bigger left rail + highlighted points ===== */
 @media (min-width:1081px){ .with-rail{grid-template-columns:380px 1fr !important;} }
@@ -1879,30 +1904,37 @@ body.site-edit-mode{padding-bottom:64px;}
           <span class="eyebrow-mono">04 · HOW THE SOCIETY IS RUN</span>
           <h2>Governance, in plain terms</h2>
         </div>
-        <div class="gov-grid reveal">
-          <div class="gov-card">
-            <span class="gov-num-mono">AGM</span>
-            <h4>Annual General Body Meeting</h4>
-            <p>Reviews audits, approves budgets, and elects the managing committee.</p>
-            <a class="card-open-btn" href="governance.html?id=agm">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <div class="gov-board reveal">
+          <div class="gov-intro">
+            <svg class="gov-house" viewBox="0 0 240 150" aria-hidden="true"><g fill="none" stroke="#D9A441" stroke-width="2.5" stroke-linejoin="round"><path d="M10 140h220"/><path d="M20 140V70h50v70M20 70l25-18 25 18"/><path d="M95 140V40h50v100M95 40l25-24 25 24"/><path d="M170 140V70h50v70M170 70l25-18 25 18"/></g><g fill="#D9A441" opacity=".85"><rect x="32" y="84" width="9" height="11"/><rect x="49" y="84" width="9" height="11"/><rect x="107" y="54" width="9" height="11"/><rect x="124" y="54" width="9" height="11"/><rect x="107" y="80" width="9" height="11"/><rect x="124" y="80" width="9" height="11"/><rect x="182" y="84" width="9" height="11"/><rect x="199" y="84" width="9" height="11"/><rect x="114" y="116" width="12" height="24" fill="#C1522C"/></g></svg>
+            <h3>216 homes, one say</h3>
+            <p>Every resident is a member. These four decide how Bhargavi runs, from the yearly vote to the daily repairs.</p>
           </div>
-          <div class="gov-card">
-            <span class="gov-num-mono">SGBM</span>
-            <h4>Special General Body Meeting</h4>
-            <p>Called when urgent matters can't wait for the AGM.</p>
-            <a class="card-open-btn" href="governance.html?id=sgbm">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
-          <div class="gov-card">
-            <span class="gov-num-mono">MC</span>
-            <h4>Managing Committee</h4>
-            <p>Runs operations: vendors, staff, maintenance and grievances.</p>
-            <a class="card-open-btn" href="governance.html?id=mc">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          </div>
-          <div class="gov-card">
-            <span class="gov-num-mono">SAW</span>
-            <h4>Safety &amp; Awareness</h4>
-            <p>Workshops on fire safety, waste segregation and security.</p>
-            <a class="card-open-btn" href="governance.html?id=saw">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <div class="gov-list">
+            <a class="gov-row" href="governance.html?id=agm">
+              <span class="gov-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M9 21v-7h6v7"/></svg></span>
+              <span class="gov-txt"><strong>Annual General Body Meeting</strong><span>Reviews audits, approves budgets, and elects the managing committee.</span></span>
+              <span class="gov-plate">AGM</span>
+              <span class="gov-go">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            </a>
+            <a class="gov-row" href="governance.html?id=sgbm">
+              <span class="gov-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l6 4V6L7 10H4zM17 9c1.5 1.5 1.5 4.5 0 6"/></svg></span>
+              <span class="gov-txt"><strong>Special General Body Meeting</strong><span>Called when urgent matters can't wait for the AGM.</span></span>
+              <span class="gov-plate">SGBM</span>
+              <span class="gov-go">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            </a>
+            <a class="gov-row" href="governance.html?id=mc">
+              <span class="gov-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3.5"/><path d="M11 11l9 9M16 16l2-2M18.5 18.5l2-2"/></svg></span>
+              <span class="gov-txt"><strong>Managing Committee</strong><span>Runs operations: vendors, staff, maintenance and grievances.</span></span>
+              <span class="gov-plate">MC</span>
+              <span class="gov-go">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            </a>
+            <a class="gov-row" href="governance.html?id=saw">
+              <span class="gov-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4"/></svg></span>
+              <span class="gov-txt"><strong>Safety &amp; Awareness</strong><span>Workshops on fire safety, waste segregation and security.</span></span>
+              <span class="gov-plate">SAW</span>
+              <span class="gov-go">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            </a>
           </div>
         </div>
 
