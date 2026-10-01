@@ -1858,27 +1858,6 @@ body.site-edit-mode{padding-bottom:64px;}
         <div class="inline-detail-panel" id="governanceDetailPanel"></div>
       </section>
 
-      <!-- ================= NOTICE BOARD ================= -->
-      <section id="notices" class="section notices-section">
-        <div class="section-head reveal">
-          <span class="eyebrow-mono">05 · NOTICE BOARD</span>
-          <h2>Pinned this week</h2>
-        </div>
-        <div class="notice-board reveal" id="noticeBoardList">
-          <div class="notice-empty" id="noticeBoardEmpty" hidden>
-            <span class="notice-empty-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2c-3.3 0-6 2.7-6 6 0 4.2-2 6-2 6h16s-2-1.8-2-6c0-3.3-2.7-6-6-6z"/>
-                <path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/>
-              </svg>
-            </span>
-            <p class="notice-empty-title">No notices posted yet</p>
-            <p class="notice-empty-sub">The Secretary's office will pin updates here — check back soon.</p>
-          </div>
-        </div>
-        <div class="inline-detail-panel" id="noticeDetailPanel"></div>
-      </section>
-
     </div><!-- /content-col -->
   </div><!-- /with-rail -->
 
@@ -3326,46 +3305,6 @@ body.site-edit-mode{padding-bottom:64px;}
         setTimeout(() => { if (!panelEl.classList.contains('show')) panelEl.innerHTML = ''; }, 420);
       }
 
-      /* ---------- Notice Board (fully live — no curated content to preserve) ---------- */
-      const noticeBoardList = document.getElementById('noticeBoardList');
-      const noticeBoardEmpty = document.getElementById('noticeBoardEmpty');
-      const noticeDetailPanel = document.getElementById('noticeDetailPanel');
-      let liveNotices = [];
-
-      async function loadPublicNotices() {
-        try {
-          liveNotices = await api('/api/public/notices');
-        } catch (err) {
-          liveNotices = [];
-        }
-        noticeBoardEmpty.hidden = liveNotices.length > 0;
-        noticeBoardList.querySelectorAll('.pin-note').forEach(el => el.remove());
-        liveNotices.forEach(n => {
-          const el = document.createElement('div');
-          el.className = 'pin-note';
-          const dateLabel = n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }).toUpperCase() : '';
-          el.innerHTML = `
-            <span class="pin-date-mono">${escapeHtml(dateLabel)}</span>
-            <p>${escapeHtml(n.title || 'Notice')}${n.message ? ' — ' + escapeHtml(n.message) : ''}</p>
-            <span class="card-open-btn" data-notice-id="${n.id}">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>`;
-          el.querySelector('.card-open-btn').addEventListener('click', () => openNoticeDetail(n.id));
-          noticeBoardList.appendChild(el);
-        });
-      }
-
-      function openNoticeDetail(id) {
-        const n = liveNotices.find(x => String(x.id) === String(id));
-        if (!n) return;
-        openInlinePanel(noticeDetailPanel, `
-          <h3>${escapeHtml(n.title || 'Notice')}</h3>
-          <div class="inline-detail-meta">
-            ${n.category ? `<span>${escapeHtml(n.category)}</span>` : ''}
-            ${n.priority ? `<span>Priority: ${escapeHtml(n.priority)}</span>` : ''}
-            ${n.target_wing ? `<span>${escapeHtml(n.target_wing)}</span>` : ''}
-          </div>
-          <p class="inline-detail-text">${escapeHtml(n.message || '')}</p>`);
-      }
-
       /* ---------- Governance documents (Secretary uploads, shown below the explainer cards) ---------- */
       const governanceDocsBlock = document.getElementById('governanceDocsBlock');
       const governanceDocsList = document.getElementById('governanceDocsList');
@@ -3535,7 +3474,7 @@ body.site-edit-mode{padding-bottom:64px;}
             noticeCard.querySelector('.dash-note').textContent = preview;
             noticeBtn.disabled = false;
             noticeBtn.addEventListener('click', () => {
-              document.getElementById('notices').scrollIntoView({ behavior: 'smooth', block: 'start' });
+              window.location.href = 'notice.html';
             });
           } else {
             noticeCard.querySelector('h4').textContent = 'No notices yet';
@@ -3548,7 +3487,6 @@ body.site-edit-mode{padding-bottom:64px;}
       }
       renderDashboardCards();
 
-      loadPublicNotices();
       loadPublicGovernance();
       loadPublicEvents();
 

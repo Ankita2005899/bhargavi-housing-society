@@ -1159,13 +1159,13 @@ body.site-edit-mode{padding-bottom:64px;}
       try { notices = await sharedApiCore('/api/notices/active'); } catch (e) { notices = []; }
       notices = notices.map(n => ({ title: n.title, message: n.message, category: n.category, priority: n.priority,
         key: noticeKey(n), by: n.created_by, pinned: n.pinned, ts: new Date(n.created_at).getTime() || 0 }));
-      if (!notices.length) {   // nothing posted yet: show the society's standing notices
-        notices = SITE_CONTENT.notices.map(n => {
-          const d = new Date(n.dateFull);
-          return { title: n.teaser, message: n.detail, category: n.category, priority: 'Normal',
-            key: isNaN(d) ? todayKey : keyOfDate(d), by: n.contact, pinned: false, ts: 0 };
-        });
-      }
+      // Earlier standing notices always stay on the board, behind any newly posted/approved ones.
+      const standing = SITE_CONTENT.notices.map(n => {
+        const d = new Date(n.dateFull);
+        return { title: n.teaser, message: n.detail, category: n.category, priority: 'Normal',
+          key: isNaN(d) ? todayKey : keyOfDate(d), by: n.contact, pinned: false, ts: 0 };
+      });
+      notices = notices.concat(standing);
       notices.sort((a, b) => b.key.localeCompare(a.key) || b.ts - a.ts);   // newest day first
 
       function dateBox(key) {
