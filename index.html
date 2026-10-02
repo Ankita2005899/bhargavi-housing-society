@@ -1675,11 +1675,11 @@ body.site-edit-mode{padding-bottom:64px;}
 
       <div class="rail-actions">
         <p class="mini-label-mono">Quick actions</p>
-        <button class="rail-btn" data-toast="Redirecting to maintenance payment portal…"><span class="ri">💳</span><span class="rl">Pay Maintenance</span></button>
-        <button class="rail-btn" data-toast="Complaint form opened. Our facility team replies within 24 hrs."><span class="ri">🛠️</span><span class="rl">Raise a Complaint</span></button>
-        <button class="rail-btn" data-toast="Amenity booking calendar opened for the Community Hall."><span class="ri">🏛️</span><span class="rl">Book Community Hall</span></button>
-        <button class="rail-btn" data-toast="Visitor gate-pass request sent to Wing security desk."><span class="ri">🚪</span><span class="rl">Visitor Gate Pass</span></button>
-        <button class="rail-btn" data-toast="Opening resident directory (committee members only)."><span class="ri">📇</span><span class="rl">Resident Directory</span></button>
+        <button class="rail-btn" data-qa="maintenance"><span class="ri">💳</span><span class="rl">Pay Maintenance</span></button>
+        <button class="rail-btn" data-qa="complaint"><span class="ri">🛠️</span><span class="rl">Raise a Complaint</span></button>
+        <button class="rail-btn" data-qa="hall"><span class="ri">🏛️</span><span class="rl">Book Community Hall</span></button>
+        <button class="rail-btn" data-qa="gatepass"><span class="ri">🚪</span><span class="rl">Visitor Gate Pass</span></button>
+        <button class="rail-btn" data-qa="directory"><span class="ri">📇</span><span class="rl">Resident Directory</span></button>
       </div>
     </aside>
 
@@ -3692,5 +3692,7 @@ body.site-edit-mode{padding-bottom:64px;}
 })();
 </script>
 <script src="logout-confirm.js"></script>
+<script src="quick-actions.js"></script>
+<script src="click-sounds.js"></script>
 </body>
 </html>

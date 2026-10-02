@@ -2340,6 +2340,421 @@ meetingsRouter.put('/:id', requireSecretary, meetingsController.update);
 meetingsRouter.delete('/:id', requireSecretary, meetingsController.remove);
 app.use('/api/meetings', meetingsRouter);
 
+// =====================================================================
+// Quick Actions backend: society settings, complaints, community-hall
+// bookings and visitor gate passes. Resident endpoints are scoped to the
+// caller's own flat; every "all records" endpoint is Secretary-only.
+// =====================================================================
+const crypto = require('crypto');
+
+const QA_PUBLIC_SETTINGS = ['hall_fee', 'hall_capacity', 'hall_rules'];
+const QA_MEMBER_SETTINGS = ['maintenance_amount', 'maintenance_due_day', 'payee_name', 'upi_id', 'bank_details'];
+const QA_DEFAULTS = {
+  hall_rules: 'Bookings are confirmed only after the Secretary approves them.\nNo loud music after 10 PM.\nPlease leave the hall clean; damage charges may apply.'
+};
+const COMPLAINT_CATEGORIES = ['Plumbing', 'Electrical', 'Lift', 'Water supply', 'Security', 'Cleaning', 'Parking', 'Noise', 'Other'];
+const COMPLAINT_PRIORITIES = ['Low', 'Normal', 'High', 'Urgent'];
+const COMPLAINT_STATUSES = ['Open', 'In Progress', 'Resolved', 'Rejected'];
+const HALL_SLOTS = { morning: 'Morning (8 AM – 1 PM)', evening: 'Evening (4 PM – 11 PM)', full: 'Full day' };
+const GATE_STATUSES = ['Active', 'Checked In', 'Checked Out', 'Cancelled'];
+
+async function migrateQuickActions() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS society_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL DEFAULT '',
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS complaints (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER REFERENCES members(id) ON DELETE SET NULL,
+      raised_by TEXT NOT NULL,
+      wing TEXT NOT NULL,
+      flat TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Other',
+      priority TEXT NOT NULL DEFAULT 'Normal',
+      title TEXT NOT NULL,
+      description TEXT,
+      status TEXT NOT NULL DEFAULT 'Open',
+      secretary_reply TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      resolved_at TIMESTAMPTZ
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS hall_bookings (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER REFERENCES members(id) ON DELETE SET NULL,
+      booked_by TEXT NOT NULL,
+      wing TEXT NOT NULL,
+      flat TEXT NOT NULL,
+      event_type TEXT NOT NULL DEFAULT 'Other',
+      booking_date DATE NOT NULL,
+      slot TEXT NOT NULL,
+      guests INTEGER NOT NULL DEFAULT 1,
+      purpose TEXT,
+      status TEXT NOT NULL DEFAULT 'Pending',
+      secretary_note TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      decided_at TIMESTAMPTZ
+    );
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS gate_passes (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER REFERENCES members(id) ON DELETE SET NULL,
+      requested_by TEXT NOT NULL,
+      wing TEXT NOT NULL,
+      flat TEXT NOT NULL,
+      visitor_name TEXT NOT NULL,
+      visitor_phone TEXT,
+      purpose TEXT,
+      vehicle_no TEXT,
+      visit_date DATE NOT NULL,
+      time_window TEXT,
+      pass_code TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'Active',
+      checked_in_at TIMESTAMPTZ,
+      checked_out_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+}
+
+// Who is acting? A resident acts as their own flat. The Secretary account
+// has no flat of its own, so it must say which flat it is acting for.
+async function qaIdentity(req) {
+  if (req.session.memberId) {
+    const m = await memberModel.findById(req.session.memberId);
+    if (m) return { memberId: m.id, name: m.name, wing: m.wing, flat: m.flat };
+  }
+  if (req.session.role === ROLES.SECRETARY) {
+    const b = req.body || {};
+    if (WINGS.includes(b.wing) && b.flat && String(b.flat).trim()) {
+      const who = String(b.on_behalf_of || '').trim().slice(0, 80);
+      return { memberId: null, name: who ? who + ' (via Secretary)' : 'Resident (via Secretary)', wing: b.wing, flat: String(b.flat).trim().slice(0, 20) };
+    }
+    return { error: 'Choose the wing and flat you are acting for.' };
+  }
+  return { error: 'Your account is not linked to a flat yet. Please contact the Secretary.' };
+}
+
+const qaClean = (v, max) => String(v == null ? '' : v).trim().slice(0, max);
+const qaDate = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : null);
+const DATE_SQL = (col) => `to_char(${col}, 'YYYY-MM-DD')`;
+
+const settingsController = {
+  async get(req, res) {
+    try {
+      const { rows } = await pool.query('SELECT key, value FROM society_settings');
+      const all = Object.assign({}, QA_DEFAULTS);
+      rows.forEach(r => { all[r.key] = r.value; });
+      const keys = req.session && req.session.userId ? QA_PUBLIC_SETTINGS.concat(QA_MEMBER_SETTINGS) : QA_PUBLIC_SETTINGS;
+      const out = {};
+      keys.forEach(k => { out[k] = all[k] || ''; });
+      res.json(out);
+    } catch (err) { dbError(res, err); }
+  },
+  async save(req, res) {
+    try {
+      const allowed = QA_PUBLIC_SETTINGS.concat(QA_MEMBER_SETTINGS);
+      const body = req.body || {};
+      for (const key of allowed) {
+        if (body[key] === undefined) continue;
+        await pool.query(
+          `INSERT INTO society_settings (key, value, updated_at) VALUES ($1,$2, now())
+           ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = now()`,
+          [key, qaClean(body[key], 1000)]
+        );
+      }
+      res.json({ success: true });
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const complaintsController = {
+  async create(req, res) {
+    try {
+      const who = await qaIdentity(req);
+      if (who.error) return res.status(400).json({ error: who.error });
+      const b = req.body || {};
+      const title = qaClean(b.title, 120);
+      if (title.length < 3) return res.status(400).json({ error: 'Please give the complaint a short title.' });
+      const category = COMPLAINT_CATEGORIES.includes(b.category) ? b.category : 'Other';
+      const priority = COMPLAINT_PRIORITIES.includes(b.priority) ? b.priority : 'Normal';
+      const { rows } = await pool.query(
+        `INSERT INTO complaints (member_id, raised_by, wing, flat, category, priority, title, description)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+        [who.memberId, who.name, who.wing, who.flat, category, priority, title, qaClean(b.description, 2000)]
+      );
+      res.status(201).json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async mine(req, res) {
+    try {
+      if (!req.session.memberId) return res.json([]);
+      const { rows } = await pool.query('SELECT * FROM complaints WHERE member_id = $1 ORDER BY created_at DESC LIMIT 50', [req.session.memberId]);
+      res.json(rows);
+    } catch (err) { dbError(res, err); }
+  },
+  async list(req, res) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT * FROM complaints
+         ORDER BY CASE status WHEN 'Open' THEN 0 WHEN 'In Progress' THEN 1 ELSE 2 END,
+                  CASE priority WHEN 'Urgent' THEN 0 WHEN 'High' THEN 1 WHEN 'Normal' THEN 2 ELSE 3 END,
+                  created_at DESC
+         LIMIT 300`
+      );
+      const stat = await pool.query(
+        `SELECT COUNT(*)::int AS total,
+                COUNT(*) FILTER (WHERE status='Open')::int AS open,
+                COUNT(*) FILTER (WHERE status='In Progress')::int AS in_progress,
+                COUNT(*) FILTER (WHERE status='Resolved')::int AS resolved,
+                COUNT(*) FILTER (WHERE status='Rejected')::int AS rejected,
+                COUNT(*) FILTER (WHERE priority='Urgent' AND status IN ('Open','In Progress'))::int AS urgent_open,
+                ROUND(AVG(EXTRACT(EPOCH FROM (resolved_at - created_at))/3600) FILTER (WHERE status='Resolved')::numeric, 1) AS avg_resolution_hours
+         FROM complaints`
+      );
+      res.json({ stats: stat.rows[0], items: rows });
+    } catch (err) { dbError(res, err); }
+  },
+  async update(req, res) {
+    try {
+      const b = req.body || {};
+      if (!COMPLAINT_STATUSES.includes(b.status)) return res.status(400).json({ error: 'Invalid status.' });
+      const closed = b.status === 'Resolved' || b.status === 'Rejected';
+      const { rows } = await pool.query(
+        `UPDATE complaints SET status = $1, secretary_reply = $2, updated_at = now(),
+                resolved_at = CASE WHEN $3 THEN COALESCE(resolved_at, now()) ELSE NULL END
+         WHERE id = $4 RETURNING *`,
+        [b.status, qaClean(b.reply, 1000), closed, req.params.id]
+      );
+      if (!rows[0]) return res.status(404).json({ error: 'Complaint not found.' });
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+// Overlap rule: a full-day booking clashes with everything, otherwise only
+// the same slot clashes.
+async function hallConflict(date, slot, ignoreId) {
+  const { rows } = await pool.query(
+    `SELECT id FROM hall_bookings
+     WHERE booking_date = $1 AND status = 'Approved' AND id <> $2
+       AND (slot = $3 OR slot = 'full' OR $3 = 'full') LIMIT 1`,
+    [date, ignoreId || 0, slot]
+  );
+  return rows.length > 0;
+}
+const HALL_COLS = `id, member_id, booked_by, wing, flat, event_type, ${DATE_SQL('booking_date')} AS booking_date, slot, guests, purpose, status, secretary_note, created_at, decided_at`;
+
+const hallController = {
+  async calendar(req, res) {
+    try {
+      const month = String(req.query.month || '');
+      if (!/^\d{4}-\d{2}$/.test(month)) return res.status(400).json({ error: 'month is required, format YYYY-MM' });
+      const { rows } = await pool.query(
+        `SELECT ${DATE_SQL('booking_date')} AS date, slot FROM hall_bookings
+         WHERE status = 'Approved' AND to_char(booking_date,'YYYY-MM') = $1`, [month]
+      );
+      res.json(rows);
+    } catch (err) { dbError(res, err); }
+  },
+  async create(req, res) {
+    try {
+      const who = await qaIdentity(req);
+      if (who.error) return res.status(400).json({ error: who.error });
+      const b = req.body || {};
+      const date = qaDate(b.date);
+      if (!date) return res.status(400).json({ error: 'Please pick a date.' });
+      if (!HALL_SLOTS[b.slot]) return res.status(400).json({ error: 'Please pick a time slot.' });
+      const { rows: chk } = await pool.query(`SELECT ($1::date >= CURRENT_DATE AND $1::date <= CURRENT_DATE + 365) AS ok`, [date]);
+      if (!chk[0].ok) return res.status(400).json({ error: 'Choose a date from today up to one year ahead.' });
+      const guests = Math.max(1, parseInt(b.guests, 10) || 1);
+      const { rows: cap } = await pool.query(`SELECT value FROM society_settings WHERE key = 'hall_capacity'`);
+      const capacity = cap[0] ? parseInt(cap[0].value, 10) : 0;
+      if (capacity && guests > capacity) return res.status(400).json({ error: `The hall holds up to ${capacity} guests.` });
+      if (await hallConflict(date, b.slot)) return res.status(409).json({ error: 'That date and slot is already booked. Please choose another.' });
+      const { rows: dup } = await pool.query(
+        `SELECT 1 FROM hall_bookings WHERE wing=$1 AND flat=$2 AND booking_date=$3 AND slot=$4 AND status='Pending'`,
+        [who.wing, who.flat, date, b.slot]
+      );
+      if (dup.length) return res.status(409).json({ error: 'You already have a pending request for this slot.' });
+      const { rows } = await pool.query(
+        `INSERT INTO hall_bookings (member_id, booked_by, wing, flat, event_type, booking_date, slot, guests, purpose)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING ${HALL_COLS}`,
+        [who.memberId, who.name, who.wing, who.flat, qaClean(b.event_type, 60) || 'Other', date, b.slot, guests, qaClean(b.purpose, 500)]
+      );
+      res.status(201).json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async mine(req, res) {
+    try {
+      if (!req.session.memberId) return res.json([]);
+      const { rows } = await pool.query(`SELECT ${HALL_COLS} FROM hall_bookings WHERE member_id = $1 ORDER BY booking_date DESC LIMIT 30`, [req.session.memberId]);
+      res.json(rows);
+    } catch (err) { dbError(res, err); }
+  },
+  async cancel(req, res) {
+    try {
+      const { rows: found } = await pool.query('SELECT member_id, status FROM hall_bookings WHERE id = $1', [req.params.id]);
+      if (!found[0]) return res.status(404).json({ error: 'Booking not found.' });
+      const isOwner = req.session.memberId && found[0].member_id === req.session.memberId;
+      if (!isOwner && req.session.role !== ROLES.SECRETARY) return res.status(403).json({ error: 'You can only cancel your own booking.' });
+      if (!['Pending', 'Approved'].includes(found[0].status)) return res.status(400).json({ error: 'This booking can no longer be cancelled.' });
+      const { rows } = await pool.query(`UPDATE hall_bookings SET status='Cancelled', decided_at=now() WHERE id=$1 RETURNING ${HALL_COLS}`, [req.params.id]);
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async list(req, res) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT ${HALL_COLS},
+           EXISTS (SELECT 1 FROM hall_bookings o WHERE o.status='Approved' AND o.booking_date = h.booking_date AND o.id <> h.id
+                   AND (o.slot = h.slot OR o.slot='full' OR h.slot='full')) AS has_conflict
+         FROM hall_bookings h
+         ORDER BY CASE status WHEN 'Pending' THEN 0 WHEN 'Approved' THEN 1 ELSE 2 END,
+                  CASE WHEN booking_date >= CURRENT_DATE THEN 0 ELSE 1 END, booking_date ASC
+         LIMIT 300`
+      );
+      const stat = await pool.query(
+        `SELECT COUNT(*) FILTER (WHERE status='Pending')::int AS pending,
+                COUNT(*) FILTER (WHERE status='Approved' AND booking_date >= CURRENT_DATE)::int AS upcoming,
+                COUNT(*) FILTER (WHERE status='Approved' AND to_char(booking_date,'YYYY-MM') = to_char(CURRENT_DATE,'YYYY-MM'))::int AS this_month,
+                COUNT(*)::int AS total
+         FROM hall_bookings`
+      );
+      res.json({ stats: stat.rows[0], items: rows });
+    } catch (err) { dbError(res, err); }
+  },
+  async decide(req, res) {
+    try {
+      const b = req.body || {};
+      if (!['approve', 'reject'].includes(b.decision)) return res.status(400).json({ error: 'decision must be approve or reject' });
+      const { rows: found } = await pool.query(`SELECT ${HALL_COLS} FROM hall_bookings WHERE id = $1`, [req.params.id]);
+      if (!found[0]) return res.status(404).json({ error: 'Booking not found.' });
+      if (found[0].status !== 'Pending') return res.status(400).json({ error: 'Only pending requests can be decided.' });
+      if (b.decision === 'approve' && await hallConflict(found[0].booking_date, found[0].slot, found[0].id)) {
+        return res.status(409).json({ error: 'Another approved booking already covers this slot.' });
+      }
+      const { rows } = await pool.query(
+        `UPDATE hall_bookings SET status=$1, secretary_note=$2, decided_at=now() WHERE id=$3 RETURNING ${HALL_COLS}`,
+        [b.decision === 'approve' ? 'Approved' : 'Rejected', qaClean(b.note, 500), req.params.id]
+      );
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const GATE_COLS = `id, member_id, requested_by, wing, flat, visitor_name, visitor_phone, purpose, vehicle_no, ${DATE_SQL('visit_date')} AS visit_date, time_window, pass_code, status, checked_in_at, checked_out_at, created_at`;
+
+const gatePassController = {
+  async create(req, res) {
+    try {
+      const who = await qaIdentity(req);
+      if (who.error) return res.status(400).json({ error: who.error });
+      const b = req.body || {};
+      const visitor = qaClean(b.visitor_name, 80);
+      if (visitor.length < 2) return res.status(400).json({ error: "Please enter the visitor's name." });
+      const date = qaDate(b.visit_date);
+      if (!date) return res.status(400).json({ error: 'Please pick the visit date.' });
+      const { rows: chk } = await pool.query(`SELECT ($1::date >= CURRENT_DATE AND $1::date <= CURRENT_DATE + 30) AS ok`, [date]);
+      if (!chk[0].ok) return res.status(400).json({ error: 'Choose a date from today up to 30 days ahead.' });
+      const phone = qaClean(b.visitor_phone, 20);
+      if (phone && !/^[0-9+\-\s]{7,20}$/.test(phone)) return res.status(400).json({ error: 'Visitor phone looks invalid.' });
+      const code = String(crypto.randomInt(100000, 1000000));
+      const { rows } = await pool.query(
+        `INSERT INTO gate_passes (member_id, requested_by, wing, flat, visitor_name, visitor_phone, purpose, vehicle_no, visit_date, time_window, pass_code)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ${GATE_COLS}`,
+        [who.memberId, who.name, who.wing, who.flat, visitor, phone, qaClean(b.purpose, 120), qaClean(b.vehicle_no, 20).toUpperCase(), date, qaClean(b.time_window, 60), code]
+      );
+      res.status(201).json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async mine(req, res) {
+    try {
+      if (!req.session.memberId) return res.json([]);
+      const { rows } = await pool.query(`SELECT ${GATE_COLS} FROM gate_passes WHERE member_id = $1 ORDER BY visit_date DESC, created_at DESC LIMIT 30`, [req.session.memberId]);
+      res.json(rows);
+    } catch (err) { dbError(res, err); }
+  },
+  async cancel(req, res) {
+    try {
+      const { rows: found } = await pool.query('SELECT member_id, status FROM gate_passes WHERE id = $1', [req.params.id]);
+      if (!found[0]) return res.status(404).json({ error: 'Pass not found.' });
+      const isOwner = req.session.memberId && found[0].member_id === req.session.memberId;
+      if (!isOwner && req.session.role !== ROLES.SECRETARY) return res.status(403).json({ error: 'You can only cancel your own pass.' });
+      if (found[0].status !== 'Active') return res.status(400).json({ error: 'Only an unused pass can be cancelled.' });
+      const { rows } = await pool.query(`UPDATE gate_passes SET status='Cancelled' WHERE id=$1 RETURNING ${GATE_COLS}`, [req.params.id]);
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async list(req, res) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT ${GATE_COLS} FROM gate_passes
+         ORDER BY visit_date DESC, created_at DESC LIMIT 300`
+      );
+      const stat = await pool.query(
+        `SELECT COUNT(*) FILTER (WHERE visit_date = CURRENT_DATE AND status <> 'Cancelled')::int AS today_total,
+                COUNT(*) FILTER (WHERE visit_date = CURRENT_DATE AND status = 'Active')::int AS today_expected,
+                COUNT(*) FILTER (WHERE status = 'Checked In')::int AS inside_now,
+                COUNT(*) FILTER (WHERE visit_date = CURRENT_DATE AND status = 'Checked Out')::int AS today_done
+         FROM gate_passes`
+      );
+      res.json({ stats: stat.rows[0], items: rows });
+    } catch (err) { dbError(res, err); }
+  },
+  async setStatus(req, res) {
+    try {
+      const status = (req.body || {}).status;
+      if (!GATE_STATUSES.includes(status)) return res.status(400).json({ error: 'Invalid status.' });
+      const { rows } = await pool.query(
+        `UPDATE gate_passes SET status = $1::text,
+           checked_in_at  = CASE WHEN $1::text = 'Checked In'  THEN now() WHEN $1::text = 'Active' THEN NULL ELSE checked_in_at END,
+           checked_out_at = CASE WHEN $1::text = 'Checked Out' THEN now() WHEN $1::text IN ('Active','Checked In') THEN NULL ELSE checked_out_at END
+         WHERE id = $2 RETURNING ${GATE_COLS}`,
+        [status, req.params.id]
+      );
+      if (!rows[0]) return res.status(404).json({ error: 'Pass not found.' });
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const settingsRouter = express.Router();
+settingsRouter.get('/', settingsController.get);
+settingsRouter.put('/', requireSecretary, settingsController.save);
+app.use('/api/settings', settingsRouter);
+
+const complaintsRouter = express.Router();
+complaintsRouter.post('/', requireAuth, complaintsController.create);
+complaintsRouter.get('/mine', requireAuth, complaintsController.mine);
+complaintsRouter.get('/', requireSecretary, complaintsController.list);
+complaintsRouter.patch('/:id', requireSecretary, complaintsController.update);
+app.use('/api/complaints', complaintsRouter);
+
+const hallRouter = express.Router();
+hallRouter.get('/calendar', hallController.calendar);
+hallRouter.post('/', requireAuth, hallController.create);
+hallRouter.get('/mine', requireAuth, hallController.mine);
+hallRouter.get('/', requireSecretary, hallController.list);
+hallRouter.patch('/:id/cancel', requireAuth, hallController.cancel);
+hallRouter.patch('/:id/decision', requireSecretary, hallController.decide);
+app.use('/api/hall-bookings', hallRouter);
+
+const gatePassRouter = express.Router();
+gatePassRouter.post('/', requireAuth, gatePassController.create);
+gatePassRouter.get('/mine', requireAuth, gatePassController.mine);
+gatePassRouter.get('/', requireSecretary, gatePassController.list);
+gatePassRouter.patch('/:id/cancel', requireAuth, gatePassController.cancel);
+gatePassRouter.patch('/:id/status', requireSecretary, gatePassController.setStatus);
+app.use('/api/gate-passes', gatePassRouter);
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', society: 'Bhargavi Housing Society' });
 });
@@ -2365,6 +2780,7 @@ async function start() {
     console.warn('⚠️  DATABASE_URL is not set — the API routes will fail until it is configured.');
   } else {
     await migrate();
+    await migrateQuickActions();
     await runSeeds();
   }
   app.listen(env.port, () => {
