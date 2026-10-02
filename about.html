@@ -801,29 +801,33 @@ body.site-edit-mode{padding-bottom:64px;}
 .about-stats-inner .stat-label{color:var(--sky-100);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin-top:.35em;}
 
 .committee-section{max-width:1240px;margin:0 auto;padding:4.5rem 1.5rem 5rem;}
-.committee-head{text-align:center;max-width:640px;margin:0 auto 3.5rem;}
-.committee-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2rem 1.6rem;}
-.committee-card{
-  background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
-  text-align:center;padding:2.2rem 1.3rem 1.7rem;position:relative;
-  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+.committee-head{text-align:center;max-width:640px;margin:0 auto 1rem;}
+.committee-group{margin-top:3.4rem;}
+.group-head{display:flex;align-items:baseline;gap:.9rem;margin-bottom:1.7rem;}
+.group-head h3{font-size:1.4rem;margin:0;white-space:nowrap;}
+.group-head span{font-size:.92rem;color:var(--ink-400);white-space:nowrap;}
+.group-head::after{content:"";flex:1;height:1px;background:var(--line);align-self:center;}
+.member-row{--gap:1.6rem;display:flex;flex-wrap:wrap;gap:2.4rem var(--gap);}
+.member{flex:0 0 calc((100% - 4 * var(--gap)) / 5);min-width:0;}
+.member-photo{
+  aspect-ratio:5/6;border-radius:var(--radius-md);overflow:hidden;background:var(--navy-900);
+  margin-bottom:1rem;box-shadow:0 1px 0 rgba(14,27,50,.04);
 }
-.committee-card::before{
-  content:"";position:absolute;top:0;left:14%;right:14%;height:4px;border-radius:0 0 6px 6px;
-  background:linear-gradient(90deg, var(--diya-600), var(--gold-500));
+.member-photo img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;transition:transform .5s var(--ease);}
+.member:hover .member-photo img{transform:scale(1.04);}
+.member h4{font-size:1.15rem;margin:0 0 .15em;}
+.member-role{margin:0 0 .55em;font-size:.95rem;font-weight:700;color:var(--diya-700);line-height:1.3;}
+.member-desc{margin:0;font-size:.9rem;line-height:1.55;color:var(--ink-600);}
+@media (max-width:1100px){
+  .member{flex-basis:calc((100% - 2 * var(--gap)) / 3);}
 }
-.committee-card:hover{transform:translateY(-6px);box-shadow:0 22px 44px -16px rgba(14,27,50,.3);}
-.committee-card img{
-  width:118px;height:118px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.1rem;
-  border:4px solid #fff;box-shadow:0 8px 20px -6px rgba(14,27,50,.35);
+@media (max-width:640px){
+  .member-row{--gap:1rem;gap:1.8rem var(--gap);}
+  .member{flex-basis:calc((100% - var(--gap)) / 2);}
+  .member h4{font-size:1.02rem;}
+  .member-desc{font-size:.84rem;}
+  .group-head span{display:none;}
 }
-.committee-card-body h4{font-size:1.05rem;margin-bottom:.3em;}
-.committee-card-role{
-  display:inline-block;font-family:var(--font-mono);font-size:.7rem;font-weight:700;
-  letter-spacing:.03em;text-transform:uppercase;color:var(--diya-700);background:#FBEAD9;
-  border-radius:999px;padding:.3rem .8rem;margin-bottom:.8em;
-}
-.committee-card-body p{font-size:.85rem;color:var(--ink-600);margin:0;line-height:1.5;}
 
 /* =====================================================
    ANIMATION LAYER — hero entrance, scroll reveals, stat
@@ -839,8 +843,6 @@ body.site-edit-mode{padding-bottom:64px;}
   .about-hero-inner > p{animation-delay:.5s;}
   @keyframes aboutFadeUp{to{opacity:1;transform:translateY(0);}}
 
-  .committee-card img{transition:transform .45s var(--ease), box-shadow .3s ease;}
-  .committee-card:hover img{transform:scale(1.08);}
   .about-story-photos img{transition:transform .5s var(--ease);}
   .about-story-photos img:hover{transform:scale(1.03);}
 
@@ -1075,102 +1077,91 @@ body.site-edit-mode{padding-bottom:64px;}
     <h2>Meet the Managing Committee</h2>
     <p>Elected and volunteer residents who run the day-to-day of the society, from finances to festivals.</p>
   </div>
-  <div class="committee-grid">
-    <div class="committee-card reveal">
-      <img src="images/committee/president.png" alt="Anand Deshmukh, President">
-      <div class="committee-card-body">
+  <div class="committee-group reveal">
+    <div class="group-head"><h3>Office bearers</h3><span>The five elected officers who lead the society.</span></div>
+    <div class="member-row">
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/president.jpg" alt="Anand Deshmukh, President" loading="lazy"></div>
         <h4>Anand Deshmukh</h4>
-        <span class="committee-card-role">President</span>
-        <p>Overall leadership of the society and final approval on major decisions.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/vice-president.png" alt="Sunita Kulkarni, Vice President">
-      <div class="committee-card-body">
+        <p class="member-role">President</p>
+        <p class="member-desc">Overall leadership of the society and final approval on major decisions.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/vice-president.jpg" alt="Sunita Kulkarni, Vice President" loading="lazy"></div>
         <h4>Sunita Kulkarni</h4>
-        <span class="committee-card-role">Vice President</span>
-        <p>Supports the President and steps in to chair meetings when needed.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/secretary.png" alt="Rajesh Patil, Secretary">
-      <div class="committee-card-body">
+        <p class="member-role">Vice President</p>
+        <p class="member-desc">Supports the President and steps in to chair meetings when needed.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/secretary.jpg" alt="Rajesh Patil, Secretary" loading="lazy"></div>
         <h4>Rajesh Patil</h4>
-        <span class="committee-card-role">Secretary</span>
-        <p>Runs day-to-day administration, notices, meetings and resident records.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/treasurer.png" alt="Meera Joshi, Treasurer">
-      <div class="committee-card-body">
+        <p class="member-role">Secretary</p>
+        <p class="member-desc">Runs day-to-day administration, notices, meetings and resident records.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/treasurer.jpg" alt="Meera Joshi, Treasurer" loading="lazy"></div>
         <h4>Meera Joshi</h4>
-        <span class="committee-card-role">Treasurer</span>
-        <p>Manages maintenance dues, the society's accounts, and annual budgeting.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/joint-secretary.png" alt="Vikram Shah, Joint Secretary">
-      <div class="committee-card-body">
+        <p class="member-role">Treasurer</p>
+        <p class="member-desc">Manages maintenance dues, the society's accounts, and annual budgeting.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/joint-secretary.jpg" alt="Vikram Shah, Joint Secretary" loading="lazy"></div>
         <h4>Vikram Shah</h4>
-        <span class="committee-card-role">Joint Secretary</span>
-        <p>Assists the Secretary and handles vendor &amp; contractor coordination.</p>
-      </div>
+        <p class="member-role">Joint Secretary</p>
+        <p class="member-desc">Assists the Secretary and handles vendor &amp; contractor coordination.</p>
+      </article>
     </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/wing-a-rep.png" alt="Priya Nair, Wing A Representative">
-      <div class="committee-card-body">
+  </div>
+  <div class="committee-group reveal">
+    <div class="group-head"><h3>Wing representatives</h3><span>Your first point of contact in each wing.</span></div>
+    <div class="member-row">
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/wing-a-rep.jpg" alt="Priya Nair, Wing A Representative" loading="lazy"></div>
         <h4>Priya Nair</h4>
-        <span class="committee-card-role">Wing A Representative</span>
-        <p>Point of contact for Wing A residents' concerns and feedback.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/wing-b-rep.png" alt="Arjun Rao, Wing B Representative">
-      <div class="committee-card-body">
+        <p class="member-role">Wing A Representative</p>
+        <p class="member-desc">Point of contact for Wing A residents' concerns and feedback.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/wing-b-rep.jpg" alt="Arjun Rao, Wing B Representative" loading="lazy"></div>
         <h4>Arjun Rao</h4>
-        <span class="committee-card-role">Wing B Representative</span>
-        <p>Point of contact for Wing B residents' concerns and feedback.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/wing-c-rep.png" alt="Kavita Iyer, Wing C Representative">
-      <div class="committee-card-body">
+        <p class="member-role">Wing B Representative</p>
+        <p class="member-desc">Point of contact for Wing B residents' concerns and feedback.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/wing-c-rep.jpg" alt="Kavita Iyer, Wing C Representative" loading="lazy"></div>
         <h4>Kavita Iyer</h4>
-        <span class="committee-card-role">Wing C Representative</span>
-        <p>Point of contact for Wing C residents' concerns and feedback.</p>
-      </div>
+        <p class="member-role">Wing C Representative</p>
+        <p class="member-desc">Point of contact for Wing C residents' concerns and feedback.</p>
+      </article>
     </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/events-head.png" alt="Rohan Mehta, Events & Cultural Committee Head">
-      <div class="committee-card-body">
+  </div>
+  <div class="committee-group reveal">
+    <div class="group-head"><h3>Committee heads</h3><span>Volunteers who run events, upkeep, safety and welfare.</span></div>
+    <div class="member-row">
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/events-head.jpg" alt="Rohan Mehta, Events & Cultural Head" loading="lazy"></div>
         <h4>Rohan Mehta</h4>
-        <span class="committee-card-role">Events &amp; Cultural Head</span>
-        <p>Plans and runs festivals, celebrations and community events all year.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/maintenance-head.png" alt="Sanjay Pawar, Maintenance & Facilities Head">
-      <div class="committee-card-body">
+        <p class="member-role">Events &amp; Cultural Head</p>
+        <p class="member-desc">Plans and runs festivals, celebrations and community events all year.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/maintenance-head.jpg" alt="Sanjay Pawar, Maintenance Head" loading="lazy"></div>
         <h4>Sanjay Pawar</h4>
-        <span class="committee-card-role">Maintenance Head</span>
-        <p>Oversees repairs, housekeeping, water supply and common-area upkeep.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/security-coordinator.png" alt="Deepa Kamble, Security & Safety Coordinator">
-      <div class="committee-card-body">
+        <p class="member-role">Maintenance Head</p>
+        <p class="member-desc">Oversees repairs, housekeeping, water supply and common-area upkeep.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/security-coordinator.jpg" alt="Deepa Kamble, Security Coordinator" loading="lazy"></div>
         <h4>Deepa Kamble</h4>
-        <span class="committee-card-role">Security Coordinator</span>
-        <p>Coordinates with the security desk, gate-pass system and CCTV upkeep.</p>
-      </div>
-    </div>
-    <div class="committee-card reveal">
-      <img src="images/committee/welfare-coordinator.png" alt="Neha Gokhale, Social Welfare Coordinator">
-      <div class="committee-card-body">
+        <p class="member-role">Security Coordinator</p>
+        <p class="member-desc">Coordinates with the security desk, gate-pass system and CCTV upkeep.</p>
+      </article>
+      <article class="member">
+        <div class="member-photo"><img src="images/committee/welfare-coordinator.jpg" alt="Neha Gokhale, Welfare Coordinator" loading="lazy"></div>
         <h4>Neha Gokhale</h4>
-        <span class="committee-card-role">Welfare Coordinator</span>
-        <p>Looks after senior-citizen welfare, new-resident onboarding and support.</p>
-      </div>
+        <p class="member-role">Welfare Coordinator</p>
+        <p class="member-desc">Looks after senior-citizen welfare, new-resident onboarding and support.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -1285,12 +1276,6 @@ body.site-edit-mode{padding-bottom:64px;}
 
       /* ---------- scroll reveals: fade + slide up as sections enter view ---------- */
       const revealEls = document.querySelectorAll('.reveal');
-      // Stagger the committee cards so they cascade in one after another
-      // instead of all popping in at once.
-      document.querySelectorAll('.committee-card').forEach((card, i) => {
-        card.style.transitionDelay = `${Math.min(i, 7) * 70}ms`;
-      });
-
       const revealIO = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
