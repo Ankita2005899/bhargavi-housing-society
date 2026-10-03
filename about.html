@@ -1331,5 +1331,31 @@ body.site-edit-mode{padding-bottom:64px;}
 <script src="logout-confirm.js"></script>
 <script src="click-sounds.js"></script>
 <script src="responsive-nav.js"></script>
+<style>
+.member-photo.no-photo{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#16294d,#2a4a7f);color:#f3d9a0;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700;letter-spacing:.04em;}
+</style>
+<script>
+/* If a committee photo is missing, show the member's initials instead of a blank box. */
+(function(){
+  function fallback(img){
+    var box = img.closest('.member-photo');
+    if (!box || box.classList.contains('no-photo')) return;
+    var name = (img.getAttribute('alt') || '').split(',')[0].trim();
+    var initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase();}).join('') || '?';
+    box.classList.add('no-photo');
+    box.setAttribute('role','img');
+    box.setAttribute('aria-label', img.getAttribute('alt') || name);
+    box.textContent = initials;
+  }
+  document.addEventListener('error', function(e){
+    if (e.target && e.target.tagName === 'IMG') fallback(e.target);
+  }, true);
+  window.addEventListener('load', function(){
+    document.querySelectorAll('.member-photo img').forEach(function(img){
+      if (img.complete && img.naturalWidth === 0) fallback(img);
+    });
+  });
+})();
+</script>
 </body>
 </html>
