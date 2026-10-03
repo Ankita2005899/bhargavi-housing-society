@@ -96,3 +96,130 @@ html{ font-size: var(--site-font); }
 html,body,body *,body *::before,body *::after,button,input,select,textarea{
   font-family:"Times New Roman", Times, serif !important;
 }
+
+
+/* =====================================================================
+   RESPONSIVE LAYER — laptop / tablet / phone
+   (appended last so it wins over the per-page <style> blocks)
+   ===================================================================== */
+
+/* ---- 1) never let anything push the page sideways ---- */
+html, body{ overflow-x: clip; max-width: 100%; }
+@supports not (overflow: clip){ body{ overflow-x: hidden; } }
+img, video, canvas, iframe, embed, object{ max-width: 100%; }
+img, video{ height: auto; }
+/* images that are sized by a parent / object-fit keep their box */
+img[class*="logo"], .brand-logo, .slide-menu-logo{ height: auto; }
+table{ max-width: 100%; }
+pre, code{ white-space: pre-wrap; word-break: break-word; }
+h1, h2, h3, h4, p, td, th{ overflow-wrap: break-word; }
+/* wide tables scroll inside themselves instead of widening the page */
+.table-wrap, .sec-table-wrap, .table-scroll{ overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+
+/* ---- 2) fluid root font size (was a fixed 118% everywhere) ---- */
+@media (max-width: 1100px){ :root{ --site-font: 112%; } }
+@media (max-width: 768px){  :root{ --site-font: 106%; } }
+@media (max-width: 480px){  :root{ --site-font: 100%; } }
+@media (min-width: 1700px){ :root{ --site-font: 125%; } }
+
+/* ---- 3) off-canvas slide menu on the home page must not widen the page ---- */
+.slide-menu:not(.show){ visibility: hidden; transition: transform .4s var(--ease, ease), visibility 0s linear .4s; }
+.slide-menu.show{ visibility: visible; transition-delay: 0s; }
+
+/* ---- 4) header: one tidy row on tablet + phone, nav moves into a drawer ---- */
+.rn-burger{ display: none; }
+@media (max-width: 1100px){
+  .site-header .main-nav{ display: none !important; }
+  .site-header .header-inner{ flex-wrap: nowrap; justify-content: flex-start; gap: .75rem; padding: .6rem var(--site-gutter); }
+  .site-header .brand{ flex: 1 1 auto; min-width: 0; }
+  .site-header .brand-text{ min-width: 0; }
+  .site-header .brand-text strong{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; font-size: 1.05rem; }
+  .site-header .brand-text em{ display: none; }
+  .site-header .brand-logo, .site-header .brand::before{ width: 46px; height: 46px; flex: 0 0 auto; }
+  .site-header .header-auth{ flex: 0 0 auto; margin-left: auto; }
+  .site-header .hamburger{ flex: 0 0 auto; }
+  .rn-burger{
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    flex: 0 0 auto; width: 44px; height: 42px; padding: 0; cursor: pointer;
+    background: transparent; border: 1.5px solid rgba(255,255,255,.45); border-radius: 12px;
+  }
+  .rn-burger span{ display: block; width: 22px; height: 2.5px; background: #fff; border-radius: 2px; }
+}
+@media (max-width: 560px){
+  .site-header .header-inner{ gap: .5rem; }
+  .site-header .brand{ gap: .55rem; }
+  .site-header .brand-logo, .site-header .brand::before{ width: 40px; height: 40px; border-radius: 12px; }
+  .site-header .brand-text strong{ font-size: .92rem; }
+  .site-header .header-auth .account-pill{ display: none; }
+  .site-header .header-auth .btn{ font-size: .75rem; padding: .45em .7em; white-space: nowrap; }
+  .site-header .hamburger, .rn-burger{ width: 40px; height: 38px; }
+}
+@media (max-width: 360px){
+  .site-header .brand-text strong{ font-size: .82rem; }
+  .site-header .header-auth .btn{ padding: .4em .55em; }
+}
+
+/* ---- 5) navigation drawer (built by responsive-nav.js on inner pages) ---- */
+.rn-overlay{ position: fixed; inset: 0; background: rgba(14,27,50,.5); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 900; }
+.rn-overlay.show{ opacity: 1; visibility: visible; }
+.rn-drawer{
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(340px, 88vw); z-index: 901;
+  background: #f7f5f0; color: #14213d; display: flex; flex-direction: column;
+  transform: translateX(100%); visibility: hidden;
+  transition: transform .3s ease, visibility 0s linear .3s;
+  box-shadow: -16px 0 40px rgba(0,0,0,.2); overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+}
+.rn-drawer.show{ transform: none; visibility: visible; transition-delay: 0s; }
+.rn-drawer-head{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-weight: 700; font-size: 1.1rem; }
+.rn-close{ background: none; border: 0; font-size: 2rem; line-height: 1; padding: .2rem .6rem; cursor: pointer; color: #3b4660; }
+.rn-drawer a, .rn-drawer summary{
+  display: block; padding: .85rem .4rem; font-weight: 600; font-size: 1.02rem; color: #14213d;
+  border-bottom: 1px solid rgba(20,33,61,.12); text-decoration: none; cursor: pointer; list-style: none;
+}
+.rn-drawer summary::-webkit-details-marker{ display: none; }
+.rn-drawer summary::after{ content: "\25BE"; float: right; transition: transform .2s; }
+.rn-drawer details[open] > summary::after{ transform: rotate(180deg); }
+.rn-drawer details a{ padding-left: 1.2rem; font-weight: 500; font-size: .98rem; }
+.rn-drawer a:active, .rn-drawer summary:active{ background: rgba(217,164,65,.18); }
+html.rn-lock{ overflow: hidden; }
+@media (min-width: 1101px){ .rn-overlay, .rn-drawer{ display: none !important; } }
+
+/* ---- 6) comfortable touch targets on touch screens ---- */
+@media (pointer: coarse){
+  .btn, button, .hamburger, .rn-burger, input[type="checkbox"] + label{ min-height: 40px; }
+  input, select, textarea{ font-size: max(16px, 1rem) !important; }   /* stops iOS zoom-on-focus */
+}
+
+/* ---- 7) generic grids / flex rows collapse gracefully ---- */
+@media (max-width: 900px){
+  .contact-grid, .about-grid, .with-rail, .detail-page-main.has-sidebar{ grid-template-columns: 1fr !important; }
+  .footer-top{ grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 600px){
+  .footer-top{ grid-template-columns: 1fr !important; }
+  .footer-bottom{ flex-direction: column; gap: .4rem; text-align: center; }
+  .section{ padding-top: 2.6rem; padding-bottom: 2.6rem; }
+  h1{ font-size: clamp(1.7rem, 7vw, 2.4rem); }
+  h2{ font-size: clamp(1.4rem, 5.6vw, 1.9rem); }
+}
+
+/* ---- 8) modals / popups never taller or wider than the screen ---- */
+.modal-overlay{ padding: .75rem; overflow-y: auto; }
+.modal-overlay > *, .popup, .modal, [class*="popup-wide"], .secretary-panel-full{ max-width: 100% !important; }
+.modal-overlay > *{ max-height: 96dvh; overflow-y: auto; }
+
+/* ---- 9) secretary dashboard on phones ---- */
+@media (max-width: 640px){
+  .sec-top-actions{ width: 100%; justify-content: flex-start; }
+  .sec-summary-box{ min-width: 0 !important; max-width: 100%; }
+  .sec-page-wrap table{ display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* ---- 10) home page: slider + quick actions wrap instead of side-scrolling ---- */
+@media (max-width: 1080px){
+  .left-rail{ flex-direction: row !important; flex-wrap: wrap; overflow: visible !important; position: static !important;
+              padding: 1.4rem var(--site-gutter) !important; gap: 1.2rem; }
+  .left-rail > *{ flex: 1 1 320px; min-width: 0 !important; max-width: 100%; }
+  .rail-slider, .rail-actions{ min-width: 0 !important; }
+}
