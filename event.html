@@ -683,6 +683,7 @@ body.site-edit-mode{padding-bottom:64px;}
   display:inline-block;margin:0 0 1.2rem;padding:.4rem .8rem;border-radius:8px;
   background:var(--sky-100);font-size:.82rem;font-weight:600;color:var(--navy-800);
 }
+.edit-startyear-field[hidden]{display:none;}
 .edit-startyear-field input{width:80px;margin-left:.4em;padding:.15rem .4rem;border-radius:6px;border:1px solid var(--line);font-family:var(--font-mono);}
 
 @media (max-width: 760px){
@@ -757,11 +758,40 @@ body.site-edit-mode{padding-bottom:64px;}
   font-family:var(--font-mono);font-size:.78rem;font-weight:600;color:var(--navy-800);
   background:var(--sky-100);border-radius:999px;padding:.35rem .8rem;
 }
-.event-year-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-top:1rem;}
-.event-year-gallery img{width:100%;height:120px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-card);}
-.event-year-gallery figcaption{margin-top:.3em;font-size:.74rem;color:var(--ink-400);text-align:center;}
+/* Overview: text on the left, videos on the right */
+.ev-overview{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,460px);gap:2rem;align-items:start;}
+.ev-overview-text{min-width:0;}
+.ev-video-card{position:sticky;top:96px;background:var(--paper-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:1.1rem 1.1rem 1.2rem;border-top:4px solid var(--diya-600);}
+.ev-video-head{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin-bottom:.9rem;}
+.ev-video-head h4{margin:0;font-size:1rem;}
+.ev-video-head .mini-label-mono{color:var(--ink-400);}
+.ev-video{margin-bottom:1.1rem;}
+.ev-video:last-child{margin-bottom:0;}
+.ev-player{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 10px 24px -12px rgba(14,27,50,.55);}
+.ev-player video,.ev-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:contain;}
+.ev-video-title{margin:.5rem .1rem 0;font-size:.88rem;font-weight:700;color:var(--navy-950);line-height:1.35;}
+.ev-video-empty{text-align:center;padding:1.6rem 1rem;border:1.5px dashed var(--line);border-radius:12px;color:var(--ink-400);font-size:.88rem;line-height:1.5;}
+.ev-video-empty b{display:block;font-size:1.8rem;margin-bottom:.3rem;}
+
+/* Gallery photo: shown whole (no cropping), click to enlarge */
+.event-year-gallery{display:grid;grid-template-columns:minmax(0,860px);gap:1rem;margin-top:.9rem;}
+.ev-photo{margin:0;}
+.ev-zoom{position:relative;display:block;width:100%;padding:0;border:0;cursor:zoom-in;aspect-ratio:16/9;border-radius:var(--radius-lg);overflow:hidden;background:#0E1B32;box-shadow:var(--shadow-card);}
+.ev-zoom .ev-photo-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(22px) brightness(.55);transform:scale(1.15);}
+.ev-zoom .ev-photo-main{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block;}
+.ev-zoom-hint{position:absolute;z-index:2;right:.8rem;bottom:.8rem;background:rgba(14,27,50,.78);color:#fff;font-size:.74rem;font-weight:700;padding:.35rem .75rem;border-radius:999px;pointer-events:none;}
+.ev-zoom:focus-visible{outline:3px solid var(--diya-600);outline-offset:3px;}
+.event-year-gallery figcaption{margin-top:.5em;font-size:.8rem;color:var(--ink-400);}
+.ev-lightbox{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:1.2rem;background:rgba(8,16,30,.92);}
+.ev-lightbox.is-open{display:flex;}
+.ev-lightbox img{max-width:96vw;max-height:88vh;object-fit:contain;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.ev-lightbox-cap{position:absolute;left:0;right:0;bottom:1rem;text-align:center;color:#D9E2F0;font-size:.86rem;}
+.ev-lightbox-close{position:absolute;top:1rem;right:1.2rem;width:2.6rem;height:2.6rem;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:1.6rem;line-height:1;cursor:pointer;}
+.ev-lightbox-close:hover{background:rgba(255,255,255,.3);}
+@media (max-width:1100px){.ev-overview{grid-template-columns:minmax(0,1fr);}.ev-video-card{position:static;}}
 @media (max-width:900px){
-  .event-side-layout{flex-direction:column;}
+  .event-side-layout{flex-direction:column;align-items:stretch;}
+  .event-main-col{width:100%;max-width:100%;}
   .event-sidebar{position:static;width:100%;flex:1 1 auto;}
   .event-sidebar nav{flex-direction:row;flex-wrap:wrap;}
   .event-sidebar button{width:auto;flex:1 1 140px;justify-content:center;}
@@ -1379,6 +1409,16 @@ body.site-edit-mode{padding-bottom:64px;}
         console.warn('Could not load recorded year data, showing estimates only.', err);
       }
 
+      // Videos the Secretary added for this event, grouped by year.
+      let videosByYear = {};
+      try {
+        const vids = await fetch('/api/event-videos/' + encodeURIComponent(item.id), { credentials: 'same-origin' })
+          .then(r => (r.ok ? r.json() : []));
+        vids.forEach(v => { (videosByYear[v.year] = videosByYear[v.year] || []).push(v); });
+      } catch (err) {
+        console.warn('Could not load event videos.', err);
+      }
+
       // Base page content (title/description/highlights/venue/contact/photo)
       // as saved by the Secretary via "Website (edit mode)" on this page —
       // any field never edited stays null and the hardcoded default above
@@ -1515,18 +1555,44 @@ body.site-edit-mode{padding-bottom:64px;}
         const s = mergedYearData(year);
         const timesOrganised = CURRENT_YEAR - item.startYear + 1;
         switch (key) {
-          case 'overview': return `
-            <h3>About ${escapeHtml(item.title)}</h3>
-            <p class="event-panel-intro" data-edit-key="text-event-detail">${escapeHtml(item.detail)}</p>
-            <p class="mini-label-mono">WHAT TO EXPECT</p>
-            <ul class="detail-highlights" data-edit-key="text-event-highlights">
-              ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
-            </ul>
-            <p class="mini-label-mono">GALLERY — ${year}</p>
-            <div class="event-year-gallery">
-              <figure><img src="${escapeHtml(s.image)}" alt="${escapeHtml(item.title)} ${year}"><figcaption>${escapeHtml(item.title)}, ${year}</figcaption></figure>
-            </div>
-            ${s.notes ? `<p class="mini-label-mono">NOTES FROM ${year}</p><p class="event-panel-intro">${escapeHtml(s.notes)}</p>` : ''}`;
+          case 'overview': {
+            const vids = videosByYear[year] || [];
+            const players = vids.map(v => {
+              const player = v.kind === 'youtube'
+                ? `<iframe src="${escapeHtml(v.src)}" title="${escapeHtml(v.title || item.title + ' ' + year)}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+                : `<video src="${escapeHtml(v.src)}" controls preload="metadata" playsinline></video>`;
+              return `<div class="ev-video"><div class="ev-player">${player}</div>${v.title ? `<p class="ev-video-title">${escapeHtml(v.title)}</p>` : ''}</div>`;
+            }).join('');
+            const videoCard = `
+              <aside class="ev-video-card" aria-label="Event videos">
+                <div class="ev-video-head"><h4>🎬 Event videos</h4><span class="mini-label-mono">${year}</span></div>
+                ${players || `<div class="ev-video-empty"><b>🎥</b>No videos have been added for ${year} yet.<br>The committee uploads them after the event.</div>`}
+              </aside>`;
+            return `
+              <div class="ev-overview">
+                <div class="ev-overview-text">
+                  <h3>About ${escapeHtml(item.title)}</h3>
+                  <p class="event-panel-intro" data-edit-key="text-event-detail">${escapeHtml(item.detail)}</p>
+                  <p class="mini-label-mono">WHAT TO EXPECT</p>
+                  <ul class="detail-highlights" data-edit-key="text-event-highlights">
+                    ${item.highlights.map(h => `<li>${icon('check', 16)} <span>${escapeHtml(h)}</span></li>`).join('')}
+                  </ul>
+                  ${s.notes ? `<p class="mini-label-mono">NOTES FROM ${year}</p><p class="event-panel-intro">${escapeHtml(s.notes)}</p>` : ''}
+                </div>
+                ${videoCard}
+              </div>
+              <p class="mini-label-mono" style="margin-top:2rem;">GALLERY — ${year}</p>
+              <div class="event-year-gallery">
+                <figure class="ev-photo">
+                  <button type="button" class="ev-zoom" data-full="${escapeHtml(s.image)}" data-cap="${escapeHtml(item.title)}, ${year}" aria-label="View the ${escapeHtml(item.title)} ${year} photo full size">
+                    <img class="ev-photo-bg" src="${escapeHtml(s.image)}" alt="" aria-hidden="true">
+                    <img class="ev-photo-main" src="${escapeHtml(s.image)}" alt="${escapeHtml(item.title)} ${year}">
+                    <span class="ev-zoom-hint">⤢ View full size</span>
+                  </button>
+                  <figcaption>${escapeHtml(item.title)}, ${year}</figcaption>
+                </figure>
+              </div>`;
+          }
           case 'organizer': return `
             <h3>Who organises it</h3>
             <div class="event-fact-grid">
@@ -1600,6 +1666,36 @@ body.site-edit-mode{padding-bottom:64px;}
         const caption = document.getElementById('yearSliderCaption');
         if (caption) caption.textContent = `Showing ${year}`;
       }
+
+      /* ---------- photo viewer: click the gallery photo to see it full size ---------- */
+      const lightbox = document.createElement('div');
+      lightbox.className = 'ev-lightbox';
+      lightbox.setAttribute('role', 'dialog');
+      lightbox.setAttribute('aria-modal', 'true');
+      lightbox.setAttribute('aria-label', 'Photo viewer');
+      lightbox.innerHTML = '<button type="button" class="ev-lightbox-close" aria-label="Close photo">&times;</button><img alt=""><div class="ev-lightbox-cap"></div>';
+      document.body.appendChild(lightbox);
+      const lbImg = lightbox.querySelector('img');
+      let lbReturnFocus = null;
+      function openLightbox(src, cap) {
+        lbImg.src = src; lbImg.alt = cap || '';
+        lightbox.querySelector('.ev-lightbox-cap').textContent = cap || '';
+        lbReturnFocus = document.activeElement;
+        lightbox.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        lightbox.querySelector('.ev-lightbox-close').focus();
+      }
+      function closeLightbox() {
+        lightbox.classList.remove('is-open');
+        document.body.style.overflow = '';
+        if (lbReturnFocus && document.contains(lbReturnFocus)) lbReturnFocus.focus();
+      }
+      lightbox.addEventListener('click', (e) => { if (e.target !== lbImg) closeLightbox(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox(); });
+      main.addEventListener('click', (e) => {
+        const z = e.target.closest('.ev-zoom');
+        if (z && !editModeOn) openLightbox(z.dataset.full, z.dataset.cap);
+      });
 
       let activeYear = CURRENT_YEAR;
       refreshPanels(activeYear);

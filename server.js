@@ -2183,7 +2183,7 @@ async function runSeeds() {
 const app = express();
 app.set('trust proxy', 1); // Render sits behind a proxy; needed so secure cookies work
 
-app.use(express.json());
+app.use(express.json({ limit: '8mb' }));
 
 app.use(session({
   secret: env.sessionSecret,
@@ -2755,6 +2755,157 @@ gatePassRouter.patch('/:id/cancel', requireAuth, gatePassController.cancel);
 gatePassRouter.patch('/:id/status', requireSecretary, gatePassController.setStatus);
 app.use('/api/gate-passes', gatePassRouter);
 
+// =====================================================================
+// Event videos: the Secretary uploads a video (or pastes a YouTube /
+// direct link) for an event + year; every logged-in resident can watch it
+// on that event's page. Uploaded files are stored in Postgres (not on the
+// server disk) so they survive Render redeploys, and are streamed with
+// HTTP Range support so the player can seek.
+// =====================================================================
+const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
+const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/ogg'];
+
+async function migrateEventVideos() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS event_videos (
+      id SERIAL PRIMARY KEY,
+      event_slug TEXT NOT NULL,
+      year INTEGER NOT NULL,
+      title TEXT NOT NULL DEFAULT '',
+      kind TEXT NOT NULL,
+      url TEXT,
+      mime TEXT,
+      size_bytes INTEGER,
+      data BYTEA,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+  await pool.query('CREATE INDEX IF NOT EXISTS event_videos_slug_year ON event_videos (event_slug, year)');
+  // Store the bytes uncompressed so partial reads (Range requests) stay cheap.
+  await pool.query('ALTER TABLE event_videos ALTER COLUMN data SET STORAGE EXTERNAL');
+}
+
+function parseVideoLink(raw) {
+  let u;
+  try { u = new URL(String(raw || '').trim()); } catch (e) { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  const host = u.hostname.replace(/^www\./, '').replace(/^m\./, '');
+  let id = null;
+  if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+  else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+    if (u.pathname === '/watch') id = u.searchParams.get('v');
+    else { const m = /^\/(embed|shorts|live)\/([^/?]+)/.exec(u.pathname); if (m) id = m[2]; }
+  }
+  if (id !== null) {
+    if (!/^[A-Za-z0-9_-]{11}$/.test(id || '')) return null;
+    return { kind: 'youtube', url: 'https://www.youtube-nocookie.com/embed/' + id };
+  }
+  if (/\.(mp4|webm|ogg|mov)$/i.test(u.pathname)) return { kind: 'link', url: u.href };
+  return null;
+}
+
+const VIDEO_PUBLIC_COLS = `id, event_slug, year, title, kind, mime, size_bytes, created_at,
+  CASE WHEN kind = 'upload' THEN '/api/event-videos/file/' || id ELSE url END AS src`;
+
+const eventVideoController = {
+  async list(req, res) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT ${VIDEO_PUBLIC_COLS} FROM event_videos WHERE event_slug = $1 ORDER BY year DESC, created_at ASC`,
+        [String(req.params.slug)]
+      );
+      res.json(rows);
+    } catch (err) { dbError(res, err); }
+  },
+  async upload(req, res) {
+    try {
+      const year = parseInt(req.params.year, 10);
+      if (!Number.isInteger(year) || year < 2000 || year > 2100) return res.status(400).json({ error: 'Enter a valid year.' });
+      const mime = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+      if (!VIDEO_TYPES.includes(mime)) return res.status(400).json({ error: 'Please upload an MP4, WebM, MOV or OGG video.' });
+      if (!Buffer.isBuffer(req.body) || !req.body.length) return res.status(400).json({ error: 'The video file was empty.' });
+      const title = String(req.query.title || '').trim().slice(0, 120);
+      const { rows } = await pool.query(
+        `INSERT INTO event_videos (event_slug, year, title, kind, mime, size_bytes, data)
+         VALUES ($1,$2,$3,'upload',$4,$5,$6) RETURNING ${VIDEO_PUBLIC_COLS}`,
+        [String(req.params.slug), year, title, mime, req.body.length, req.body]
+      );
+      res.status(201).json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async addLink(req, res) {
+    try {
+      const year = parseInt(req.params.year, 10);
+      if (!Number.isInteger(year) || year < 2000 || year > 2100) return res.status(400).json({ error: 'Enter a valid year.' });
+      const parsed = parseVideoLink((req.body || {}).url);
+      if (!parsed) return res.status(400).json({ error: 'Paste a YouTube link, or a direct link ending in .mp4 / .webm.' });
+      const title = String((req.body || {}).title || '').trim().slice(0, 120);
+      const { rows } = await pool.query(
+        `INSERT INTO event_videos (event_slug, year, title, kind, url)
+         VALUES ($1,$2,$3,$4,$5) RETURNING ${VIDEO_PUBLIC_COLS}`,
+        [String(req.params.slug), year, title, parsed.kind, parsed.url]
+      );
+      res.status(201).json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async rename(req, res) {
+    try {
+      const title = String((req.body || {}).title || '').trim().slice(0, 120);
+      const { rows } = await pool.query(`UPDATE event_videos SET title = $1 WHERE id = $2 RETURNING ${VIDEO_PUBLIC_COLS}`, [title, parseInt(req.params.id, 10) || 0]);
+      if (!rows[0]) return res.status(404).json({ error: 'Video not found.' });
+      res.json(rows[0]);
+    } catch (err) { dbError(res, err); }
+  },
+  async remove(req, res) {
+    try {
+      const { rows } = await pool.query('DELETE FROM event_videos WHERE id = $1 RETURNING id', [parseInt(req.params.id, 10) || 0]);
+      if (!rows[0]) return res.status(404).json({ error: 'Video not found.' });
+      res.json({ success: true });
+    } catch (err) { dbError(res, err); }
+  },
+  // Streams an uploaded video. Handles "Range: bytes=a-b" so seeking works.
+  async file(req, res) {
+    try {
+      const id = parseInt(req.params.id, 10) || 0;
+      const { rows } = await pool.query(`SELECT mime, size_bytes FROM event_videos WHERE id = $1 AND kind = 'upload'`, [id]);
+      if (!rows[0]) return res.status(404).end();
+      const total = rows[0].size_bytes;
+      let start = 0, end = total - 1, partial = false;
+      const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+      if (m && (m[1] !== '' || m[2] !== '')) {
+        if (m[1] === '') { start = Math.max(0, total - parseInt(m[2], 10)); }
+        else { start = parseInt(m[1], 10); if (m[2] !== '') end = Math.min(parseInt(m[2], 10), total - 1); }
+        if (start > end || start >= total) { res.set('Content-Range', `bytes */${total}`); return res.status(416).end(); }
+        end = Math.min(end, start + 4 * 1024 * 1024 - 1); // serve in chunks of at most 4 MB
+        partial = true;
+      }
+      const { rows: chunk } = await pool.query('SELECT substring(data FROM $2::int FOR $3::int) AS chunk FROM event_videos WHERE id = $1', [id, start + 1, end - start + 1]);
+      const buf = chunk[0] && chunk[0].chunk;
+      if (!buf) return res.status(404).end();
+      res.status(partial ? 206 : 200);
+      res.set({ 'Content-Type': rows[0].mime, 'Accept-Ranges': 'bytes', 'Content-Length': buf.length, 'Cache-Control': 'private, max-age=3600' });
+      if (partial) res.set('Content-Range', `bytes ${start}-${end}/${total}`);
+      res.end(buf);
+    } catch (err) { dbError(res, err); }
+  }
+};
+
+const isVideoBody = (req) => /^video\//i.test(String(req.headers['content-type'] || ''));
+const eventVideosRouter = express.Router();
+eventVideosRouter.get('/file/:id', requireAuth, eventVideoController.file);
+eventVideosRouter.get('/:slug', requireAuth, eventVideoController.list);
+eventVideosRouter.post('/:slug/:year/upload', requireSecretary, express.raw({ type: isVideoBody, limit: VIDEO_MAX_BYTES }), eventVideoController.upload);
+eventVideosRouter.post('/:slug/:year/link', requireSecretary, eventVideoController.addLink);
+eventVideosRouter.patch('/:id', requireSecretary, eventVideoController.rename);
+eventVideosRouter.delete('/:id', requireSecretary, eventVideoController.remove);
+eventVideosRouter.use((err, req, res, next) => {
+  if (err && (err.type === 'entity.too.large' || err.status === 413)) {
+    return res.status(413).json({ error: 'That video is larger than 50 MB. Please compress it, or paste a YouTube link instead.' });
+  }
+  next(err);
+});
+app.use('/api/event-videos', eventVideosRouter);
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', society: 'Bhargavi Housing Society' });
 });
@@ -2781,6 +2932,7 @@ async function start() {
   } else {
     await migrate();
     await migrateQuickActions();
+    await migrateEventVideos();
     await runSeeds();
   }
   app.listen(env.port, () => {
