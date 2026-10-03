@@ -3125,9 +3125,14 @@ body.site-edit-mode{padding-bottom:64px;}
       function openMeetingPopup() { meetingPopupOverlay.classList.add('show'); }
       function closeMeetingPopup() { meetingPopupOverlay.classList.remove('show'); }
 
-      ['openMeetingPopupBtn', 'openMeetingPopupBtn2'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.addEventListener('click', () => { if (activeMeetings.length) openMeetingPopup(); });
+      // "Scheduled Meeting" (top-right) keeps the quick popup; "View agenda"
+      // opens the full meeting.html page with the Secretary's meeting details.
+      const meetingPopupTopBtn = document.getElementById('openMeetingPopupBtn');
+      if (meetingPopupTopBtn) meetingPopupTopBtn.addEventListener('click', () => { if (activeMeetings.length) openMeetingPopup(); });
+      const viewAgendaBtn = document.getElementById('openMeetingPopupBtn2');
+      if (viewAgendaBtn) viewAgendaBtn.addEventListener('click', () => {
+        if (!activeMeetings.length) return;
+        window.location.href = 'meeting.html?id=' + encodeURIComponent(activeMeetings[0].id);
       });
       meetingPopupClose.addEventListener('click', closeMeetingPopup);
       meetingPopupOverlay.addEventListener('click', (e) => { if (e.target === meetingPopupOverlay) closeMeetingPopup(); });
