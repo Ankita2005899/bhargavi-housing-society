@@ -120,7 +120,6 @@ h1, h2, h3, h4, p, td, th{ overflow-wrap: break-word; }
 @media (max-width: 1100px){ :root{ --site-font: 112%; } }
 @media (max-width: 768px){  :root{ --site-font: 106%; } }
 @media (max-width: 480px){  :root{ --site-font: 100%; } }
-@media (min-width: 1700px){ :root{ --site-font: 125%; } }
 
 /* ---- 3) off-canvas slide menu on the home page must not widen the page ---- */
 .slide-menu:not(.show){ visibility: hidden; transition: transform .4s var(--ease, ease), visibility 0s linear .4s; }
@@ -204,10 +203,16 @@ html.rn-lock{ overflow: hidden; }
   h2{ font-size: clamp(1.4rem, 5.6vw, 1.9rem); }
 }
 
-/* ---- 8) modals / popups never taller or wider than the screen ---- */
+/* ---- 8) modals / popups: keep their own width, just never exceed the screen ---- */
 .modal-overlay{ padding: .75rem; overflow-y: auto; }
-.modal-overlay > *, .popup, .modal, [class*="popup-wide"], .secretary-panel-full{ max-width: 100% !important; }
+:where(.modal-overlay > *){ max-width: calc(100vw - 1.5rem); }
 .modal-overlay > *{ max-height: 96dvh; overflow-y: auto; }
+@media (min-width: 761px){
+  .meeting-popup{ max-width: 560px; }
+  .meeting-popup-banner{ padding: 2rem 2.2rem 2.4rem; }
+  .meeting-popup-banner h3{ font-size: 1.5rem; }
+  .meeting-popup-body{ padding: 1.6rem 2.2rem 2rem; }
+}
 
 /* ---- 9) secretary dashboard on phones ---- */
 @media (max-width: 640px){
@@ -222,4 +227,23 @@ html.rn-lock{ overflow: hidden; }
               padding: 1.4rem var(--site-gutter) !important; gap: 1.2rem; }
   .left-rail > *{ flex: 1 1 320px; min-width: 0 !important; max-width: 100%; }
   .rail-slider, .rail-actions{ min-width: 0 !important; }
+}
+
+
+/* ---- 11) "Email the office" / "Call gate office" buttons ---- */
+.contact-buttons{ display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.4rem; }
+.contact-buttons .btn{
+  min-width: 190px; padding: .8em 1.6em; font-size: .95rem; font-weight: 600; letter-spacing: .01em;
+  box-shadow: none; transform: none;
+}
+.contact-buttons .btn-primary{ box-shadow: 0 6px 16px rgba(193,82,44,.30); }
+.contact-buttons .btn::before{ font-size: 1.05em; line-height: 1; }
+.contact-buttons .btn-primary::before{ content: "\2709"; }          /* envelope */
+.contact-buttons .btn-outline::before{ content: "\260E"; }          /* phone */
+.contact-buttons .btn:hover{ transform: translateY(-2px); }
+.contact-buttons .btn-primary:hover{ box-shadow: 0 10px 22px rgba(193,82,44,.40); }
+.contact-buttons .btn:focus-visible{ outline: 3px solid rgba(243,217,160,.9); outline-offset: 3px; }
+@media (max-width: 560px){
+  .contact-buttons{ flex-direction: column; }
+  .contact-buttons .btn{ width: 100%; min-width: 0; }
 }
